@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/spacing_large"
+    android:layout_marginRight="@dimen/spacing_large"
+    android:padding="@dimen/spacing_large">
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical">
+       <View
+           android:layout_width="0dp"
+           android:layout_height="@dimen/spacing_mlarge" />
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="AREA"
+           android:textAlignment="center"
+           android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+           android:textColor="@color/grey_40" />
+
+       <android.support.v7.widget.AppCompatSpinner
+           android:id="@+id/spnArea_unplan"
+           style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           android:spinnerMode="dialog" />
+
+       <View
+           android:layout_width="0dp"
+           android:layout_height="@dimen/spacing_mlarge" />
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="ACTIVITY"
+           android:textAlignment="center"
+           android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+           android:textColor="@color/grey_40" />
+
+       <android.support.v7.widget.AppCompatSpinner
+           android:id="@+id/spnActivity_add_unplan"
+           style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           android:spinnerMode="dialog" />
+
+       <View
+           android:layout_width="0dp"
+           android:layout_height="@dimen/spacing_mlarge" />
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:id="@+id/ln_cb_unplan"
+           android:orientation="horizontal">
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/tv_outlet_unplan"
+               android:text="Name"
+               android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+               android:textColor="@color/grey_40"
+               android:layout_weight="1"/>
+           <android.support.v7.widget.AppCompatCheckBox
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="New"
+               android:id="@+id/cb_outlet_unplan"
+               android:textColor="@color/grey_40"
+               android:gravity="center"/>
+       </LinearLayout>
+       <android.support.v7.widget.AppCompatSpinner
+           android:id="@+id/spn_outlet_unplan"
+           style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           android:spinnerMode="dialog" />
+
+       <android.support.design.widget.TextInputEditText
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginLeft="-4dp"
+           android:layout_marginRight="-4dp"
+           android:inputType="text"
+           android:maxLines="1"
+           android:singleLine="true"
+           android:ems="10"
+           android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+           android:textColor="@color/green_300"
+           android:id="@+id/etOutlet_unplan"
+           android:theme="@style/EditText.Grey"
+           android:visibility="gone"/>
+
+       <View
+           android:layout_width="0dp"
+           android:layout_height="@dimen/spacing_mlarge" />
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="DESCRIPTION"
+           android:textAlignment="center"
+           android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+           android:textColor="@color/grey_40" />
+
+       <android.support.design.widget.TextInputEditText
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginLeft="-4dp"
+           android:layout_marginRight="-4dp"
+           android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+           android:textColor="@color/green_300"
+           android:id="@+id/et_desc_unplan"
+           android:theme="@style/EditText.Grey" />
+       <View
+           android:layout_width="0dp"
+           android:layout_height="@dimen/spacing_xxlarge" />
+
+       <Button
+           android:id="@+id/button_add_unplan"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_alignParentStart="true"
+           android:layout_below="@+id/view4"
+           android:layout_gravity="center_horizontal"
+           android:background="@color/green_300"
+           android:text="Create Unplan"
+           android:textColor="@color/white" />
+
+   </LinearLayout>
+
+</ScrollView>

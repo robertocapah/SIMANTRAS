@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">Kalbe Call Plan AEDP V2</string>
+    <string name="app_name_call_plan">Kalbe Call Plan AEDP V2</string>
+    <string name="closeDrawer">Navigation View</string>
+    <string name="openDrawer">Navigation View Closed</string>
+    <string name="label">Kalbe Nutritionals</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="error_advice">Your system has been detected some errors, my developers need this information. please push button below to send the errors</string>
+
+    <string name="crash_toast_text">ups ! Your Application has Stopped, but a report has been sent to my developer to help fix the issue !</string>
+
+    <string name="crash_dialog_title">SPG Mobile has crashed</string>
+    <string name="crash_dialog_text">An unexpected error occurred forcing the
+    application to stop. Please help us fix this by sending us error data,
+    all you have to do is click OK.</string>
+    <string name="crash_dialog_comment_prompt">You might add your comments about the problem below:</string>
+    <string name="crash_dialog_ok_toast">Thank you !</string>
+    <string name="CrashReport_MailBody">Hello</string>
+    <string name="CrashReport_MailSubject">Error Reporting\'\'</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="history_absence">History Absence</string>
+    <string name="OK">OK</string>
+    <string name="GOT_IT">GOT IT</string>
+    <string name="YES">YES</string>
+    <string name="NO">NO</string>
+    <string name="SETTING">SETTING</string>
+    <string name="CANCEL">CANCEL</string>
+    <string name="CLOSE">CLOSE</string>
+    <string name="UPDATE">UPDATE</string>
+    <string name="DISMISS">DISMISS</string>
+    <string name="HIDE">HIDE</string>
+    <string name="RETRY">RETRY</string>
+    <string name="TRY_AGAIN">TRY AGAIN</string>
+    <string name="DETAILS">DETAILS</string>
+    <string name="FAILED">FAILED</string>
+    <string name="TYPE_SEARCH">SEARCH</string>
+    <string name="NO_IMAGE">NO IMAGE</string>
+    <string name="DELETE">DELETE</string>
+    <string name="DISCARD">DISCARD</string>
+    <string name="AGREE">AGREE</string>
+    <string name="DISAGREE">DISAGREE</string>
+    <string name="OPEN">OPEN</string>
+    <string name="SAVE">SAVE</string>
+    <string name="NEXT">NEXT</string>
+    <string name="BACK">BACK</string>
+    <string name="SKIP">SKIP</string>
+    <string name="activity_item">Supporting document</string>
+    <string name="verified">Verified</string>
+</resources>

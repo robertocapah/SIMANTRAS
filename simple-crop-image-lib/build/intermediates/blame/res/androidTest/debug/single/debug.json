@@ -1,0 +1,82 @@
+[
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-mdpi-v4_ic_check.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-mdpi-v4\\ic_check.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-hdpi-v4_ic_close.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-hdpi-v4\\ic_close.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout_main.xml.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\layout\\main.xml"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xhdpi-v4_ic_close.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-xhdpi-v4\\ic_close.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-mdpi-v4_ic_close.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-mdpi-v4\\ic_close.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-hdpi-v4_ic_check.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-hdpi-v4\\ic_check.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout_cropimage.xml.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\layout\\cropimage.xml"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xhdpi-v4_ic_check.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-xhdpi-v4\\ic_check.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxxhdpi-v4_ic_close.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxxhdpi-v4\\ic_close.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4_camera_crop_height.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\camera_crop_height.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4_btn_crop_pressed.9.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\btn_crop_pressed.9.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4_camera_crop_width.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\camera_crop_width.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4_indicator_autocrop.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\indicator_autocrop.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxxhdpi-v4_ic_check.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxxhdpi-v4\\ic_check.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxhdpi-v4_ic_close.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxhdpi-v4\\ic_close.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4_btn_crop_operator.9.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\btn_crop_operator.9.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxhdpi-v4_ic_check.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxhdpi-v4\\ic_check.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4_ic_rotate_right.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_rotate_right.png"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable_selector_crop_button.xml.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable\\selector_crop_button.xml"
+    },
+    {
+        "merged": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4_ic_rotate_left.png.flat",
+        "source": "D:\\PROJECTKERJAAN\\AEDPV2\\simple-crop-image-lib\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_rotate_left.png"
+    }
+]

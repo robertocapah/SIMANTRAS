@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <!--<com.kalbe.kalbecallplanaedp.Utils.CircularTextView-->
+        <!--android:id="@+id/text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:paddingBottom="@dimen/spacing_small"-->
+        <!--android:paddingLeft="@dimen/spacing_medium"-->
+        <!--android:paddingRight="@dimen/spacing_medium"-->
+        <!--android:paddingTop="@dimen/spacing_small"-->
+        <!--android:text="1"-->
+        <!--android:background="@drawable/shape_round"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"-->
+        <!--android:textColor="@color/grey_60" />-->
+    <shp.kalbecallplanaedp.Utils.CircularTextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/black"
+        android:padding="2dp"/>
+</LinearLayout>

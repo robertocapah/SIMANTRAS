@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_add"
+        android:icon="@mipmap/ic_add_orange"
+        android:title="Add New" />
+    <item
+        android:id="@+id/action_submit"
+        android:icon="@mipmap/ic_save_orange"
+        android:title="Submit" />
+</menu>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_5"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/nested_scroll_view"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:scrollingCache="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/lnLv0"
+            android:padding="@dimen/spacing_large">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="2dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:id="@+id/lnLv1"
+                    android:paddingBottom="@dimen/spacing_xlarge">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:gravity="center"
+                        android:text="Pick Account"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/grey_90"
+                        app:fontFamily="sans-serif-medium" />
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="4dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:tint="@color/colorAccent"
+                        android:src="@drawable/swipe_up_handle" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/lnLv2"
+                        android:layout_below="@+id/iv_anim"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp">
+                        <android.support.v7.widget.RecyclerView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/lv_pick_v3">
+
+                        </android.support.v7.widget.RecyclerView>
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btnAddAccount"
+                            android:layout_marginTop="@dimen/spacing_large"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:drawableRight="@drawable/ic_plus_white"
+                            android:text="Add New Account"
+                            android:theme="@style/Button.Primary" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/spacing_middle" />
+
+
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_smlarge"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:layout_anchor="@id/nested_scroll_view"
+        app:layout_anchorGravity="bottom|right|end"
+        app:srcCompat="@drawable/ic_plus_white" />
+</LinearLayout>

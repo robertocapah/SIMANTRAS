@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/groupListMenu">
+
+        <item
+            android:id="@+id/home"
+            android:checked="true"
+            android:icon="@drawable/ic_home_black"
+            android:orderInCategory="0"
+            android:title="Home"
+            app:actionLayout="@layout/menu_counter"/>
+
+        <item
+            android:id="@+id/mnCallPlan"
+            android:icon="@mipmap/ic_asg_unplan"
+            android:orderInCategory="0"
+            android:title="Call Plan" />
+
+    </group>
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/groupMenuDinamis">
+        <item
+            android:id="@+id/mnAkusisi"
+            android:icon="@mipmap/ic_akuisisi"
+            android:orderInCategory="0"
+            android:title="Akuisisi" />
+
+        <item
+            android:id="@+id/mnMaintenance"
+            android:icon="@mipmap/ic_asg_plan"
+            android:orderInCategory="0"
+            android:title="Maintenance" />
+
+        <item
+            android:id="@+id/mnInfoProgram"
+            android:icon="@mipmap/ic_info_program"
+            android:orderInCategory="0"
+            android:title="Info Program" />
+    </group>
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/groupListfooter">
+        <item
+            android:id="@+id/mnCheckOut"
+            android:orderInCategory="0"
+            android:title="Check Out" />
+        <item
+            android:id="@+id/mnDownloadData"
+            android:icon="@mipmap/ic_download"
+            android:orderInCategory="0"
+            android:title="Download Data" />
+        <item
+            android:id="@+id/mnpushData"
+            android:icon="@mipmap/ic_push_data"
+            android:orderInCategory="0"
+            android:title="Push Data" />
+        <item
+            android:id="@+id/mnNotification"
+            android:icon="@mipmap/ic_notification"
+            android:orderInCategory="0"
+            android:title="Notification"
+            app:actionLayout="@layout/badge_navigation_plain"/>
+        <item
+            android:id="@+id/mnSetting"
+            android:icon="@mipmap/ic_setting"
+            android:orderInCategory="0"
+            android:title="Setting" />
+        <item
+            android:id="@+id/mnLogout"
+            android:checked="false"
+            android:orderInCategory="2"
+            android:title="Logout" />
+    </group>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/groupVersion">
+
+    </group>
+</menu>

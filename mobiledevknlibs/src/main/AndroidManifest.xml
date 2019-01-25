@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.kalbe.mobiledevknlibs">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application>
+        <activity android:name=".PDFView.PDFViewer"></activity>
+
+        <activity android:name=".library.zXingLib.zxing.CaptureActivity"
+            android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+    </application>
+
+</manifest>

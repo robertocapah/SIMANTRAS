@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/spacing_large"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sub Akuisisi"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/grey_40" />
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/spn_add_sub_akuisisi"
+                    style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:spinnerMode="dialog" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/spacing_large"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No. Document"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/grey_40" />
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/et_no_doc"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/black"
+                    android:theme="@style/EditText.Grey" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/spacing_large"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Expired Date"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/grey_40" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Expired Date"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:drawableRight="@mipmap/ic_date"
+                    android:id="@+id/tv_exp_date"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:theme="@style/EditText.Grey"
+                    android:textColor="@color/black" />
+
+                <!--<android.support.design.widget.TextInputEditText-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:inputType="date"-->
+                    <!--android:id="@+id/et_exp_date"-->
+                    <!--android:maxLines="1"-->
+                    <!--android:singleLine="true"-->
+                    <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"-->
+                    <!--android:textColor="@color/black"-->
+                    <!--android:clickable="true"-->
+                    <!--android:focusable="false"-->
+                    <!--android:editable="false"-->
+                    <!--android:focusableInTouchMode="false"-->
+                    <!--android:drawableRight="@mipmap/ic_date"-->
+                    <!--android:theme="@style/EditText.Grey" />-->
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/spacing_large"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lv_akuisisi"></android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab_add_image_akuisisi"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end|right"-->
+        <!--android:layout_margin="@dimen/spacing_smlarge"-->
+        <!--android:tint="@android:color/white"-->
+        <!--app:backgroundTint="@color/orange_800"-->
+        <!--app:fabSize="normal"-->
+        <!--app:rippleColor="@android:color/white"-->
+        <!--app:srcCompat="@drawable/ic_add_white" />-->
+
+    <io.github.yavski.fabspeeddial.FabSpeedDial
+        android:id="@+id/fabView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        app:fabGravity="bottom_end"
+        app:fabMenu="@menu/menu_main_add_save"
+        app:miniFabBackgroundTint="@android:color/white"
+        app:miniFabDrawableTint="@color/orange_800"
+        app:miniFabTitleTextColor="@color/orange_800"
+        app:fabBackgroundTint="@color/orange_800"
+        app:touchGuardDrawable="#B3000000" />
+</android.support.design.widget.CoordinatorLayout>
