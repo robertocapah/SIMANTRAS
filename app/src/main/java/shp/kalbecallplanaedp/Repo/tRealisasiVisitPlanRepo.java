@@ -116,6 +116,32 @@ public class tRealisasiVisitPlanRepo implements crud { DatabaseHelper helper;
         return item;
     }
 
+    public tRealisasiVisitPlan findBytxtDokterId(String txtDokterId) throws SQLException {
+        tRealisasiVisitPlan item = new tRealisasiVisitPlan();
+        QueryBuilder<tRealisasiVisitPlan, Integer> queryBuilder = null;
+        try {
+            queryBuilder = helper.gettRealisasiVisitPlanDao().queryBuilder();
+            queryBuilder.where().eq(item.Property_txtDokterId, txtDokterId);
+            item = queryBuilder.queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return item;
+    }
+
+    public tRealisasiVisitPlan findBytxtApotekId(String txtApotekId) throws SQLException {
+        tRealisasiVisitPlan item = new tRealisasiVisitPlan();
+        QueryBuilder<tRealisasiVisitPlan, Integer> queryBuilder = null;
+        try {
+            queryBuilder = helper.gettRealisasiVisitPlanDao().queryBuilder();
+            queryBuilder.where().eq(item.Property_txtApotekId, txtApotekId);
+            item = queryBuilder.queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return item;
+    }
+
     public List<tRealisasiVisitPlan> getAllPushData () {
         tRealisasiVisitPlan item = new tRealisasiVisitPlan();
         List<tRealisasiVisitPlan> listData = new ArrayList<>();

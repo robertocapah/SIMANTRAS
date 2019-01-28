@@ -155,7 +155,7 @@ public class FragementInfoProgram extends Fragment implements IOBackPressed{
         if (_mSubSubActivity!=null){
             if (_mSubSubActivity.size()>0){
                 for (int i =0; i < _mSubSubActivity.size(); i++){
-                    adapter.addFragment(new FragmentSubInfoProgram(dtHeader, _mSubSubActivity.get(i).getIntSubSubActivityid(), i, valid), _mSubSubActivity.get(i).getTxtName());
+                    adapter.addFragment(new FragmentSubInfoProgram(dtHeader, _mSubSubActivity.get(i).getIntSubSubActivityid(), i, valid, dtCheckinActive), _mSubSubActivity.get(i).getTxtName());
                 }
                 lnEmpty.setVisibility(View.GONE);
             }else {

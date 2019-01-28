@@ -22,6 +22,7 @@ import shp.kalbecallplanaedp.Common.mApotek;
 import shp.kalbecallplanaedp.Common.mDokter;
 import shp.kalbecallplanaedp.Common.mSubSubActivity;
 import shp.kalbecallplanaedp.Common.tNotification;
+import shp.kalbecallplanaedp.Common.tRealisasiVisitPlan;
 import shp.kalbecallplanaedp.Data.clsHardCode;
 import shp.kalbecallplanaedp.Model.clsItemGroupNotifAdapter;
 import shp.kalbecallplanaedp.Model.clsListItemAdapter;
@@ -31,6 +32,7 @@ import shp.kalbecallplanaedp.Repo.mApotekRepo;
 import shp.kalbecallplanaedp.Repo.mDokterRepo;
 import shp.kalbecallplanaedp.Repo.mSubSubActivityRepo;
 import shp.kalbecallplanaedp.Repo.tNotificationRepo;
+import shp.kalbecallplanaedp.Repo.tRealisasiVisitPlanRepo;
 import shp.kalbecallplanaedp.adapter.AdapterListNOrder;
 import shp.kalbecallplanaedp.adapter.ExpandableListAdapterNotif;
 import shp.kalbecallplanaedp.widget.LineItemDecoration;
@@ -81,15 +83,29 @@ public class FragmentNotification extends Fragment {
                         itemAdapter.setTxtTittle(activity.getTxtName());
                         if (data.getIntActivityId()==new clsHardCode().VisitDokter){
                             mDokter dokter = new mDokterRepo(getContext()).findBytxtId(data.getIntDokterId());
-                            if (dokter.getTxtLastName()!=null){
-                                if (!dokter.getTxtLastName().equals("null")){
-                                    nama = dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                            if (dokter==null){
+                                tRealisasiVisitPlan dtRealisasi = (tRealisasiVisitPlan) new tRealisasiVisitPlanRepo(getContext()).findBytxtDokterId(data.getIntDokterId());
+                                nama = dtRealisasi.getTxtDokterName();
+                            }else {
+                                if (dokter.getTxtLastName()!=null){
+                                    if (!dokter.getTxtLastName().equals("null")){
+                                        nama = dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                                    }
+                                }else {
+                                    nama = dokter.getTxtFirstName();
                                 }
                             }
+
                             listChild = (List<tNotification>) notificationRepo.findByOutletId(data.getIntDokterId(), data.getIntActivityId());
                             itemAdapter.setTxtSubTittle("Dokter " + nama + "  (" + String.valueOf(listChild.size())+ ")");
                         }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
-                            nama = new mApotekRepo(getContext()).findBytxtId(data.getIntApotekId()).getTxtName();
+                            mApotek apotek = new mApotekRepo(getContext()).findBytxtId(data.getIntApotekId());
+                            if (apotek==null){
+                                tRealisasiVisitPlan dtRealisasi = (tRealisasiVisitPlan) new tRealisasiVisitPlanRepo(getContext()).findBytxtApotekId(data.getIntApotekId());
+                                nama = dtRealisasi.getTxtApotekName();
+                            }else {
+                                nama = apotek.getTxtName();
+                            }
                             listChild = (List<tNotification>) notificationRepo.findByOutletId(data.getIntApotekId(), data.getIntActivityId());
                             itemAdapter.setTxtSubTittle(nama + "  (" + String.valueOf(listChild.size())+ ")");
                         }

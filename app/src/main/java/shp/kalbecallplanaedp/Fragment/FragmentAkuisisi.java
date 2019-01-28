@@ -261,7 +261,7 @@ public class FragmentAkuisisi extends Fragment implements IOBackPressed{
                 e.printStackTrace();
             }
 
-            adapter.addFragment(new FragmentSubAkuisisi(dtHeader, _mSubSubActivity.get(i).getIntType(), fab), _mSubSubActivity.get(i).getTxtName());
+            adapter.addFragment(new FragmentSubAkuisisi(dtHeader, _mSubSubActivity.get(i).getIntType(), fab, dtCheckinActive), _mSubSubActivity.get(i).getTxtName());
         }
         viewPager.setAdapter(adapter);
     }

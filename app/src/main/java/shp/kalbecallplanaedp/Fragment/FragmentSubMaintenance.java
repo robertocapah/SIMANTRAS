@@ -13,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import shp.kalbecallplanaedp.Common.mApotek;
 import shp.kalbecallplanaedp.Common.mDokter;
 import shp.kalbecallplanaedp.Common.tMaintenanceDetail;
 import shp.kalbecallplanaedp.Common.tMaintenanceHeader;
@@ -25,6 +26,7 @@ import shp.kalbecallplanaedp.Repo.mApotekRepo;
 import shp.kalbecallplanaedp.Repo.mDokterRepo;
 import shp.kalbecallplanaedp.Repo.tMaintenanceDetailRepo;
 import shp.kalbecallplanaedp.Repo.tMaintenanceHeaderRepo;
+import shp.kalbecallplanaedp.Repo.tRealisasiVisitPlanRepo;
 import shp.kalbecallplanaedp.adapter.AdapterListMaintenance;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
@@ -57,6 +59,8 @@ public class FragmentSubMaintenance extends Fragment {
     String txtSubSubActivity;
     tRealisasiVisitPlan dtCheckinActive;
     tProgramVisitSubActivity dataPlan;
+    tRealisasiVisitPlanRepo repoRealisasi;
+
 
     public FragmentSubMaintenance(List<String> listHeaderId, tMaintenanceHeader header, int intSubSubActivity, int index, String txtSubSubActivity, tRealisasiVisitPlan dtCheckinActive,  tProgramVisitSubActivity dataPlan){
         this.header = header;
@@ -79,6 +83,7 @@ public class FragmentSubMaintenance extends Fragment {
 
         detailRepo = new tMaintenanceDetailRepo(getContext());
         headerRepo = new tMaintenanceHeaderRepo(getContext());
+        repoRealisasi = new tRealisasiVisitPlanRepo(getContext());
 
         loadData();
 
@@ -117,13 +122,18 @@ public class FragmentSubMaintenance extends Fragment {
             try {
                 if (header.getIntActivityId()==new clsHardCode().VisitDokter){
                     dokter  = new mDokterRepo(getContext()).findBytxtId(header.getIntDokterId());
-                    if (dokter.getTxtLastName()!=null){
-                        strName = dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                    if (dokter!=null){
+                        if (dokter.getTxtLastName()!=null){
+                            strName = dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                        }else {
+                            strName = dokter.getTxtFirstName();
+                        }
                     }else {
-                        strName = dokter.getTxtFirstName();
+                        strName = dtCheckinActive.getTxtDokterName();
                     }
                 }else {
-                    strName = new mApotekRepo(getContext()).findBytxtId(header.getIntApotekID()).getTxtName();
+//                    mApotek apotek = (mApotek) new mApotekRepo(getContext()).findBytxtId(header.getIntApotekID());
+                    strName = dtCheckinActive.getTxtApotekName();
                 }
 
                 listDetail = (List<tMaintenanceDetail>) detailRepo.findByListHeaderIdandSubsubId(listHeaderId, intSubSubActivity);

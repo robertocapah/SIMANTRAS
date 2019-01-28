@@ -12,8 +12,6 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -36,6 +34,7 @@ import shp.kalbecallplanaedp.Common.mApotek;
 import shp.kalbecallplanaedp.Common.mDokter;
 import shp.kalbecallplanaedp.Common.tAkuisisiDetail;
 import shp.kalbecallplanaedp.Common.tAkuisisiHeader;
+import shp.kalbecallplanaedp.Common.tRealisasiVisitPlan;
 import shp.kalbecallplanaedp.Data.clsHardCode;
 import shp.kalbecallplanaedp.ImageViewerActivity;
 import shp.kalbecallplanaedp.Model.Image;
@@ -87,11 +86,13 @@ public class FragmentSubAkuisisi extends Fragment {
     mApotek apotek;
     mApotekRepo apotekRepo;
     SwipeRefreshLayout swpAkusisi;
+    tRealisasiVisitPlan dtCheckinActive;
 
-    public FragmentSubAkuisisi(tAkuisisiHeader dtHeader, int intTypeSubSubId, FloatingActionButton fab) {
+    public FragmentSubAkuisisi(tAkuisisiHeader dtHeader, int intTypeSubSubId, FloatingActionButton fab, tRealisasiVisitPlan dtCheckinActive){
         this.dtHeader = dtHeader;
         this.intTypeSubSubId = intTypeSubSubId;
         this.fab = fab;
+        this.dtCheckinActive = dtCheckinActive;
     }
 
     @Nullable
@@ -102,17 +103,17 @@ public class FragmentSubAkuisisi extends Fragment {
         viewPager = (ViewPager) v.findViewById(R.id.view_pager_subakuisisi);
         tvNoDoc = (TextView) v.findViewById(R.id.title_subakuisisi);
         tvExpDate = (TextView) v.findViewById(R.id.tv_exp_date_sub);
-        tv_status_info = (TextView) v.findViewById(R.id.tv_status_info);
-        tv_status_Akusisi = (TextView) v.findViewById(R.id.tv_status_Akusisi);
+        tv_status_info = (TextView)v.findViewById(R.id.tv_status_info);
+        tv_status_Akusisi = (TextView)v.findViewById(R.id.tv_status_Akusisi);
         ln_image = (LinearLayout) v.findViewById(R.id.ln_image_sub_akuisisi);
         ln_resgistrasi = (LinearLayout) v.findViewById(R.id.ln_resgistrasi_sub_akuisisi);
-        ln_emptyAkuisisi = (LinearLayout) v.findViewById(R.id.ln_emptyAkuisisi);
-        tvOutlet = (TextView) v.findViewById(R.id.tv_nama_outlet_akuisisi);
-        tvUserName = (TextView) v.findViewById(R.id.tv_username_akuisisi);
+        ln_emptyAkuisisi = (LinearLayout)v.findViewById(R.id.ln_emptyAkuisisi);
+        tvOutlet = (TextView)v.findViewById(R.id.tv_nama_outlet_akuisisi);
+        tvUserName = (TextView)v.findViewById(R.id.tv_username_akuisisi);
         tvDesc_akuisisi = (TextView) v.findViewById(R.id.tvDesc_akuisisi);
         tv_image = (TextView) v.findViewById(R.id.image_letter_akuisisi);
-        image = (ImageView) v.findViewById(R.id.image_akuisisi);
-        swpAkusisi = (SwipeRefreshLayout) v.findViewById(R.id.swpAkusisi);
+        image = (ImageView)v.findViewById(R.id.image_akuisisi);
+        swpAkusisi = (SwipeRefreshLayout)v.findViewById(R.id.swpAkusisi);
         swpAkusisi.setOnRefreshListener(refreshListener);
         swpAkusisi.setColorSchemeColors(
 //                    getResources().getColor(android.R.color.holo_blue_bright),
@@ -126,15 +127,7 @@ public class FragmentSubAkuisisi extends Fragment {
         detailRepo = new tAkuisisiDetailRepo(getContext());
         dokterRepo = new mDokterRepo(getContext());
         apotekRepo = new mApotekRepo(getContext());
-        adapterImageSlider = new AdapterImageSlider(getActivity(), dtDetail);
 
-
-        return v;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         loadData();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -148,9 +141,10 @@ public class FragmentSubAkuisisi extends Fragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                enableDisableSwipeRefresh(state == ViewPager.SCROLL_STATE_IDLE);
+                enableDisableSwipeRefresh( state == ViewPager.SCROLL_STATE_IDLE );
             }
         });
+
 
 
         adapterImageSlider.setOnItemClickListener(new AdapterImageSlider.OnItemClickListener() {
@@ -162,12 +156,7 @@ public class FragmentSubAkuisisi extends Fragment {
                 startActivity(intent1);
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        int a = 2;
+        return v;
     }
 
     private void enableDisableSwipeRefresh(boolean enable) {
@@ -176,156 +165,112 @@ public class FragmentSubAkuisisi extends Fragment {
         }
     }
 
-    private void loadData() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (dtHeader == null) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ln_emptyAkuisisi.setVisibility(View.VISIBLE);
-                                ln_resgistrasi.setVisibility(View.GONE);
-                                ln_image.setVisibility(View.GONE);
-                                tvDesc_akuisisi.setText("Please download or create data Akuisisi");
-                            }
-                        });
-                    } else {
-                        dtDetail = (List<tAkuisisiDetail>) detailRepo.findByHeaderId(dtHeader.getTxtHeaderId());
-                        if (intTypeSubSubId == new clsHardCode().TypeFoto) {
-                            if (dtDetail.size() > 0) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (isDetailNotReady(dtDetail)) {
-                                            ln_emptyAkuisisi.setVisibility(View.VISIBLE);
-                                            ln_resgistrasi.setVisibility(View.GONE);
-                                            ln_image.setVisibility(View.GONE);
-                                            tvDesc_akuisisi.setText("Please download File Akuisisi");
-                                        } else {
-                                            ln_resgistrasi.setVisibility(View.GONE);
-                                            ln_emptyAkuisisi.setVisibility(View.GONE);
-                                            ln_image.setVisibility(View.VISIBLE);
-                                            tvNoDoc.setText(dtHeader.getTxtNoDoc());
-                                            tvExpDate.setText(parseDate(dtHeader.getDtExpiredDate()));
-                                        }
-                                        if (dtHeader.getIntFlagPush() == new clsHardCode().Save) {
-                                            tv_status_info.setText("Submit");
-                                            tv_status_info.setTextColor(getContext().getResources().getColor(R.color.red_200));
-                                        } else if (dtHeader.getIntFlagPush() == new clsHardCode().Sync) {
-                                            tv_status_info.setText("Sync");
-                                            tv_status_info.setTextColor(getContext().getResources().getColor(R.color.green_300));
-                                        }
-                                    }
-                                });
+    private void loadData(){
+        try {
+            if (dtHeader==null){
+                ln_emptyAkuisisi.setVisibility(View.VISIBLE);
+                ln_resgistrasi.setVisibility(View.GONE);
+                ln_image.setVisibility(View.GONE);
+                tvDesc_akuisisi.setText("Please download or create data Akuisisi");
+            }else {
+                dtDetail = (List<tAkuisisiDetail>) detailRepo.findByHeaderId(dtHeader.getTxtHeaderId());
+                if (intTypeSubSubId ==new clsHardCode().TypeFoto){
+                    if (dtDetail.size()>0){
+                        if (isDetailNotReady(dtDetail)){
+                            ln_emptyAkuisisi.setVisibility(View.VISIBLE);
+                            ln_resgistrasi.setVisibility(View.GONE);
+                            ln_image.setVisibility(View.GONE);
+                            tvDesc_akuisisi.setText("Please download File Akuisisi");
+                        }else {
+                            ln_resgistrasi.setVisibility(View.GONE);
+                            ln_emptyAkuisisi.setVisibility(View.GONE);
+                            ln_image.setVisibility(View.VISIBLE);
+                            tvNoDoc.setText(dtHeader.getTxtNoDoc());
+                            tvExpDate.setText(parseDate(dtHeader.getDtExpiredDate()));
+                        }
+                        if (dtHeader.getIntFlagPush()==new clsHardCode().Save){
+                            tv_status_info.setText("Submit");
+                            tv_status_info.setTextColor(getContext().getResources().getColor(R.color.red_200));
+                        }else if (dtHeader.getIntFlagPush()==new clsHardCode().Sync){
+                            tv_status_info.setText("Sync");
+                            tv_status_info.setTextColor(getContext().getResources().getColor(R.color.green_300));
+                        }
 
-
-                            } else {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ln_emptyAkuisisi.setVisibility(View.VISIBLE);
-                                        ln_resgistrasi.setVisibility(View.GONE);
-                                        ln_image.setVisibility(View.GONE);
-                                        tvDesc_akuisisi.setText("Please download File Akuisisi");
-                                    }
-                                });
-
-                            }
-                        } else if (intTypeSubSubId == new clsHardCode().TypeText) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ln_image.setVisibility(View.GONE);
-                                    ln_emptyAkuisisi.setVisibility(View.GONE);
-                                    ln_resgistrasi.setVisibility(View.VISIBLE);
-                                }
-                            });
-                            boolean isDokter = false;
-                            if (dtHeader.getIntApotekID() != null) {
-                                if (!dtHeader.getIntApotekID().equals("null")) {
-                                    isDokter = false;
-                                } else {
-                                    isDokter = true;
-                                }
-                            } else if (dtHeader.getIntDokterId() != null) {
-                                if (!dtHeader.getIntDokterId().equals("null")) {
-                                    isDokter = true;
-                                } else {
-                                    isDokter = false;
-                                }
-                            }
-
-                            if (isDokter) {
-                                dokter = (mDokter) dokterRepo.findBytxtId(dtHeader.getIntDokterId());
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (dokter.getTxtLastName() != null) {
-                                            tvOutlet.setText("Doctor : " + dokter.getTxtFirstName() + " " + dokter.getTxtLastName());
-                                        } else {
-                                            tvOutlet.setText("Doctor : " + dokter.getTxtFirstName());
-                                        }
-                                    }
-                                });
-
-                            } else {
-                                apotek = (mApotek) apotekRepo.findBytxtId(dtHeader.getIntApotekID());
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        tvOutlet.setText("Pharmacy : " + apotek.getTxtName());
-//                            tv_image.setText((dtHeader.getTxtUserName().substring(0,1)).toUpperCase());
-                                    }
-                                });
-
-                            }
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    tvUserName.setText(dtHeader.getTxtUserName());
-                                    image.setColorFilter(getContext().getResources().getColor(R.color.red_400));
-                                    if (dtHeader.getIntFlagPush() == new clsHardCode().Save) {
-                                        tv_status_Akusisi.setText("Submit");
-                                        tv_status_Akusisi.setTextColor(getContext().getResources().getColor(R.color.red_200));
-                                    } else if (dtHeader.getIntFlagPush() == new clsHardCode().Sync) {
-                                        tv_status_Akusisi.setText("Sync");
-                                        tv_status_Akusisi.setTextColor(getContext().getResources().getColor(R.color.green_300));
-                                    }
-                                    image.setImageResource(R.drawable.shape_circle);
-                                    tv_image.setText((dtHeader.getTxtUserName().substring(0, 1)).toUpperCase());
-                                }
-                            });
-
+                    }else {
+                        ln_emptyAkuisisi.setVisibility(View.VISIBLE);
+                        ln_resgistrasi.setVisibility(View.GONE);
+                        ln_image.setVisibility(View.GONE);
+                        tvDesc_akuisisi.setText("Please download File Akuisisi");
+                    }
+                }else if (intTypeSubSubId==new clsHardCode().TypeText){
+                    ln_image.setVisibility(View.GONE);
+                    ln_emptyAkuisisi.setVisibility(View.GONE);
+                    ln_resgistrasi.setVisibility(View.VISIBLE);
+                    boolean isDokter = false;
+                    if (dtHeader.getIntApotekID()!=null){
+                        if (!dtHeader.getIntApotekID().equals("null")){
+                            isDokter = false;
+                        }else {
+                            isDokter = true;
+                        }
+                    }else if (dtHeader.getIntDokterId()!=null){
+                        if (!dtHeader.getIntDokterId().equals("null")){
+                            isDokter = true;
+                        }else {
+                            isDokter = false;
                         }
                     }
 
+                    if (isDokter){
+                        dokter = (mDokter) dokterRepo.findBytxtId(dtHeader.getIntDokterId());
+                        if (dokter!=null){
+                            if (dokter.getTxtLastName()!=null){
+                                tvOutlet.setText("Doctor : "+ dokter.getTxtFirstName() + " " + dokter.getTxtLastName());
+                            }else {
+                                tvOutlet.setText("Doctor : "+ dokter.getTxtFirstName());
+                            }
+                        }else {
+                            tvOutlet.setText("Doctor : "+ dtCheckinActive.getTxtDokterName());
+                        }
+
+                    }else {
+//                        apotek = (mApotek) apotekRepo.findBytxtId(dtHeader.getIntApotekID());
+//                        if (apotek != null) {
+//
+//                        }else {
+//                            tvOutlet.setText("Pharmacy : "+apotek.getTxtName());
+//                        }
+                        tvOutlet.setText("Pharmacy : "+ dtCheckinActive.getTxtApotekName());
+//                            tv_image.setText((dtHeader.getTxtUserName().substring(0,1)).toUpperCase());
+                    }
+                    tvUserName.setText(dtHeader.getTxtUserName());
+                    image.setColorFilter(getContext().getResources().getColor(R.color.red_400));
+                    if (dtHeader.getIntFlagPush()==new clsHardCode().Save){
+                        tv_status_Akusisi.setText("Submit");
+                        tv_status_Akusisi.setTextColor(getContext().getResources().getColor(R.color.red_200));
+                    }else if (dtHeader.getIntFlagPush()==new clsHardCode().Sync){
+                        tv_status_Akusisi.setText("Sync");
+                        tv_status_Akusisi.setTextColor(getContext().getResources().getColor(R.color.green_300));
+                    }
+                    image.setImageResource(R.drawable.shape_circle);
+                    tv_image.setText((dtHeader.getTxtUserName().substring(0,1)).toUpperCase());
+                }
+            }
+
 //                dtHeader = (tAkuisisiHeader) headerRepo.findBySubSubId(intSubSubId, new clsHardCode().Save);
 
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                adapterImageSlider = new AdapterImageSlider(getActivity(), dtDetail);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapterImageSlider.setItems(dtDetail);
-                        viewPager.setAdapter(adapterImageSlider);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        adapterImageSlider = new AdapterImageSlider(getActivity(), dtDetail);
+        adapterImageSlider.setItems(dtDetail);
+        viewPager.setAdapter(adapterImageSlider);
 
-                        // displaying selected image first
-                        viewPager.setCurrentItem(0);
-                        addBottomDots(layout_dots, adapterImageSlider.getCount(), 0);
-                    }
-                });
-
-            }
-        }).start();
-
+        // displaying selected image first
+        viewPager.setCurrentItem(0);
+        addBottomDots(layout_dots, adapterImageSlider.getCount(), 0);
 
     }
-
     private void addBottomDots(LinearLayout layout_dots, int size, int current) {
         ImageView[] dots = new ImageView[size];
 
@@ -416,10 +361,10 @@ public class FragmentSubAkuisisi extends Fragment {
 
     }
 
-    private boolean isDetailNotReady(List<tAkuisisiDetail> dtDetailAkuisisi) {
+    private boolean isDetailNotReady(List<tAkuisisiDetail>dtDetailAkuisisi){
         boolean valid = false;
-        for (tAkuisisiDetail data : dtDetailAkuisisi) {
-            if (data.getTxtImg() == null) {
+        for (tAkuisisiDetail data: dtDetailAkuisisi){
+            if (data.getTxtImg()==null){
                 valid = true;
                 break;
             }
@@ -427,19 +372,19 @@ public class FragmentSubAkuisisi extends Fragment {
         return valid;
     }
 
-    private String parseDate(String dateExp) {
+    private String parseDate(String dateExp){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date date = null;
         try {
-            if (dateExp != null && dateExp != "")
+            if (dateExp!=null&& dateExp!="")
                 date = sdf.parse(dateExp);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (date != null) {
+        if (date!=null){
             return dateFormat.format(date);
-        } else {
+        }else {
             return "";
         }
     }
@@ -450,7 +395,7 @@ public class FragmentSubAkuisisi extends Fragment {
 //            int iterator = customViewPager.getCurrentItem();
 //            customViewPager.setAdapter(adapter);
 //            customViewPager.setCurrentItem(iterator);
-            if (dtHeader != null) {
+            if (dtHeader!=null){
                 try {
                     dtHeader = (tAkuisisiHeader) headerRepo.findByHeaderId(dtHeader.getTxtHeaderId());
                 } catch (SQLException e) {

@@ -307,19 +307,21 @@ public class FragmentPushData extends Fragment{
                         String name = null;
                         dtActivity =  (mActivity) repoActivity.findById(data.getIntActivityId());
                         if (data.getIntActivityId()==new clsHardCode().VisitDokter){
-                            dokter = dokterRepo.findBytxtId(data.getTxtDokterId());
-                            if (!dokter.getTxtLastName().equals("null")&&dokter.getTxtLastName()!=null){
-                                name = "Visit Doctor " + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
-                            }else {
-                                name = "Visit Doctor " + dokter.getTxtFirstName();
-                            }
+//                            dokter = dokterRepo.findBytxtId(data.getTxtDokterId());
+//                            if (!dokter.getTxtLastName().equals("null")&&dokter.getTxtLastName()!=null){
+//                                name = "Visit Doctor " + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+//                            }else {
+//                                name = "Visit Doctor " + dokter.getTxtFirstName();
+//                            }
+                            name = "Visit Doctor " + data.getTxtDokterName();
 
-                            swpItem.setTxtImgName((dokter.getTxtFirstName().substring(0,1)).toUpperCase());
+                            swpItem.setTxtImgName((data.getTxtDokterName().substring(0,1)).toUpperCase());
                             swpItem.setTxtSubTittle(name);
                         }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
-                            apotek = apotekRepo.findBytxtId(data.getTxtApotekId());
-                            name = "Visit " + apotek.getTxtName();
-                            swpItem.setTxtImgName((apotek.getTxtName().substring(0,1)).toUpperCase());
+//                            apotek = apotekRepo.findBytxtId(data.getTxtApotekId());
+//                            name = "Visit " + apotek.getTxtName();
+                            name = "Visit " + data.getTxtApotekName();
+                            swpItem.setTxtImgName((data.getTxtApotekName().substring(0,1)).toUpperCase());
                             swpItem.setTxtSubTittle(name);
                         }else {
                             swpItem.setTxtSubTittle("");
@@ -356,16 +358,19 @@ public class FragmentPushData extends Fragment{
                                     isDokter = true;
                                 }
                             }
+                            tRealisasiVisitPlan dtRealisasi = (tRealisasiVisitPlan) repoRealisasi.findBytxtId(data.getTxtRealisasiVisitId());
                             if (isDokter){
                                 dtActivity =  (mActivity) repoActivity.findById(new clsHardCode().VisitDokter);
                                 dokter = dokterRepo.findBytxtId(data.getIntDokterId());
-                                name = "Visit Doctor" + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
-                                swpItem.setTxtImgName((dokter.getTxtFirstName().substring(0,1)).toUpperCase());
+//                                name = "Visit Doctor" + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                                name = "Visit Doctor" + dtRealisasi.getTxtDokterName();
+                                swpItem.setTxtImgName((dtRealisasi.getTxtDokterName().substring(0,1)).toUpperCase());
                             }else {
                                 dtActivity =  (mActivity) repoActivity.findById(new clsHardCode().VisitApotek);
                                 apotek = apotekRepo.findBytxtId(data.getIntApotekID());
-                                name = "Visit " + apotek.getTxtName();
-                                swpItem.setTxtImgName((apotek.getTxtName().substring(0,1)).toUpperCase());
+//                                name = "Visit " + apotek.getTxtName();
+                                name = "Visit " + dtRealisasi.getTxtApotekName();
+                                swpItem.setTxtImgName((dtRealisasi.getTxtApotekName().substring(0,1)).toUpperCase());
                             }
                             listAkuisisiDetail = (List<tAkuisisiDetail>) akuisisiDetailRepo.findByHeaderId(data.getTxtHeaderId());
                             if (listAkuisisiDetail!=null){
@@ -393,18 +398,21 @@ public class FragmentPushData extends Fragment{
                                     String name = null;
                                     mDokter dokter;
                                     mApotek apotek;
+                                    tRealisasiVisitPlan dtRealisasi = (tRealisasiVisitPlan) repoRealisasi.findBytxtId(data.getTxtRealisasiVisitId());
                                     if (data.getIntActivityId()==new clsHardCode().VisitDokter){
                                         if (!data.getIntDokterId().equals("null")){
                                             dtActivity =  (mActivity) repoActivity.findById(data.getIntActivityId());
                                             dokter = dokterRepo.findBytxtId(data.getIntDokterId());
-                                            name = "Visit Doctor " + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
-                                            swpItem.setTxtImgName((dokter.getTxtFirstName().substring(0,1)).toUpperCase());
+//                                            name = "Visit Doctor " + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                                            name = "Visit Doctor " + dtRealisasi.getTxtDokterName();
+                                            swpItem.setTxtImgName((dtRealisasi.getTxtDokterName().substring(0,1)).toUpperCase());
                                         }
                                     }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
                                         dtActivity =  (mActivity) repoActivity.findById(data.getIntActivityId());
                                         apotek = apotekRepo.findBytxtId(data.getIntApotekID());
-                                        name = "Visit " + apotek.getTxtName();
-                                        swpItem.setTxtImgName((apotek.getTxtName().substring(0,1)).toUpperCase());
+//                                        name = "Visit " + apotek.getTxtName();
+                                        name = "Visit " + dtRealisasi.getTxtApotekName();
+                                        swpItem.setTxtImgName((dtRealisasi.getTxtApotekName().substring(0,1)).toUpperCase());
                                     }
 
                                     mSubSubActivity subDetailActivity = (mSubSubActivity) new mSubSubActivityRepo(getContext()).findById(listMainDetail.get(0).getIntSubDetailActivityId());
@@ -431,16 +439,19 @@ public class FragmentPushData extends Fragment{
                             String name = null;
                             mDokter dokter;
                             mApotek apotek;
+                            tRealisasiVisitPlan dtRealisasi = (tRealisasiVisitPlan) repoRealisasi.findBytxtId(data.getTxtRealisasiVisitId());
                             if (data.getIntActivityId()==new clsHardCode().VisitDokter){
                                 dtActivity =  (mActivity) repoActivity.findById(data.getIntActivityId());
                                 dokter = dokterRepo.findBytxtId(data.getIntDokterId());
-                                name = "Visit Doctor " + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
-                                swpItem.setTxtImgName((dokter.getTxtFirstName().substring(0,1)).toUpperCase());
+//                                name = "Visit Doctor " + dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                                name = "Visit Doctor " + dtRealisasi.getTxtDokterName();
+                                swpItem.setTxtImgName((dtRealisasi.getTxtDokterName().substring(0,1)).toUpperCase());
                             }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
                                 dtActivity =  (mActivity) repoActivity.findById(data.getIntActivityId());
                                 apotek = apotekRepo.findBytxtId(data.getIntApotekId());
-                                name = "Visit " + apotek.getTxtName();
-                                swpItem.setTxtImgName((apotek.getTxtName().substring(0,1)).toUpperCase());
+//                                name = "Visit " + apotek.getTxtName();
+                                name = "Visit " + dtRealisasi.getTxtApotekName();
+                                swpItem.setTxtImgName((dtRealisasi.getTxtApotekName().substring(0,1)).toUpperCase());
                             }
                             listInfoDetail = (List<tInfoProgramDetail>) infoProgramDetailRepo.findByHeaderPushId(data.getTxtHeaderId());
                             if (listInfoDetail!=null){

@@ -22,6 +22,7 @@ import shp.kalbecallplanaedp.Common.mDokter;
 import shp.kalbecallplanaedp.Common.mFileAttachment;
 import shp.kalbecallplanaedp.Common.tInfoProgramDetail;
 import shp.kalbecallplanaedp.Common.tInfoProgramHeader;
+import shp.kalbecallplanaedp.Common.tRealisasiVisitPlan;
 import shp.kalbecallplanaedp.Data.clsHardCode;
 import shp.kalbecallplanaedp.ImageViewerActivity;
 import shp.kalbecallplanaedp.Model.clsInfoProgram;
@@ -72,13 +73,15 @@ public class FragmentSubInfoProgram extends Fragment {
     int index;
     boolean isFromHistory;
     SwipeRefreshLayout swpInfo;
+    tRealisasiVisitPlan dtCheckinActive;
 
 
-    public FragmentSubInfoProgram(tInfoProgramHeader header, int intSubSubActivity, int index, boolean isFromHistory){
+    public FragmentSubInfoProgram(tInfoProgramHeader header, int intSubSubActivity, int index, boolean isFromHistory, tRealisasiVisitPlan dtCheckinActive){
         this.header = header;
         this.intSubSubActivity = intSubSubActivity;
         this.index = index;
         this.isFromHistory = isFromHistory;
+        this.dtCheckinActive = dtCheckinActive;
     }
 
 
@@ -129,15 +132,29 @@ public class FragmentSubInfoProgram extends Fragment {
 
         if (header!=null){
             try {
+//                if (header.getIntActivityId()==new clsHardCode().VisitDokter){
+//                    dokter  = new mDokterRepo(getContext()).findBytxtId(header.getIntDokterId());
+//                    if (dokter.getTxtLastName()!=null){
+//                        strName = dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+//                    }else {
+//                        strName = dokter.getTxtFirstName();
+//                    }
+//                }else {
+//                    strName = new mApotekRepo(getContext()).findBytxtId(header.getIntApotekId()).getTxtName();
+//                }
                 if (header.getIntActivityId()==new clsHardCode().VisitDokter){
                     dokter  = new mDokterRepo(getContext()).findBytxtId(header.getIntDokterId());
-                    if (dokter.getTxtLastName()!=null){
-                        strName = dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                    if (dokter!=null){
+                        if (dokter.getTxtLastName()!=null){
+                            strName = dokter.getTxtFirstName() + " " + dokter.getTxtLastName();
+                        }else {
+                            strName = dokter.getTxtFirstName();
+                        }
                     }else {
-                        strName = dokter.getTxtFirstName();
+                        strName = dtCheckinActive.getTxtDokterName();
                     }
                 }else {
-                    strName = new mApotekRepo(getContext()).findBytxtId(header.getIntApotekId()).getTxtName();
+                    strName = dtCheckinActive.getTxtApotekName();
                 }
 
                 listDetail = (List<tInfoProgramDetail>) detailRepo.findByHeaderIdandSubsubId(header.getTxtHeaderId(), intSubSubActivity);

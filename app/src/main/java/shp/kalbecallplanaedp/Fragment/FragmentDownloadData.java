@@ -557,41 +557,49 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
             public void onClick(View v) {
                 if (isDataReady){
                     itemList.clear();
+                    List<tRealisasiVisitPlan> dtListRealisasi = new ArrayList<>();
                     try {
                         dataListAkuisisi = (List<tAkuisisiHeader>) dtRepoAkuisisiHeader.findAll();
+                        dtListRealisasi = (List<tRealisasiVisitPlan>) dtRepoRealisasi.findAll();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    if (dataListAkuisisi!=null){
-                        if (dataListAkuisisi.size()>0){
-                            int index = 0;
-                            for (tAkuisisiHeader data : dataListAkuisisi){
-                                index++;
-                                String name = null;
-                                try {
-                                    if (data.getIntDokterId()!=null){
-                                        if (!data.getIntDokterId().equals("null")){
-                                            name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+                    if (dtListRealisasi.size()>0){
+                        if (dataListAkuisisi!=null){
+                            if (dataListAkuisisi.size()>0){
+                                int index = 0;
+                                for (tAkuisisiHeader data : dataListAkuisisi){
+                                    index++;
+                                    String name = null;
+                                    try {
+                                        if (data.getIntDokterId()!=null){
+                                            if (!data.getIntDokterId().equals("null")){
+//                                            name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+                                                name = "Dokter " + dtRepoRealisasi.findBytxtDokterId(data.getIntDokterId()).getTxtDokterName();
+                                            }else if (data.getIntApotekID()!=null){
+                                                if (!data.getIntApotekID().equals("null")){
+//                                                name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                                                    name = dtRepoRealisasi.findBytxtApotekId(data.getIntApotekID()).getTxtApotekName();
+                                                }
+                                            }
                                         }else if (data.getIntApotekID()!=null){
                                             if (!data.getIntApotekID().equals("null")){
                                                 name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
                                             }
                                         }
-                                    }else if (data.getIntApotekID()!=null){
-                                        if (!data.getIntApotekID().equals("null")){
-                                            name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
-                                        }
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
+                                    itemList.add(String.valueOf(index) + " - Akuisisi - " + name);
                                 }
-                                itemList.add(String.valueOf(index) + " - Akuisisi - " + name);
+                            }else {
+                                itemList.add(" - ");
                             }
-                        }else {
-                            itemList.add(" - ");
                         }
+                        onButtonOnClick(ln_download_akuisisi, tv_download_akuisisi, "tAkuisisiHeader");
+                    }else {
+                        new ToastCustom().showToasty(getContext(),"Please download data realisasi call plan",4);
                     }
-                    onButtonOnClick(ln_download_akuisisi, tv_download_akuisisi, "tAkuisisiHeader");
                 }else {
                     new ToastCustom().showToasty(getContext(),"Please download all data master",4);
                 }
@@ -603,33 +611,41 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
             public void onClick(View v) {
                 if (isDataReady){
                     itemList.clear();
+                    List<tRealisasiVisitPlan> dtListRealisasi = new ArrayList<>();
                     try {
                         dataListMaintenance = (List<tMaintenanceHeader>) dtRepoMaintenanceHeader.findAll();
+                        dtListRealisasi = (List<tRealisasiVisitPlan>) dtRepoRealisasi.findAll();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    if (dataListMaintenance!=null){
-                        if (dataListMaintenance.size()>0){
-                            int index = 0;
-                            for (tMaintenanceHeader data : dataListMaintenance){
-                                index++;
-                                String name = null;
-                                try {
-                                    if (data.getIntActivityId()==new clsHardCode().VisitDokter){
-                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
-                                    }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
-                                        name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                    if (dtListRealisasi.size()>0){
+                        if (dataListMaintenance!=null){
+                            if (dataListMaintenance.size()>0){
+                                int index = 0;
+                                for (tMaintenanceHeader data : dataListMaintenance){
+                                    index++;
+                                    String name = null;
+                                    try {
+                                        if (data.getIntActivityId()==new clsHardCode().VisitDokter){
+                                            name = "Dokter " + dtRepoRealisasi.findBytxtDokterId(data.getIntDokterId()).getTxtDokterName();
+//                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+                                        }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
+                                            name = dtRepoRealisasi.findBytxtApotekId(data.getIntApotekID()).getTxtApotekName();
+//                                        name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                                        }
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
+                                    itemList.add(String.valueOf(index) + " - Maintenance - " + name);
                                 }
-                                itemList.add(String.valueOf(index) + " - Maintenance - " + name);
+                            }else {
+                                itemList.add(" - ");
                             }
-                        }else {
-                            itemList.add(" - ");
                         }
+                        onButtonOnClick(ln_download_maintenance, tv_download_maintenance, "tMaintenanceHeader");
+                    }else {
+                        new ToastCustom().showToasty(getContext(),"Please download data realisasi call plan",4);
                     }
-                    onButtonOnClick(ln_download_maintenance, tv_download_maintenance, "tMaintenanceHeader");
                 }else {
                     new ToastCustom().showToasty(getContext(),"Please download all data master",4);
                 }
@@ -641,33 +657,41 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
             public void onClick(View v) {
                 if (isDataReady){
                     itemList.clear();
+                    List<tRealisasiVisitPlan> dtListRealisasi = new ArrayList<>();
                     try {
                         dataLIstInfoProgram = (List<tInfoProgramHeader>) dtRepoInfoProgHeader.findAll();
+                        dtListRealisasi = (List<tRealisasiVisitPlan>) dtRepoRealisasi.findAll();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    if (dataLIstInfoProgram!=null){
-                        if (dataLIstInfoProgram.size()>0){
-                            int index = 0;
-                            for (tInfoProgramHeader data : dataLIstInfoProgram){
-                                index++;
-                                String name = null;
-                                try {
-                                    if (data.getIntActivityId()==new clsHardCode().VisitDokter){
-                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName() + " " +dokterRepo.findBytxtId(data.getIntDokterId()).getTxtLastName();
-                                    }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
-                                        name = apotekRepo.findBytxtId(data.getIntApotekId()).getTxtName();
+                    if (dtListRealisasi.size()>0){
+                        if (dataLIstInfoProgram!=null){
+                            if (dataLIstInfoProgram.size()>0){
+                                int index = 0;
+                                for (tInfoProgramHeader data : dataLIstInfoProgram){
+                                    index++;
+                                    String name = null;
+                                    try {
+                                        if (data.getIntActivityId()==new clsHardCode().VisitDokter){
+                                            name = "Dokter " + dtRepoRealisasi.findBytxtDokterId(data.getIntDokterId()).getTxtDokterName();
+//                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+                                        }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
+                                            name = dtRepoRealisasi.findBytxtApotekId(data.getIntApotekId()).getTxtApotekName();
+//                                        name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                                        }
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
+                                    itemList.add(String.valueOf(index) + " - Info Program - " + name);
                                 }
-                                itemList.add(String.valueOf(index) + " - Info Program - " + name);
+                            }else {
+                                itemList.add(" - ");
                             }
-                        }else {
-                            itemList.add(" - ");
                         }
+                        onButtonOnClick(ln_download_infoprogram, tv_download_infoprogram, "tInfoProgramHeader");
+                    }else {
+                        new ToastCustom().showToasty(getContext(),"Please download data realisasi call plan",4);
                     }
-                    onButtonOnClick(ln_download_infoprogram, tv_download_infoprogram, "tInfoProgramHeader");
                 }else {
                     new ToastCustom().showToasty(getContext(),"Please download all data master",4);
                 }
@@ -813,12 +837,24 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
             if (isDataReady){
                 if (txtDownlaod.equals("tRealisasiVisitPlan")){
                     downloadtCallPlan();
-                }else if (txtDownlaod.equals("tAkuisisiHeader")){
-                    downloadtAkuisisi();
-                }else if (txtDownlaod.equals("tMaintenanceHeader")){
-                    downloadtMaintenace();
-                }else if (txtDownlaod.equals("tInfoProgramHeader")){
-                    downloadtInfoProgram();
+                }
+                dtRepoRealisasi = new tRealisasiVisitPlanRepo(getContext());
+                try {
+                    List<tRealisasiVisitPlan> dtListRealisasi = (List<tRealisasiVisitPlan>) dtRepoRealisasi.findAll();
+                    if (dtListRealisasi.size()>0){
+                        if (txtDownlaod.equals("tAkuisisiHeader")){
+                            downloadtAkuisisi();
+                        }else if (txtDownlaod.equals("tMaintenanceHeader")){
+                            downloadtMaintenace();
+                        }else if (txtDownlaod.equals("tInfoProgramHeader")){
+                            downloadtInfoProgram();
+                        }
+                    }else {
+                        new ToastCustom().showToasty(getContext(),"Please download data realisasi call plan",4);
+                    }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }else {
                 new ToastCustom().showToasty(getContext(),"Please download all data master",4);
@@ -1852,22 +1888,6 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                                         data.setTxtLat(model.getData().getRealisasiData().get(i).getTxtLatitude());
                                         data.setTxtImgName1(model.getData().getRealisasiData().get(i).getTxtImage1Name());
                                         data.setTxtImgName2(model.getData().getRealisasiData().get(i).getTxtImage2Name());
-
-//                                        if (model.getData().getRealisasiData().get(i).getTxtImage1Link()!=null &&model.getData().getRealisasiData().get(i).getTxtImage1Link().length()>0){
-//                                            downloadFile(model.getData().getRealisasiData().get(i).getTxtImage1Link(),"Realisasi Pertama", model.getData().getRealisasiData().get(i).getTxtRealisasiVisitId(), i+1);
-//                                        }
-//
-//                                        if (model.getData().getRealisasiData().get(i).getTxtImage2Link()!=null &&model.getData().getRealisasiData().get(i).getTxtImage2Link().length()>0){
-//                                            downloadFile(model.getData().getRealisasiData().get(i).getTxtImage2Link(),"Realisasi Kedua", model.getData().getRealisasiData().get(i).getTxtRealisasiVisitId(), i+1);
-//                                        }
-//                                        byte[] file1 = getLogoImage(model.getData().getRealisasiData().get(i).getTxtImage1Link());
-//                                        if (file1!=null){
-//                                            data.setBlobImg1(file1);
-//                                        }
-//                                        byte[] file2=getLogoImage(model.getData().getRealisasiData().get(i).getTxtImage2Link());
-//                                        if (file2!=null){
-//                                            data.setBlobImg2(file2);
-//                                        }
                                         VMDownloadFile vmData = new VMDownloadFile();
                                         vmData.setGroupDownload(new clsHardCode().REALISASI_DUA);
                                         vmData.setLink(model.getData().getRealisasiData().get(i).getTxtImage2Link());
@@ -1883,7 +1903,6 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                                     }
                                 }
                                 dataListProgramVisitSubActivity = (List<tProgramVisitSubActivity>) dtRepoProgramVisitSubActivity.findAll();
-//                                dataListRealisasi = (List<tRealisasiVisitPlan>) dtRepoRealisasi.findAll();
                                 int index = 0;
                                 if (dataListProgramVisitSubActivity.size()>0){
                                     for (tProgramVisitSubActivity data : dataListProgramVisitSubActivity){
@@ -1960,6 +1979,7 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                             if (model.getData().getAkuisisiHeader()!=null){
                                 if (model.getData().getAkuisisiHeader().size()>0){
                                     dtRepoAkuisisiHeader = new tAkuisisiHeaderRepo(getContext());
+                                    dtRepoRealisasi = new tRealisasiVisitPlanRepo(getContext());
                                     for (int i = 0; i <model.getData().getAkuisisiHeader().size(); i++){
                                         tAkuisisiHeader data = new tAkuisisiHeader();
                                         data.setTxtHeaderId(model.getData().getAkuisisiHeader().get(i).getTxtAkuisisiHeaderId());
@@ -1989,15 +2009,17 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                                                 try {
                                                     if (data.getIntDokterId()!=null){
                                                         if (!data.getIntDokterId().equals("null")){
-                                                            name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+//                                                            name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+                                                            name = "Dokter " + dtRepoRealisasi.findBytxtDokterId(data.getIntDokterId()).getTxtDokterName();
                                                         }else if (data.getIntApotekID()!=null){
                                                             if (!data.getIntApotekID().equals("null")){
-                                                                name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                                                                name = dtRepoRealisasi.findBytxtApotekId(data.getIntApotekID()).getTxtApotekName();
+//                                                                name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
                                                             }
                                                         }
                                                     }else if (data.getIntApotekID()!=null){
                                                         if (!data.getIntApotekID().equals("null")){
-                                                            name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                                                            name = dtRepoRealisasi.findBytxtApotekId(data.getIntApotekID()).getTxtApotekName();
                                                         }
                                                     }
                                                 } catch (SQLException e) {
@@ -2135,6 +2157,7 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
 //                                        itemList.add(String.valueOf(index) + " - Maintenace - " + name);
                                     }
                                     dataListMaintenance = (List<tMaintenanceHeader>) dtRepoMaintenanceHeader.findAll();
+                                    dtRepoRealisasi = new tRealisasiVisitPlanRepo(getContext());
                                     if (dataListMaintenance!=null){
                                         if (dataListMaintenance.size()>0){
                                             int index = 0;
@@ -2143,9 +2166,11 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                                                 String name = null;
                                                 try {
                                                     if (data.getIntActivityId()==new clsHardCode().VisitDokter){
-                                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+//                                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+                                                        name = "Dokter " + dtRepoRealisasi.findBytxtDokterId(data.getIntDokterId()).getTxtDokterName();
                                                     }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
-                                                        name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+//                                                        name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                                                        name = dtRepoRealisasi.findBytxtApotekId(data.getIntApotekID()).getTxtApotekName();
                                                     }
                                                 } catch (SQLException e) {
                                                     e.printStackTrace();
@@ -2239,15 +2264,9 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                                         data.setIntAreaId(model.getData().getLtInfoHeader().get(i).getIntAreaId());
                                         data.setIntFlagPush(new clsHardCode().Draft);
                                         dtRepoInfoProgHeader.createOrUpdate(data);
-//                                        String name ="";
-//                                        if (model.getData().getLtInfoHeader().get(i).getIntActivityId()==new clsHardCode().VisitDokter){
-//                                            name = "Dokter " + dokterRepo.findBytxtId(model.getData().getLtInfoHeader().get(i).getIntDokterId()).getTxtFirstName() + " " +dokterRepo.findBytxtId(model.getData().getLtInfoHeader().get(i).getIntDokterId()).getTxtLastName();
-//                                        }else {
-//                                            name = apotekRepo.findBytxtId(model.getData().getLtInfoHeader().get(i).getIntApotekId()).getTxtName();
-//                                        }
-//                                        itemList.add(String.valueOf(index) + " - Info Program - " + name);
                                     }
                                     dataLIstInfoProgram = (List<tInfoProgramHeader>) dtRepoInfoProgHeader.findAll();
+                                    dtRepoRealisasi = new tRealisasiVisitPlanRepo(getContext());
                                     if (dataLIstInfoProgram!=null){
                                         if (dataLIstInfoProgram.size()>0){
                                             int index = 0;
@@ -2256,9 +2275,11 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                                                 String name = null;
                                                 try {
                                                     if (data.getIntActivityId()==new clsHardCode().VisitDokter){
-                                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName() + " " +dokterRepo.findBytxtId(data.getIntDokterId()).getTxtLastName();
+//                                                        name = "Dokter " + dokterRepo.findBytxtId(data.getIntDokterId()).getTxtFirstName();
+                                                        name = "Dokter " + dtRepoRealisasi.findBytxtDokterId(data.getIntDokterId()).getTxtDokterName();
                                                     }else if (data.getIntActivityId()==new clsHardCode().VisitApotek){
-                                                        name = apotekRepo.findBytxtId(data.getIntApotekId()).getTxtName();
+//                                                        name = apotekRepo.findBytxtId(data.getIntApotekID()).getTxtName();
+                                                        name = dtRepoRealisasi.findBytxtApotekId(data.getIntApotekId()).getTxtApotekName();
                                                     }
                                                 } catch (SQLException e) {
                                                     e.printStackTrace();

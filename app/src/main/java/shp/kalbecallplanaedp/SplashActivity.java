@@ -677,7 +677,7 @@ public class SplashActivity extends AppCompatActivity {
 
                         if (txtStatus == true){
 
-                            stopService(new Intent(activity.getApplicationContext(), MyServiceNative.class));
+                            stopService(new Intent(activity, MyServiceNative.class));
                             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
                             DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
@@ -688,7 +688,7 @@ public class SplashActivity extends AppCompatActivity {
                             Log.d("Data info", "logout Success");
 
                         } else {
-                            stopService(new Intent(activity.getApplicationContext(), MyServiceNative.class));
+                            stopService(new Intent(activity, MyServiceNative.class));
                             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
                             DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
