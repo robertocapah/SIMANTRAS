@@ -2293,22 +2293,53 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
                                 }
                                 dataAdapter.notifyDataSetChanged();
 
+                                dtRepoInfoProgDetail = new tInfoProgramDetailRepo(getContext());
                                 if (model.getData().getLtInfoDetail()!=null){
                                     if (model.getData().getLtInfoDetail().size()>0){
-                                        dtRepoInfoProgDetail = new tInfoProgramDetailRepo(getContext());
                                         for (int i = 0; i < model.getData().getLtInfoDetail().size(); i++){
-                                            tInfoProgramDetail data = new tInfoProgramDetail();
-                                            data.setTxtHeaderId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramHeaderId());
-                                            data.setTxtDetailId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramDetailId());
-                                            data.setIntSubDetailActivityId(model.getData().getLtInfoDetail().get(i).getIntSubDetailActivityId());
-                                            data.setBoolFlagChecklist(model.getData().getLtInfoDetail().get(i).isBitCheck());
-                                            data.setDtChecklist(parseDate(model.getData().getLtInfoDetail().get(i).getDtDateChecklist()));
-                                            data.setIntFileAttachmentId(model.getData().getLtInfoDetail().get(i).getIntFileAttachmentId());
-//                                            if (model.getData().getLtInfoDetail().get(i).getTxtFileLinkEncrypt()!=null &&model.getData().getLtInfoDetail().get(i).getTxtFileLinkEncrypt().length()>0){
-//                                                downloadFile(model.getData().getLtInfoDetail().get(i).getTxtFileLinkEncrypt(),"Info Program", model.getData().getLtInfoDetail().get(i).getTxtInfoProgramDetailId(), i+1);
-//                                            }
-                                            dtRepoInfoProgDetail.createOrUpdate(data);
+                                            tInfoProgramDetail detail = dtRepoInfoProgDetail.findByDetailId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramDetailId());
+                                            if (detail != null) {
+                                                if (detail.isBoolFlagChecklist()==false){
+                                                    tInfoProgramDetail data = new tInfoProgramDetail();
+                                                    data.setTxtHeaderId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramHeaderId());
+                                                    data.setTxtDetailId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramDetailId());
+                                                    data.setIntSubDetailActivityId(model.getData().getLtInfoDetail().get(i).getIntSubDetailActivityId());
+                                                    data.setBoolFlagChecklist(model.getData().getLtInfoDetail().get(i).isBitCheck());
+                                                    data.setDtChecklist(parseDate(model.getData().getLtInfoDetail().get(i).getDtDateChecklist()));
+                                                    data.setIntFileAttachmentId(model.getData().getLtInfoDetail().get(i).getIntFileAttachmentId());
+                                                    dtRepoInfoProgDetail.createOrUpdate(data);
+                                                }
+                                            }else {
+                                                tInfoProgramDetail data = new tInfoProgramDetail();
+                                                data.setTxtHeaderId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramHeaderId());
+                                                data.setTxtDetailId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramDetailId());
+                                                data.setIntSubDetailActivityId(model.getData().getLtInfoDetail().get(i).getIntSubDetailActivityId());
+                                                data.setBoolFlagChecklist(model.getData().getLtInfoDetail().get(i).isBitCheck());
+                                                data.setDtChecklist(parseDate(model.getData().getLtInfoDetail().get(i).getDtDateChecklist()));
+                                                data.setIntFileAttachmentId(model.getData().getLtInfoDetail().get(i).getIntFileAttachmentId());
+                                                dtRepoInfoProgDetail.createOrUpdate(data);
+                                            }
+
+
+//                                                    if (programDetailList.get(j).getTxtDetailId()!=model.getData().getLtInfoDetail().get(i).getTxtInfoProgramDetailId()){
+//
+//                                                    }
                                         }
+//                                        List<tInfoProgramDetail> programDetailList = (List<tInfoProgramDetail>) dtRepoInfoProgDetail.findByisChecked();
+//                                        if (programDetailList.size()>0){
+//
+//                                        }else {
+//                                            for (int i = 0; i < model.getData().getLtInfoDetail().size(); i++){
+//                                                tInfoProgramDetail data = new tInfoProgramDetail();
+//                                                data.setTxtHeaderId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramHeaderId());
+//                                                data.setTxtDetailId(model.getData().getLtInfoDetail().get(i).getTxtInfoProgramDetailId());
+//                                                data.setIntSubDetailActivityId(model.getData().getLtInfoDetail().get(i).getIntSubDetailActivityId());
+//                                                data.setBoolFlagChecklist(model.getData().getLtInfoDetail().get(i).isBitCheck());
+//                                                data.setDtChecklist(parseDate(model.getData().getLtInfoDetail().get(i).getDtDateChecklist()));
+//                                                data.setIntFileAttachmentId(model.getData().getLtInfoDetail().get(i).getIntFileAttachmentId());
+//                                                dtRepoInfoProgDetail.createOrUpdate(data);
+//                                            }
+//                                        }
                                     }
                                 }
 

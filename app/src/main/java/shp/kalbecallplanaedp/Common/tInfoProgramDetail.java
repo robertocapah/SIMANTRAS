@@ -30,6 +30,7 @@ public class tInfoProgramDetail implements Serializable {
     public String Property_txtDetailId = "txtDetailId";
     public String Property_txtHeaderId = "txtHeaderId";
     public String Property_intFlagChecklist = "intFlagChecklist";
+    public String Property_boolFlagChecklist = "boolFlagChecklist";
     public String Property_dtChecklist = "dtChecklist";
     public String Property_intFileAttachmentId = "intFileAttachmentId";
     public String Property_intSubDetailActivityId = "intSubDetailActivityId";

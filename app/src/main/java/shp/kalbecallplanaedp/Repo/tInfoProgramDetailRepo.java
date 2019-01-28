@@ -118,6 +118,19 @@ public class tInfoProgramDetailRepo implements crud {
         return listData;
     }
 
+    public List<tInfoProgramDetail> findByisChecked() throws SQLException {
+        tInfoProgramDetail item = new tInfoProgramDetail();
+        List<tInfoProgramDetail> listData = new ArrayList<>();
+        QueryBuilder<tInfoProgramDetail, Integer> queryBuilder = null;
+        try {
+            queryBuilder = helper.gettInfoProgramDetailDao().queryBuilder();
+            queryBuilder.where().eq(item.Property_boolFlagChecklist, true);
+            listData = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
 
     public List<tInfoProgramDetail> findByHeaderId(String intHeaderId) throws SQLException {
         tInfoProgramDetail item = new tInfoProgramDetail();
