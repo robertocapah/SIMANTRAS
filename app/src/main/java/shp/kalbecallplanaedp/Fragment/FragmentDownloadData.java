@@ -801,6 +801,13 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
 
     private void displayDataResult(String txtDownlaod) {
         boolean isDataReady = new clsMainBL().isDataReady(getContext());
+        dtRepoRealisasi = new tRealisasiVisitPlanRepo(getContext());
+        List<tRealisasiVisitPlan> dtListRealisasi = new ArrayList<>();
+        try {
+            dtListRealisasi = (List<tRealisasiVisitPlan>) dtRepoRealisasi.findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         if (txtDownlaod.equals("mActivity")){
             downloadActivity();
         }else if (txtDownlaod.equals("mSubActivity")){
@@ -837,24 +844,16 @@ public class FragmentDownloadData extends Fragment implements Handler.Callback{
             if (isDataReady){
                 if (txtDownlaod.equals("tRealisasiVisitPlan")){
                     downloadtCallPlan();
-                }
-                dtRepoRealisasi = new tRealisasiVisitPlanRepo(getContext());
-                try {
-                    List<tRealisasiVisitPlan> dtListRealisasi = (List<tRealisasiVisitPlan>) dtRepoRealisasi.findAll();
-                    if (dtListRealisasi.size()>0){
-                        if (txtDownlaod.equals("tAkuisisiHeader")){
-                            downloadtAkuisisi();
-                        }else if (txtDownlaod.equals("tMaintenanceHeader")){
-                            downloadtMaintenace();
-                        }else if (txtDownlaod.equals("tInfoProgramHeader")){
-                            downloadtInfoProgram();
-                        }
-                    }else {
-                        new ToastCustom().showToasty(getContext(),"Please download data realisasi call plan",4);
+                }else if (dtListRealisasi.size()>0){
+                    if (txtDownlaod.equals("tAkuisisiHeader")){
+                        downloadtAkuisisi();
+                    }else if (txtDownlaod.equals("tMaintenanceHeader")){
+                        downloadtMaintenace();
+                    }else if (txtDownlaod.equals("tInfoProgramHeader")){
+                        downloadtInfoProgram();
                     }
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                }else {
+                    new ToastCustom().showToasty(getContext(),"Please download data realisasi call plan",4);
                 }
             }else {
                 new ToastCustom().showToasty(getContext(),"Please download all data master",4);
