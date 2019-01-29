@@ -635,7 +635,7 @@ public class SplashActivity extends AppCompatActivity {
 ////        new AuthenticatorUtil().addNewAccount(SplashActivity.this, mAccountManager, AccountGeneral.ACCOUNT_TYPE, AUTHTOKEN_TYPE_FULL_ACCESS);
 //    }
 
-    public void logout(final Context activity) {
+    public void logout(final Activity activity) {
         String strLinkAPI = new clsHardCode().linkLogout;
         JSONObject resJson = new JSONObject();
         mUserLogin dtLogin = new clsMainBL().getUserLogin(activity.getApplicationContext());
@@ -674,22 +674,23 @@ public class SplashActivity extends AppCompatActivity {
                         boolean txtStatus = model.getResult().isStatus();
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
-
+                        mAccountManager = AccountManager.get(activity);
                         if (txtStatus == true){
 
-                            stopService(new Intent(activity, MyServiceNative.class));
-                            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            Intent intent =new Intent(activity, MyServiceNative.class);
+                            activity.stopService(intent);
+                            NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
                             DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
                             new clsMainBL().deleteMediaStorage();
                             helper.clearDataAfterLogout();
                             checkVersion(activity, mAccountManager);
 //                            new AuthenticatorUtil().showAccountPicker(SplashActivity.this, mAccountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
-                            Log.d("Data info", "logout Success");
+//                            Log.d("Data info", "logout Success");
 
                         } else {
-                            stopService(new Intent(activity, MyServiceNative.class));
-                            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            activity.stopService(new Intent(activity, MyServiceNative.class));
+                            NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
                             DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
                             helper.clearDataAfterLogout();

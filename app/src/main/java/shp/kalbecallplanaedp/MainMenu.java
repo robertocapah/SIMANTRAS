@@ -216,7 +216,7 @@ public class MainMenu extends AppCompatActivity implements GoogleApiClient.Conne
                         builder.setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int which) {
-                                finish();
+                                finishAffinity();
                                 System.exit(0);
                             }
                         });

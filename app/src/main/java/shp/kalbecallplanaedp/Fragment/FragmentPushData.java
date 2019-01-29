@@ -514,7 +514,7 @@ public class FragmentPushData extends Fragment{
         }
         final String mRequestBody = resJson.toString();
 
-        new clsHelperBL().volleyLogin(getContext(), strLinkAPI, mRequestBody, "Logout....",false, new VolleyResponseListener() {
+        new clsHelperBL().volleyLogin(getActivity(), strLinkAPI, mRequestBody, "Logout....",false, new VolleyResponseListener() {
             @Override
             public void onError(String message) {
                 new ToastCustom().showToasty(getContext(),message,4);

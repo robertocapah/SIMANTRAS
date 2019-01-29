@@ -555,7 +555,7 @@ public class clsHelperBL {
 
         queue.add(multipartRequest);
     }
-    public void volleyLogin(final Context context, String strLinkAPI, final String mRequestBody, String progressBarType, final boolean isMustLogout, final VolleyResponseListener listener) {
+    public void volleyLogin(final Activity context, String strLinkAPI, final String mRequestBody, String progressBarType, final boolean isMustLogout, final VolleyResponseListener listener) {
         RequestQueue queue = Volley.newRequestQueue(context);
         final String[] body = new String[1];
         final String[] message = new String[1];
@@ -721,7 +721,7 @@ public class clsHelperBL {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -867,7 +867,7 @@ public class clsHelperBL {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -1016,7 +1016,7 @@ public class clsHelperBL {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        request.setShouldCache(false);
         queue.add(request);
 
     }
@@ -1193,7 +1193,7 @@ public class clsHelperBL {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -1340,7 +1340,7 @@ public class clsHelperBL {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        request.setShouldCache(false);
         queue.add(request);
     }
 

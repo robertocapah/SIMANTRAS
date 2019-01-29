@@ -155,7 +155,7 @@ public class VolleyUtils {
                 DefaultRetryPolicy(60000,0,
 //                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        req.setShouldCache(false);
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
         queue.add(req);
     }
@@ -238,7 +238,7 @@ public class VolleyUtils {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        req.setShouldCache(false);
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
         queue.add(req);
     }
@@ -311,7 +311,7 @@ public class VolleyUtils {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        req.setShouldCache(false);
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
         queue.add(req);
     }
@@ -757,7 +757,7 @@ public class VolleyUtils {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        multipartRequest.setShouldCache(false);
         RequestQueue queue = Volley.newRequestQueue(ctx.getApplicationContext());
         queue.add(multipartRequest);
     }
@@ -925,7 +925,7 @@ public class VolleyUtils {
                 DefaultRetryPolicy(60000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
+        multipartRequest.setShouldCache(false);
         RequestQueue queue = Volley.newRequestQueue(ctx.getApplicationContext());
         queue.add(multipartRequest);
     }
