@@ -1,5 +1,6 @@
 package shp.kalbecallplanaedp.Fragment;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,16 +10,27 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +40,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import shp.kalbecallplanaedp.BL.clsActivity;
@@ -75,34 +92,46 @@ import shp.kalbecallplanaedp.ResponseDataJson.downloadtMappingArea.DownloadtMapp
 import shp.kalbecallplanaedp.Utils.IOBackPressed;
 import shp.kalbecallplanaedp.Utils.LongThread;
 import shp.kalbecallplanaedp.Utils.Tools;
+
+import com.kalbe.mobiledevknlibs.Helper.clsMainActivity;
+import com.kalbe.mobiledevknlibs.Maps.PopUpMaps;
+import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
+import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * Created by Dewi Oktaviani on 10/5/2018.
  */
 
-public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handler.Callback{
+public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handler.Callback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
     View v;
     AppCompatSpinner spnArea, spnActivity, spnOutlet;
     TextView tvOultet;
     EditText etDesc, etOutlet;
     CheckBox cbOutlet;
-    Button btnCreate;
+    Button btnCreate, btnViewMap, btnRefreshMap;
+    private ImageView imgCamera1, imgCamera2;
     LinearLayout lnOutlet;
     public List<String> listArea = new ArrayList<>();
     public HashMap<String, String> mapArea = new HashMap<>();
@@ -138,6 +167,17 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
 
     tProgramVisitSubActivity dataPlan;
     tRealisasiVisitPlan data;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+    private String fileName;
+    private static final int CAMERA_CAPTURE_IMAGE1_REQUEST_CODE = 100;
+    private static final int CAMERA_CAPTURE_IMAGE2_REQUEST_CODE = 130;
+    private TextView tvLongUser, tvLatUser,tvAcc;
+    private double mlongitude = 0;
+    private double mlatitude = 0;
+    tRealisasiVisitPlan dtTemp;
+
 
     @Nullable
     @Override
@@ -153,6 +193,15 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         btnCreate = (Button)v.findViewById(R.id.button_add_unplan);
         lnOutlet = (LinearLayout)v.findViewById(R.id.ln_cb_unplan);
 
+        btnViewMap = (Button) v.findViewById(R.id.btnViewMap);
+        btnRefreshMap = (Button) v.findViewById(R.id.btnRefreshMaps);
+        imgCamera1 = (ImageView) v.findViewById(R.id.imageViewCamera1);
+        imgCamera2 = (ImageView) v.findViewById(R.id.imageViewCamera2);
+
+        tvLongUser = (TextView) v.findViewById(R.id.tvLong);
+        tvLatUser = (TextView) v.findViewById(R.id.tvLat);
+        tvAcc = (TextView) v.findViewById(R.id.tvAcc);
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
 
@@ -164,7 +213,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         visitRepo = new tProgramVisitRepo(getContext());
         realisasiVisitPlanRepo = new tRealisasiVisitPlanRepo(getContext());
         dtUserLogin = new clsMainBL().getUserLogin(getContext());
-
+        dtTemp = new tRealisasiVisitPlan();
 
 
         listArea.clear();
@@ -442,9 +491,109 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>()
         );
+
+        if (checkPlayServices()){
+            buildGoogleApiClient();
+        }
+
+
+        getLocation();
+
+        if (mLastLocation!=null){
+            displayLocation(mLastLocation);
+        }
+
+        btnRefreshMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getLocation();
+                if (mLastLocation == null){
+                    displayLocation(mLastLocation);
+                }
+            }
+        });
+        btnViewMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                new PopUpMaps().popUpMapsTwoCoordinates(getContext(), R.layout.popup_map, tvLatOutlet.getText().toString(), tvLongOutlet.getText().toString());
+                btnViewMap.setEnabled(false);
+                new PopUpMaps().popUpMapsCustom(getActivity(), R.layout.popup_map, tvLatUser.getText().toString(), tvLongUser.getText().toString(), btnViewMap);
+
+
+            }
+        });
+
+
+        imgCamera1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                fileName = "temp_absen" + timeStamp;
+                new PickImage().CaptureImage(getActivity(), new clsHardCode().txtFolderCheckIn, fileName,CAMERA_CAPTURE_IMAGE1_REQUEST_CODE);
+            }
+        });
+        imgCamera2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                fileName = "temp_absen" + timeStamp;
+                new PickImage().CaptureImage(getActivity(), new clsHardCode().txtFolderCheckIn, fileName,CAMERA_CAPTURE_IMAGE2_REQUEST_CODE);
+            }
+        });
+
         return v;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==CAMERA_CAPTURE_IMAGE1_REQUEST_CODE){
+            if (resultCode==-1){
+                Uri uri = new UriData().getOutputMediaImageUri(getContext(), new clsHardCode().txtFolderCheckIn, fileName);
+                //untuk mendapatkan bitmap bisa menggunakan decode stream
+                Bitmap bitmap = new PickImage().decodeStreamReturnBitmap(getContext(), uri);
+                //get byte array
+                byte[] save = new PickImage().getByteImageToSaveRotate(getContext(), uri);
+                dtTemp.setBlobImg1(save);
+                dtTemp.setTxtImgName1(fileName);
+                Bitmap bitmap1 = null;
+                try {
+                    bitmap1 = new PickImage().rotateBitmap(bitmap, new PickImage().Orientation(getContext(), uri));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+//                Glide.with(this).load(uri).into(imgCamera1);
+//                Bitmap bitmap1 = new PickImage().decodeByteArrayReturnBitmap(save);
+                new PickImage().previewCapturedImage(imgCamera1, bitmap1, 150, 150);
+            }else if (resultCode == 0) {
+                new clsMainActivity().showCustomToast(getContext(), "User canceled photo", false);
+            } else {
+                new clsMainActivity().showCustomToast(getContext(), "Something error", false);
+            }
+        }else if (requestCode== CAMERA_CAPTURE_IMAGE2_REQUEST_CODE){
+            if (resultCode==-1){
+                Uri uri = new UriData().getOutputMediaImageUri(getContext(), new clsHardCode().txtFolderCheckIn, fileName);
+                //untuk mendapatkan bitmap bisa menggunakan decode stream
+                Bitmap bitmap = new PickImage().decodeStreamReturnBitmap(getContext(), uri);
+                //get byte array
+                byte[] save = new PickImage().getByteImageToSaveRotate(getContext(), uri);
+                Bitmap bitmap1 = null;
+                try {
+                    bitmap1 = new PickImage().rotateBitmap(bitmap, new PickImage().Orientation(getContext(), uri));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                dtTemp.setBlobImg2(save);
+                dtTemp.setTxtImgName2(fileName);
+                new PickImage().previewCapturedImage(imgCamera2, bitmap1, 150, 150);
+            }else if (resultCode == 0) {
+                new clsMainActivity().showCustomToast(getContext(), "User canceled photo", false);
+            } else {
+                new clsMainActivity().showCustomToast(getContext(), "Something error", false);
+            }
+        }
+
+    }
     private void onAreaSelected(){
         try {
             listdtActivity = (List<mActivity>) activityRepo.findAll();
@@ -1038,5 +1187,167 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
             }
         }
 
+    }
+
+    // get location GPS
+    private boolean earlyState = true;
+    boolean mockStatus = false;
+    public Location getLocation() {
+        try {
+//            Drawable icon = getResources().getDrawable(R.mipmap.ic_error_outline);
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+            boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                // no network provider is enabled
+                mLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                new ToastCustom().showToasty(getContext(),"Please turn on GPS or check your internet connection",4);
+//                new clsMainActivity().showCustomToast(getContext(), "Please turn on GPS or check your internet connection", false);
+            } else {
+                if (isNetworkEnabled) {
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        new ToastCustom().showToasty(getContext(),"Please check application permissions",4);
+//                        _clsMainActivity.showCustomToast(getContext(), "Please check application permissions", false);
+                    } else {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
+                        mLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    }
+                } else {
+                    new ToastCustom().showToasty(getContext(),"Please check your connection",4);
+//                    _clsMainActivity.showCustomToast(getContext(), "Please check your connection", false);
+                }
+
+                if (isGPSEnabled && mLastLocation==null) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+                    mLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                } else if(!isGPSEnabled){
+                    new ToastCustom().showToasty(getContext(),"Please check your connection",4);
+//                    _clsMainActivity.showCustomToast(getContext(), "Please check your connection", false);
+                }
+            }
+
+            if (mLastLocation != null) {
+                int intOs = Integer.valueOf(Build.VERSION.SDK);
+                if (intOs >= 18) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        mockStatus = mLastLocation.isFromMockProvider();
+                    }
+                }
+            }
+            if (mockStatus){
+                new ToastCustom().showToastyCustom(getContext(), Html.fromHtml("<b>" + "Fake GPS detected ! " + "</b> "+ "<br/>" + "<br/>" +"Please Turn Off Fake Location, And Restart Your Phone"), getResources().getDrawable(R.mipmap.ic_error_outline), getResources().getColor(R.color.red_600), 10, false, true);
+//                ToastCustom.showToasty(getContext(),"Fake GPS detected ! " + "\n" + "Please Turn Off Fake Location, And Restart Your Phone",2);
+                Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                v.vibrate(5000);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(mLastLocation!=null&&!earlyState){
+            new clsMainActivity().showCustomToast(getContext(), "Location Updated", true);
+        }
+        earlyState = false;
+        return mLastLocation;
+    }
+
+    @SuppressWarnings("deprecation")
+    //set text view long lat
+    private void displayLocation(Location mLastLocation) {
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        if (mLastLocation != null) {
+            double latitude = mLastLocation.getLatitude();
+            double longitude = mLastLocation.getLongitude();
+            double accurate = mLastLocation.getAccuracy();
+
+            tvLongUser.setText(String.format("%s", longitude));
+            tvLatUser.setText(String.format("%s", latitude));
+            tvAcc.setText(String.format("%s", df.format(accurate)));
+
+//            try {
+//                float distance = countDistance(latitude, longitude);
+//                tvDistance.setText(String.format("%s meters", String.valueOf((int) Math.ceil(distance))));
+//            } catch (Exception ignored) {
+//
+//            }
+
+            mlongitude = longitude;
+            mlatitude = latitude;
+
+        } else {
+            tvLatUser.setText("");
+            tvLongUser.setText("");
+            tvAcc.setText("");
+//            tvDistance.setText("");
+        }
+
+    }
+
+    private void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getContext());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(), PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        displayLocation(mLastLocation);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkPlayServices();
     }
 }

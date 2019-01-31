@@ -164,6 +164,9 @@ public class FragmentCallPlan extends Fragment implements GoogleApiClient.Connec
         options = new Options();
         options.inSampleSize = 2;
 
+        if (checkPlayServices()){
+            buildGoogleApiClient();
+        }
         if (valid){
             btnCheckin.setVisibility(View.GONE);
             btnRefreshMap.setVisibility(View.GONE);
@@ -197,11 +200,6 @@ public class FragmentCallPlan extends Fragment implements GoogleApiClient.Connec
         }
 
 
-
-        if (checkPlayServices()){
-            buildGoogleApiClient();
-        }
-
         btnRefreshMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,7 +213,8 @@ public class FragmentCallPlan extends Fragment implements GoogleApiClient.Connec
             @Override
             public void onClick(View v) {
 //                new PopUpMaps().popUpMapsTwoCoordinates(getContext(), R.layout.popup_map, tvLatOutlet.getText().toString(), tvLongOutlet.getText().toString());
-                new PopUpMaps().popUpMapsCustom(getActivity(), R.layout.popup_map, tvLatUser.getText().toString(), tvLongUser.getText().toString());
+                btnViewMap.setEnabled(false);
+                new PopUpMaps().popUpMapsCustom(getActivity(), R.layout.popup_map, tvLatUser.getText().toString(), tvLongUser.getText().toString(), btnViewMap);
 
 
             }

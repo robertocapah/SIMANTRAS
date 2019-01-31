@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginLeft="@dimen/spacing_large"
     android:layout_marginRight="@dimen/spacing_large"
     android:padding="@dimen/spacing_large">
@@ -117,7 +118,235 @@
        <View
            android:layout_width="0dp"
            android:layout_height="@dimen/spacing_xxlarge" />
+       <android.support.v7.widget.CardView
+           android:id="@+id/tlAbesen2"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/view"
+           app:cardElevation="2dp"
+           app:cardUseCompatPadding="true">
 
+           <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+               android:id="@+id/tlAbesen"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent">
+
+               <TableRow
+                   android:background="@color/green_300"
+                   android:gravity="center_horizontal"
+                   android:padding="5dp">
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="      " />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:gravity="center"
+                       android:text="Your Position" />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:gravity="center"
+                       android:text="" />
+               </TableRow>
+
+               <TableRow
+                   android:background="#ffffff"
+                   android:padding="5dp">
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="Long" />
+
+                   <TextView
+                       android:id="@+id/tvLong"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="" />
+
+                   <TextView
+                       android:id="@+id/tvLongOutlet"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="" />
+               </TableRow>
+
+               <TableRow
+                   android:background="#ffffff"
+                   android:padding="5dp">
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="Lat" />
+
+                   <TextView
+                       android:id="@+id/tvLat"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="" />
+
+                   <TextView
+                       android:id="@+id/tvlatOutlet"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="" />
+               </TableRow>
+
+               <TableRow
+                   android:background="#ffffff"
+                   android:padding="5dp">
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="Acc" />
+
+                   <TextView
+                       android:id="@+id/tvAcc"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="" />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="" />
+               </TableRow>
+
+               <!--<TableRow-->
+               <!--android:background="#ffffff"-->
+               <!--android:padding="5dp">-->
+
+               <!--<TextView-->
+               <!--android:layout_width="wrap_content"-->
+               <!--android:layout_height="wrap_content"-->
+               <!--android:layout_weight="1"-->
+               <!--android:text="Distance" />-->
+
+               <!--<TextView-->
+               <!--android:id="@+id/tvDistance"-->
+               <!--android:layout_width="wrap_content"-->
+               <!--android:layout_height="wrap_content"-->
+               <!--android:layout_weight="1"-->
+               <!--android:text="" />-->
+
+               <!--<TextView-->
+               <!--android:layout_width="wrap_content"-->
+               <!--android:layout_height="wrap_content"-->
+               <!--android:layout_weight="1"-->
+               <!--android:text="" />-->
+               <!--</TableRow>-->
+           </TableLayout>
+       </android.support.v7.widget.CardView>
+
+       <android.support.v7.widget.CardView
+           android:id="@+id/llimgview"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/view3"
+           app:cardElevation="2dp"
+           app:cardUseCompatPadding="true">
+
+           <TableLayout
+               android:id="@+id/tlAbesen3"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent">
+
+               <TableRow
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:background="@color/green_300"
+                   android:gravity="center_horizontal"
+                   android:padding="5dp">
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Images"
+                       android:textAlignment="center" />
+               </TableRow>
+
+               <TableRow
+                   android:background="#ffffff"
+                   android:paddingBottom="10dp"
+                   android:paddingTop="10dp">
+
+                   <LinearLayout
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="0.5"
+                       android:gravity="center">
+
+                       <ImageView
+                           android:id="@+id/imageViewCamera1"
+                           android:layout_width="100dp"
+                           android:layout_height="100dp"
+                           android:background="@mipmap/ic_camera_green" />
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="0.5"
+                       android:gravity="center">
+
+                       <ImageView
+                           android:id="@+id/imageViewCamera2"
+                           android:layout_width="100dp"
+                           android:layout_height="100dp"
+                           android:background="@mipmap/ic_camera_green" />
+                   </LinearLayout>
+
+               </TableRow>
+           </TableLayout>
+       </android.support.v7.widget.CardView>
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <Button
+               android:id="@+id/btnRefreshMaps"
+               android:layout_width="150dp"
+               android:layout_height="30dp"
+               android:layout_alignParentLeft="true"
+               android:layout_alignParentStart="true"
+               android:layout_marginBottom="10dp"
+               android:layout_marginTop="10dp"
+               android:gravity="center"
+               android:background="@color/green_300"
+               android:text="Refresh Location"
+               android:textColor="#FFF" />
+
+           <Button
+               android:id="@+id/btnViewMap"
+               android:layout_width="wrap_content"
+               android:layout_height="30dp"
+               android:layout_alignParentEnd="true"
+               android:layout_alignParentRight="true"
+               android:layout_alignTop="@+id/btnRefreshMaps"
+               android:background="@color/green_300"
+               android:text="View Map"
+               android:textColor="#FFF" />
+       </RelativeLayout>
        <Button
            android:id="@+id/button_add_unplan"
            android:layout_width="match_parent"

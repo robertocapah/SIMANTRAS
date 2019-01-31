@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -153,7 +154,7 @@ public class PopUpMaps extends Activity implements LocationListener, OnMapReadyC
         }
     }
 
-    public void popUpMapsCustom(final Context context, int resViewLayout, String lblLat, String lblLong) {
+    public void popUpMapsCustom(final Context context, int resViewLayout, String lblLat, String lblLong, final Button btnMap) {
         Boolean valid = true;
         getLocation(context);
         double latitude = 0;
@@ -208,7 +209,7 @@ public class PopUpMaps extends Activity implements LocationListener, OnMapReadyC
                                     if (f != null) {
                                         (activity).getFragmentManager().beginTransaction().remove(f).commit();
                                     }
-
+                                    btnMap.setEnabled(true);
                                     dialog.dismiss();
                                 }
                             });
