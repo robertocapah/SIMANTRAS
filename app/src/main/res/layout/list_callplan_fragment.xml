@@ -47,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:groupIndicator="@null"
+        android:nestedScrollingEnabled="true"
         android:id="@+id/exp_lv_call_plan"></ExpandableListView>
 
     <android.support.design.widget.FloatingActionButton

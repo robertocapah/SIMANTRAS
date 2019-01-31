@@ -45,6 +45,7 @@
     <ExpandableListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="true"
         android:groupIndicator="@null"
         android:id="@+id/exp_lv_call_plan"></ExpandableListView>
 
