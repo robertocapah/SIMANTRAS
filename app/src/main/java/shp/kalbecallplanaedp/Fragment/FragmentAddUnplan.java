@@ -960,14 +960,14 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         ListoftRealisasiVisitData.add(dataRealisasi);
 
         final clsPushData dtJson = new clsHelperBL().pushDataNew(versionName, getContext(), ListOftProgramVisit, ListOftProgramSubActivity,ListoftRealisasiVisitData);
-        String linkPushData = new clsHardCode().linkPushData;
+        String linkPushData = new clsHardCode().linkCreateUnplan;
         new VolleyUtils().makeJsonObjectRequestPushData(getContext(), linkPushData, dtJson, pDialog, new VolleyResponseListener() {
             @Override
             public void onError(String message) {
                 new ToastCustom().showToasty(getContext(),message,4);
 //                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                 pDialog.dismiss();
-            } 
+            }
 
             @Override
             public void onResponse(String response, Boolean status, String strErrorMsg) {
@@ -1360,9 +1360,10 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-            new ToastCustom().showToasty(getContext(),"Save",1);
-            new Tools().intentFragment(FragmentListCallPlan.class, "Call Plan", getContext());
+            new ToastCustom().showToasty(getContext(),"Submit",1);
+            Intent myIntent = new Intent(getContext(), MainMenu.class);
+            getActivity().finish();
+            startActivity(myIntent);
             if (notificationList!=null){
                 if (notificationList.size()>0){
                     createNotification(notificationList.size());
