@@ -123,6 +123,8 @@ public class clsHelperBL {
             tInfoProgramHeaderRepo _tInfoProgramHeaderRepo = new tInfoProgramHeaderRepo(context);
             tInfoProgramDetailRepo _tInfoProgramDetailRepo = new tInfoProgramDetailRepo(context);
 
+            List<tProgramVisitSubActivity> ListOftProgramSubActivity = _tProgramVisitSubActivityRepo.getAllPushData();
+            List<tProgramVisit> ListOftProgramVisit = _tProgramVisitRepo.getAllPushData();
             List<tRealisasiVisitPlan> ListoftRealisasiVisitData = _tRealisasiVisitPlanRepo.getAllPushData();
             List<tAkuisisiHeader> ListOftAkuisisiHeaderData = _tAkuisisiHeaderRepo.getAllPushData();
             List<tAkuisisiDetail> ListOftAkuisisiDetailData = _tAkuisisiDetailRepo.getPushAllData(ListOftAkuisisiHeaderData);
@@ -130,11 +132,11 @@ public class clsHelperBL {
             List<tMaintenanceDetail> ListOfMaintenanceDetail = _tMaintenanceDetailRepo.getPushAllDataDetail(ListOftMaintenanceHeader);
             List<tInfoProgramHeader> ListOftInfoProgramHeader = _tInfoProgramHeaderRepo.getAllPushData();
             List<tInfoProgramDetail> ListOftInfoProgramDetail = _tInfoProgramDetailRepo.getPushAllData(ListOftInfoProgramHeader);
-            List<tProgramVisitSubActivity> ListOftProgramSubActivity = _tProgramVisitSubActivityRepo.getAllPushData();
-            List<tProgramVisit> ListOftProgramVisit = _tProgramVisitRepo.getAllPushData();
+
 //            List<tLogError>
 
             FileUpload = new HashMap<>();
+            dtPush.setFromUnplan(false);
             if (ListOftAkuisisiHeaderData!=null){
                 isDataNull.add(false);
                 dtPush.setListDataOftAkuisisiHeader(ListOftAkuisisiHeaderData);
@@ -194,6 +196,77 @@ public class clsHelperBL {
             }
 
 //            if ()
+        }else {
+            dtPush = null;
+        }
+        dtclsPushData.setDataJson(dtPush);
+        dtclsPushData.setFileName(FileName);
+        dtclsPushData.setFileUpload(FileUpload);
+        return dtclsPushData;
+    }
+
+    public clsPushData pushDataNew(String versionName, Context context,List<tProgramVisit> programVisit, List<tProgramVisitSubActivity> programVisitSubActivity, List<tRealisasiVisitPlan> realisasiVisitPlan){
+        clsPushData dtclsPushData = new clsPushData();
+        clsDataJson dtPush = new clsDataJson();
+        mUserLoginRepo loginRepo = new mUserLoginRepo(context);
+        HashMap<String, byte[]> FileUpload = null;
+        List<String> FileName = new ArrayList<>();
+        if (loginRepo.getContactCount(context)>0){
+            mUserLogin dataLogin = new clsMainBL().getUserLogin(context);
+            dtPush.setDtLogin(dataLogin.getDtLogIn());
+            dtPush.setTxtVersionApp(versionName);
+            dtPush.setIntRoleId(String.valueOf(dataLogin.getIntRoleID()));
+            dtPush.setTxtUserId(String.valueOf(dataLogin.getIntUserID()));
+            try {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Calendar calendar = Calendar.getInstance();
+                mCounterDataRepo _mCounterDataRepo = new mCounterDataRepo(context);
+                mCounterData _mCounterData = new mCounterData();
+                _mCounterData.setIntId(enumCounterData.MonitorScedule.getIdCounterData());
+                _mCounterData.setTxtDescription("value menunjukan waktu terakhir menjalankan services");
+                _mCounterData.setTxtName("Monitor Service");
+                _mCounterData.setTxtValue(dateFormat.format(calendar.getTime()));
+                _mCounterDataRepo.createOrUpdate(_mCounterData);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            tProgramVisitRepo _tProgramVisitRepo = new tProgramVisitRepo(context);
+            tRealisasiVisitPlanRepo _tRealisasiVisitPlanRepo = new tRealisasiVisitPlanRepo(context);
+            tProgramVisitSubActivityRepo _tProgramVisitSubActivityRepo = new tProgramVisitSubActivityRepo(context);
+
+            List<tProgramVisitSubActivity> ListOftProgramSubActivity = new ArrayList<>();
+            List<tProgramVisit> ListOftProgramVisit = new ArrayList<>();
+            List<tRealisasiVisitPlan> ListoftRealisasiVisitData = new ArrayList<>();
+
+                ListOftProgramSubActivity = programVisitSubActivity;
+                ListOftProgramVisit = programVisit;
+                ListoftRealisasiVisitData = realisasiVisitPlan;
+
+            FileUpload = new HashMap<>();
+            dtPush.setFromUnplan(true);
+            if (ListOftProgramVisit != null) {
+                dtPush.setListDataOftProgramVisit(ListOftProgramVisit);
+            }
+
+            if (ListOftProgramSubActivity!=null){
+                dtPush.setListOfDatatProgramVisitSubActivity(ListOftProgramSubActivity);
+            }
+
+            if (ListoftRealisasiVisitData!=null){
+                dtPush.setListOfDatatRealisasiVisitPlan(ListoftRealisasiVisitData);
+                for (tRealisasiVisitPlan data : ListoftRealisasiVisitData){
+                    if (data.getBlobImg1()!=null){
+                        FileName.add("Visit" + data.getTxtRealisasiVisitId() + "-1");
+                        FileUpload.put("Visit" + data.getTxtRealisasiVisitId() + "-1", data.getBlobImg1());
+                    }
+                    if (data.getBlobImg2()!=null){
+                        FileName.add("Visit" + data.getTxtRealisasiVisitId() + "-2");
+                        FileUpload.put("Visit" + data.getTxtRealisasiVisitId() + "-2", data.getBlobImg2());
+                    }
+                }
+            }
+
         }else {
             dtPush = null;
         }

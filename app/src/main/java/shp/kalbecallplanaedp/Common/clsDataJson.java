@@ -35,6 +35,15 @@ public class clsDataJson {
     private String txtMethod;
     private String txtVersionApp;
     private String dtLogin;
+    private boolean isFromUnplan;
+
+    public boolean isFromUnplan() {
+        return isFromUnplan;
+    }
+
+    public void setFromUnplan(boolean fromUnplan) {
+        isFromUnplan = fromUnplan;
+    }
 
     public List<mUserLogin> getListDatamUserLogin() {
         return ListDatamUserLogin;
@@ -217,25 +226,33 @@ public class clsDataJson {
             }
         }
 
-//        if (this.getListDataOftProgramVisit()!=null){
-//            tProgramVisit dataHeader = new tProgramVisit();
-//            itemLIstQuery = new ArrayList<>();
-////            for (tProgramVisit data: this.getListDataOftProgramVisit()){
-////                JSONObject item = new JSONObject();
-////                item.put(dataHeader.Property_txtProgramVisitId, String.valueOf(data.getTxtProgramVisitId()));
-////                item.put(dataHeader.Property_intUserId, String.valueOf(data.getIntUserId()));
-////                item.put(dataHeader.Property_intRoleId, String.valueOf(data.getIntRoleId()));
-////                item.put(dataHeader.Property_txtNotes, String.valueOf(data.getTxtNotes()));
-////                item.put(dataHeader.Property_intType, String.valueOf(data.getIntType()));
-////                item.put(dataHeader.Property_intStatus, String.valueOf(data.getIntStatus()));
-//////                item.put(dataHeader.Property_dtStart, String.valueOf(data.getDtStart()));
-//////                item.put(dataHeader.Property_dtEnd, String.valueOf(data.getDtEnd()));
-////                item.put(dataHeader.Property_dtLogin, getDtLogin());
-////                item.put(dataHeader.Property_intFlagPush, String.valueOf(data.getIntFlagPush()));
-////                itemLIstQuery.add(item);
-////            }
-//            resJson.put(dataHeader.Property_ListDataOftProgramVisit, new JSONArray(itemLIstQuery));
-//        }
+        if (this.getListDataOftProgramVisit()!=null&&isFromUnplan()){
+            tProgramVisit dataHeader = new tProgramVisit();
+            itemLIstQuery = new ArrayList<>();
+            for (tProgramVisit header: this.getListDataOftProgramVisit()){
+                JSONObject jsonHeader = new JSONObject();
+//                item.put(dataHeader.Property_txtProgramVisitId, String.valueOf(data.getTxtProgramVisitId()));
+//                item.put(dataHeader.Property_intUserId, String.valueOf(data.getIntUserId()));
+//                item.put(dataHeader.Property_intRoleId, String.valueOf(data.getIntRoleId()));
+//                item.put(dataHeader.Property_txtNotes, String.valueOf(data.getTxtNotes()));
+//                item.put(dataHeader.Property_intType, String.valueOf(data.getIntType()));
+//                item.put(dataHeader.Property_intStatus, String.valueOf(data.getIntStatus()));
+//                item.put(dataHeader.Property_dtStart, String.valueOf(data.getDtStart()));
+//                item.put(dataHeader.Property_dtEnd, String.valueOf(data.getDtEnd()));
+//                item.put(dataHeader.Property_dtLogin, getDtLogin());
+//                item.put(dataHeader.Property_intFlagPush, String.valueOf(data.getIntFlagPush()));
+                jsonHeader.put(dataHeader.Property_txtProgramVisitId, String.valueOf(header.getTxtProgramVisitId()));
+                jsonHeader.put(dataHeader.Property_intUserId, String.valueOf(header.getIntUserId()));
+                jsonHeader.put(dataHeader.Property_intRoleId, String.valueOf(header.getIntRoleId()));
+                jsonHeader.put(dataHeader.Property_txtNotes, String.valueOf(header.getTxtNotes()));
+                jsonHeader.put(dataHeader.Property_intType, String.valueOf(header.getIntType()));
+                jsonHeader.put(dataHeader.Property_intStatus, String.valueOf(header.getIntStatus()));
+                jsonHeader.put(dataHeader.Property_dtLogin, getDtLogin());
+                jsonHeader.put(dataHeader.Property_intFlagPush, String.valueOf(header.getIntFlagPush()));
+                itemLIstQuery.add(jsonHeader);
+            }
+            resJson.put(dataHeader.Property_ListDataOftProgramVisit, new JSONArray(itemLIstQuery));
+        }
 
         if(this.getListOfDatatProgramVisitSubActivity()!=null){
             tProgramVisitSubActivity dataVisit = new tProgramVisitSubActivity();

@@ -30,6 +30,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,6 +56,7 @@ import shp.kalbecallplanaedp.BL.clsActivity;
 import shp.kalbecallplanaedp.BL.clsHelperBL;
 import shp.kalbecallplanaedp.BL.clsMainBL;
 import shp.kalbecallplanaedp.Common.VMDownloadFile;
+import shp.kalbecallplanaedp.Common.clsPushData;
 import shp.kalbecallplanaedp.Common.clsSpinner;
 import shp.kalbecallplanaedp.Common.clsToken;
 import shp.kalbecallplanaedp.Common.mActivity;
@@ -71,6 +73,7 @@ import shp.kalbecallplanaedp.Common.tProgramVisit;
 import shp.kalbecallplanaedp.Common.tProgramVisitSubActivity;
 import shp.kalbecallplanaedp.Common.tRealisasiVisitPlan;
 import shp.kalbecallplanaedp.Data.VolleyResponseListener;
+import shp.kalbecallplanaedp.Data.VolleyUtils;
 import shp.kalbecallplanaedp.Data.clsHardCode;
 import shp.kalbecallplanaedp.MainMenu;
 import shp.kalbecallplanaedp.R;
@@ -89,6 +92,7 @@ import shp.kalbecallplanaedp.Repo.tProgramVisitSubActivityRepo;
 import shp.kalbecallplanaedp.Repo.tRealisasiVisitPlanRepo;
 import shp.kalbecallplanaedp.ResponseDataJson.createUnplan.CreateUnplan;
 import shp.kalbecallplanaedp.ResponseDataJson.downloadtMappingArea.DownloadtMappingArea;
+import shp.kalbecallplanaedp.ResponseDataJson.responsePushData.ResponsePushData;
 import shp.kalbecallplanaedp.Utils.IOBackPressed;
 import shp.kalbecallplanaedp.Utils.LongThread;
 import shp.kalbecallplanaedp.Utils.Tools;
@@ -174,9 +178,11 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     private static final int CAMERA_CAPTURE_IMAGE1_REQUEST_CODE = 100;
     private static final int CAMERA_CAPTURE_IMAGE2_REQUEST_CODE = 130;
     private TextView tvLongUser, tvLatUser,tvAcc;
+    CardView cvImgview;
     private double mlongitude = 0;
     private double mlatitude = 0;
     tRealisasiVisitPlan dtTemp;
+    ProgressDialog pDialog;
 
 
     @Nullable
@@ -201,9 +207,11 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         tvLongUser = (TextView) v.findViewById(R.id.tvLong);
         tvLatUser = (TextView) v.findViewById(R.id.tvLat);
         tvAcc = (TextView) v.findViewById(R.id.tvAcc);
+        cvImgview = (CardView)v.findViewById(R.id.llimgview);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
+        cvImgview.setVisibility(View.GONE);
 
         areaRepo = new mUserMappingAreaRepo(getContext());
         activityRepo = new mActivityRepo(getContext());
@@ -214,7 +222,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         realisasiVisitPlanRepo = new tRealisasiVisitPlanRepo(getContext());
         dtUserLogin = new clsMainBL().getUserLogin(getContext());
         dtTemp = new tRealisasiVisitPlan();
-
+        pDialog = new ProgressDialog(getContext());
 
         listArea.clear();
         listActivity.clear();
@@ -611,6 +619,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
 
     private void onActivitySelected(int intActivityId, String txtAreaId){
         if (intActivityId==1){
+            cvImgview.setVisibility(View.VISIBLE);
             listOutlet.clear();
             mapOutlet.clear();
             listOutlet.add("Select One");
@@ -639,6 +648,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
             spinnerAdapterOutlet.notifyDataSetChanged();
             spnOutlet.setAdapter(spinnerAdapterOutlet);
         }else if (intActivityId==2){
+            cvImgview.setVisibility(View.VISIBLE);
             tvOultet.setText("PHARMACY NAME");
             listOutlet.clear();
             mapOutlet.clear();
@@ -662,6 +672,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
             spinnerAdapterOutlet.notifyDataSetChanged();
             spnOutlet.setAdapter(spinnerAdapterOutlet);
         }else {
+            cvImgview.setVisibility(View.GONE);
             lnOutlet.setVisibility(View.GONE);
             cbOutlet.setEnabled(false);
             spnOutlet.setVisibility(View.GONE);
@@ -673,6 +684,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
 
     private void saveData(){
         boolean valid = true;
+        boolean isVisit = false;
         String msg = "";
         if (spnArea.getSelectedItem().toString().equals("Select One")){
             valid = false;
@@ -681,6 +693,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
             valid = false;
             msg = "Please select Activity";
         }else if (mapActivity.get(spnActivity.getSelectedItem())==1){
+            isVisit = true;
             if (cbOutlet.isChecked()){
                 if (etOutlet.getText().toString().equals("")){
                     valid = false;
@@ -693,6 +706,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 }
             }
         }else if (mapActivity.get(spnActivity.getSelectedItem())==2){
+            isVisit = true;
             if (cbOutlet.isChecked()){
                 if (etOutlet.getText().toString().equals("")){
                     valid = false;
@@ -706,12 +720,27 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
             }
         }
 
+        if (valid&&dtTemp==null&&isVisit){
+            valid = false;
+            msg = "Please take at least 1 photo";
+        }else if (valid&&isVisit&&dtTemp.getBlobImg1()==null && dtTemp.getBlobImg2()==null){
+            valid = false;
+            msg = "Please take at least 1 photo";
+        }else if (valid&&isVisit&&tvLatUser.getText().toString().equals("")&&tvLongUser.getText().toString().equals("")&&tvAcc.getText().toString().equals("")){
+            valid = false;
+            msg = "Failed checkin: Location not found, please check your GPS";
+        }else if (valid&&isVisit&&tvLatUser.getText()==null && tvLongUser.getText()==null&&tvAcc.getText()==null){
+            valid = false;
+            msg = "Failed checkin: Location not found, please check your GPS";
+        }
+
         if (valid){
             try {
 
                 DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 DateFormat dateLongFormat = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss");
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal = Calendar.getInstance();
                 try {
 //            visitHeader = (tProgramVisit) visitRepo.findAll().get(0);
                     if (visitRepo.isExistProgramVisit(getContext())){
@@ -793,23 +822,38 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                         data.setTxtApotekName(spnOutlet.getSelectedItem().toString());
                     }
                 }
-                data.setDtCheckIn("");
-                data.setDtCheckOut("");
-                data.setDtDateRealisasi("");
+
+
                 data.setDtDatePlan(dateFormat.format(dateTimeFormat.parse(dtUserLogin.getDtLogIn())));///tanggal login
+                if (isVisit){
+                    data.setDtDateRealisasi(null);
+                    data.setDtCheckIn(dateTimeFormat.format(cal.getTime()));
+                    data.setDtCheckOut(null);
+                    data.setTxtImgName1(dtTemp.getTxtImgName1());
+                    data.setBlobImg1(dtTemp.getBlobImg1());
+                    data.setTxtImgName2(dtTemp.getTxtImgName2());
+                    data.setBlobImg2(dtTemp.getBlobImg2());
+                    data.setIntStatusRealisasi(new clsHardCode().VisitPlan);
+                }else {
+                    data.setDtDateRealisasi(dateFormat.format(dateTimeFormat.parse(dtUserLogin.getDtLogIn()))); ///tanggal login
+                    data.setDtCheckIn(dateTimeFormat.format(cal.getTime()));
+                    data.setDtCheckOut(dateTimeFormat.format(cal.getTime()));
+                    data.setTxtImgName1(null);
+                    data.setBlobImg1(null);
+                    data.setTxtImgName2(null);
+                    data.setBlobImg2(null);
+                    data.setIntStatusRealisasi(new clsHardCode().Realisasi);
+                }
                 data.setIntNumberRealisasi(null); //generate number
-                data.setTxtAcc("");
-                data.setTxtLat("");
-                data.setTxtLong("");
-                data.setTxtImgName1("");
-                data.setBlobImg1(null);
-                data.setTxtImgName2("");
-                data.setBlobImg2(null);
-                data.setIntStatusRealisasi(new clsHardCode().VisitPlan);
+                data.setTxtAcc(tvAcc.getText().toString());
+                data.setTxtLat(tvLatUser.getText().toString());
+                data.setTxtLong(tvLongUser.getText().toString());
+
                 data.setIntFlagPush(new clsHardCode().Sync);
 //                realisasiVisitPlanRepo.createOrUpdate(data);
 
-                createUnplan(visitHeader, dataPlan, data);
+//                createUnplan(visitHeader, dataPlan, data);
+                createNewUnplan(visitHeader, dataPlan, data);
 
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -888,6 +932,208 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     }
 
     List<VMDownloadFile> vmList = new ArrayList<>();
+    private void  createNewUnplan(tProgramVisit header, tProgramVisitSubActivity visitPlan, tRealisasiVisitPlan dataRealisasi) {
+        pDialog.setMessage("Please wait...");
+        pDialog.setCancelable(false);
+        pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+
+            }
+        });
+        pDialog.show();
+
+        String versionName = "";
+        try {
+            versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
+
+        List<tProgramVisitSubActivity> ListOftProgramSubActivity = new ArrayList<>();
+        List<tProgramVisit> ListOftProgramVisit = new ArrayList<>();
+        List<tRealisasiVisitPlan> ListoftRealisasiVisitData = new ArrayList<>();
+
+        ListOftProgramVisit.add(header);
+        ListOftProgramSubActivity.add(visitPlan);
+        ListoftRealisasiVisitData.add(dataRealisasi);
+
+        final clsPushData dtJson = new clsHelperBL().pushDataNew(versionName, getContext(), ListOftProgramVisit, ListOftProgramSubActivity,ListoftRealisasiVisitData);
+        String linkPushData = new clsHardCode().linkPushData;
+        new VolleyUtils().makeJsonObjectRequestPushData(getContext(), linkPushData, dtJson, pDialog, new VolleyResponseListener() {
+            @Override
+            public void onError(String message) {
+                new ToastCustom().showToasty(getContext(),message,4);
+//                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                pDialog.dismiss();
+            } 
+
+            @Override
+            public void onResponse(String response, Boolean status, String strErrorMsg) {
+                if (response!=null){
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response);
+                        CreateUnplan model = gson.fromJson(jsonObject.toString(), CreateUnplan.class);
+                        boolean txtStatus = model.getResult().isStatus();
+                        String txtMessage = model.getResult().getMessage();
+                        String txtMethode_name = model.getResult().getMethodName();
+                        if (txtStatus == true){
+                            vmList.clear();
+
+//                            visitRepo.createOrUpdate(dt);
+
+                            tProgramVisit dataHeader = visitHeader;
+                            if (model.getData().getDataHeader()!=null){
+//                                dataHeader.setIntStatus(model.getData().getDataHeader().getTxtProgramVisitId());
+                                dataHeader.setDtStart(new clsActivity().parseDate(model.getData().getDataHeader().getDtStart()));
+                                dataHeader.setDtEnd(new clsActivity().parseDate(model.getData().getDataHeader().getDtEnd()));
+//                                dataHeader.setIntFlagPush(new clsHardCode().Sync);
+                            }
+                            visitRepo.createOrUpdate(dataHeader);
+                            visitSubActivityRepo.createOrUpdate(dataPlan);
+                            realisasiVisitPlanRepo.createOrUpdate(data);
+
+                            if (model.getData().getDtAkuisisi().getAkuisisiHeader()!=null){
+                                if (model.getData().getDtAkuisisi().getAkuisisiHeader().size()>0){
+                                    for (int i = 0; i < model.getData().getDtAkuisisi().getAkuisisiHeader().size(); i++){
+                                        tAkuisisiHeader data = new tAkuisisiHeader();
+                                        data.setTxtHeaderId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getTxtAkuisisiHeaderId());
+                                        data.setIntSubSubActivityId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getIntSubDetailActivityId());
+                                        data.setIntSubSubActivityTypeId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getIntFlag());
+                                        data.setTxtNoDoc(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getTxtNoDoc());
+                                        data.setDtExpiredDate(new clsActivity().parseDate(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getDtExpiredDate()));
+                                        data.setIntUserId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getIntUserId());
+                                        data.setIntRoleId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getIntRoleId());
+                                        data.setIntDokterId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getTxtDokterId());
+                                        data.setIntApotekID(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getTxtApotekId());
+                                        data.setIntAreaId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getIntAreaId());
+                                        data.setTxtUserName(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getTxtUserName());
+                                        data.setTxtRealisasiVisitId(model.getData().getDtAkuisisi().getAkuisisiHeader().get(i).getTxtRealisasiVisitId());
+                                        data.setIntFlagPush(new clsHardCode().Sync);
+                                        data.setIntFlagShow(new clsHardCode().Save);
+                                        new tAkuisisiHeaderRepo(getContext()).createOrUpdate(data);
+                                    }
+                                }
+                            }
+
+                            if (model.getData().getDtAkuisisi().getAkuisisiDetail()!=null){
+                                if (model.getData().getDtAkuisisi().getAkuisisiDetail().size()>0){
+                                    for (int i = 0; i < model.getData().getDtAkuisisi().getAkuisisiDetail().size(); i++){
+                                        tAkuisisiDetail data = new tAkuisisiDetail();
+                                        data.setTxtHeaderId(model.getData().getDtAkuisisi().getAkuisisiDetail().get(i).getTxtAkuisisiHeaderId());
+                                        data.setTxtDetailId(model.getData().getDtAkuisisi().getAkuisisiDetail().get(i).getTxtAkuisisiDetailId());
+                                        data.setTxtImgName(model.getData().getDtAkuisisi().getAkuisisiDetail().get(i).getTxtImageName());
+
+                                        if (model.getData().getDtAkuisisi().getAkuisisiDetail().get(i).getTxtLink()!=null){
+                                            if (model.getData().getDtAkuisisi().getAkuisisiDetail().get(i).getTxtLink().length()>0){
+                                                VMDownloadFile file = new VMDownloadFile();
+                                                file.setLink(model.getData().getDtAkuisisi().getAkuisisiDetail().get(i).getTxtLink());
+                                                file.setGroupDownload(new clsHardCode().AKUISISI);
+                                                file.setIndex(i+1);
+                                                file.setTxtId(model.getData().getDtAkuisisi().getAkuisisiDetail().get(i).getTxtAkuisisiDetailId());
+                                                vmList.add(file);
+                                            }
+                                        }
+                                        new tAkuisisiDetailRepo(getContext()).createOrUpdate(data);
+                                    }
+                                }
+                            }
+
+                            if (model.getData().getDtNotification()!=null){
+                                if (model.getData().getDtNotification().size()>0){
+                                    for (int i=0; i < model.getData().getDtNotification().size(); i++){
+                                        tNotification data = new tNotification();
+                                        data.setIntHeaderAkuisisiId(model.getData().getDtNotification().get(i).getTxtAkuisisiHeaderId());
+                                        data.setIntActivityId(model.getData().getDtNotification().get(i).getIntActivityId());
+                                        data.setIntDokterId(model.getData().getDtNotification().get(i).getTxtDokterId());
+                                        data.setIntApotekId(model.getData().getDtNotification().get(i).getTxtApotekId());
+                                        data.setDtExpired(new clsActivity().parseDate(model.getData().getDtNotification().get(i).getDtExpiredDate()));
+                                        data.setIntSubDetailActivityId(model.getData().getDtNotification().get(i).getIntSubDetailActivityId());
+                                        data.setTxtNoDoc(model.getData().getDtNotification().get(i).getTxtNoDoc());
+                                        new tNotificationRepo(getContext()).createOrUpdate(data);
+                                    }
+                                    isCreateNotification = true;
+                                }else {
+                                    isCreateNotification =false;
+                                }
+                            }
+
+                            if (model.getData().getDtMaintenance().getLtMaintenanceHeader()!=null){
+                                if (model.getData().getDtMaintenance().getLtMaintenanceHeader().size()>0){
+                                    for (int i = 0; i < model.getData().getDtMaintenance().getLtMaintenanceHeader().size(); i++){
+                                        tMaintenanceHeader data = new tMaintenanceHeader();
+                                        data.setTxtHeaderId(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getTxtMaintenanceHeaderId());
+                                        data.setTxtRealisasiVisitId(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getTxtRealisasiVisitId());
+                                        data.setIntActivityId(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getIntActivityId());
+                                        data.setIntUserId(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getIntUserId());
+                                        data.setIntRoleId(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getIntRoleId());
+                                        data.setIntDokterId(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getIntDokterId());
+                                        data.setIntApotekID(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getIntApotekId());
+                                        data.setIntAreaId(model.getData().getDtMaintenance().getLtMaintenanceHeader().get(i).getIntAreaId());
+                                        data.setIntFlagPush(new clsHardCode().Sync);
+                                        new tMaintenanceHeaderRepo(getContext()).createOrUpdate(data);
+                                    }
+                                }
+                            }
+
+                            if (model.getData().getDtMaintenance().getLtMaintenanceDetail()!=null){
+                                if (model.getData().getDtMaintenance().getLtMaintenanceDetail().size()>0){
+                                    for (int i = 0; i < model.getData().getDtMaintenance().getLtMaintenanceDetail().size(); i ++){
+                                        tMaintenanceDetail data = new tMaintenanceDetail();
+                                        data.setTxtDetailId(model.getData().getDtMaintenance().getLtMaintenanceDetail().get(i).getTxtMaintenanceDetailId());
+                                        data.setTxtHeaderId(model.getData().getDtMaintenance().getLtMaintenanceDetail().get(i).getTxtMaintenanceHeaderId());
+                                        data.setIntSubDetailActivityId(model.getData().getDtMaintenance().getLtMaintenanceDetail().get(i).getIntSubDetailActivityId());
+                                        data.setTxtNoDoc(model.getData().getDtMaintenance().getLtMaintenanceDetail().get(i).getTxtNoDocument());
+                                        data.setIntFlagPush(new clsHardCode().Sync);
+                                        new tMaintenanceDetailRepo(getContext()).createOrUpdate(data);
+                                    }
+                                }
+                            }
+
+                            Log.d("Data info", "Success Download");
+
+
+                            if (vmList.size()>0){
+                                downlaodFileNew(vmList, getActivity().getApplicationContext());
+                            }else {
+                                List<tNotification> notificationList = null;
+                                if (isCreateNotification){
+                                    try {
+                                        notificationList = (List<tNotification>)  new tNotificationRepo(getContext()).findOutletId();
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                new ToastCustom().showToasty(getContext(),"Submit",1);
+                                Intent myIntent = new Intent(getContext(), MainMenu.class);
+                                getActivity().finish();
+                                startActivity(myIntent);
+//                                new Tools().intentFragment(FragmentListCallPlan.class, "Call Plan", getContext());
+                                if (notificationList!=null){
+                                    if (notificationList.size()>0){
+                                        createNotification(notificationList.size());
+                                    }
+                                }
+                            }
+
+                        } else {
+                            new ToastCustom().showToasty(getContext(),txtMessage,4);
+                        }
+                        pDialog.dismiss();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    new ToastCustom().showToasty(getContext(),strErrorMsg,4);
+                    pDialog.dismiss();
+                }
+            }
+        });
+    }
     private void  createUnplan(tProgramVisit header, tProgramVisitSubActivity visitPlan, tRealisasiVisitPlan dataRealisasi) {
         String strLinkAPI = new clsHardCode().linkCreateUnplan;
         JSONObject resJson = new JSONObject();
