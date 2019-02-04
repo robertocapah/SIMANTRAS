@@ -105,35 +105,48 @@ public class LongThread implements Runnable {
     }
 
     private byte[] getByte(String url) {
+        InputStream is = null;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
             URL imageUrl = new URL(url);
             URLConnection ucon = imageUrl.openConnection();
-            String contentType = ucon.getHeaderField("Content-Type");
-            boolean image = contentType.startsWith("image/");
-            boolean text = contentType.startsWith("application/");
-            if (image||text){
-                byte[] data = null;
-                InputStream is = ucon.getInputStream();
-                int length =  ucon.getContentLength();
-                data = new byte[length];
-                int bytesRead;
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                while ((bytesRead = is.read(data)) != -1) {
-                    output.write(data, 0, bytesRead);
-                }
-                return output.toByteArray();
+            is = ucon.getInputStream();
+            byte[] data = null;
+
+            int length =  ucon.getContentLength();
+            data = new byte[length];
+            int bytesRead;
+            while ((bytesRead = is.read(data)) != -1) {
+                output.write(data, 0, bytesRead);
             }
-            else {
-                return null;
-            }
+            return output.toByteArray();
+//            String contentType = ucon.getHeaderField("Content-Type");
+//            boolean image = contentType.startsWith("image/");
+//            boolean text = contentType.startsWith("application/");
+//
+//            if (image||text){
+//
+//            }
+//            else { 
+//                return null;
+//            }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (Exception e) {
             Log.d("ImageManager", "Error: " + e.toString());
+        }finally {
+            try {
+                if (output!=null)
+                output.close();
+                if (is!=null)
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
