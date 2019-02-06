@@ -39,6 +39,8 @@ public class tProgramVisitSubActivity {
     private String dtEnd;
     @DatabaseField
     private int intFlagPush;
+    @DatabaseField
+    private boolean bitNew;
 
     public String Property_txtProgramVisitSubActivityId = "txtProgramVisitSubActivityId";
     public String Property_txtApotekName = "txtApotekName";
@@ -55,6 +57,7 @@ public class tProgramVisitSubActivity {
     public String Property_dtStart = "dtStart";
     public String Property_dtEnd = "dtEnd";
     public String Property_intFlagPush = "intFlagPush";
+    public String Property_bitNew = "bitNew";
 
     public String Property_ListOfDatatProgramVisitSubActivity = "ListOfDatatProgramVisitSubActivity";
 
@@ -176,5 +179,13 @@ public class tProgramVisitSubActivity {
 
     public void setIntFlagPush(int intFlagPush) {
         this.intFlagPush = intFlagPush;
+    }
+
+    public boolean isBitNew() {
+        return bitNew;
+    }
+
+    public void setBitNew(boolean bitNew) {
+        this.bitNew = bitNew;
     }
 }

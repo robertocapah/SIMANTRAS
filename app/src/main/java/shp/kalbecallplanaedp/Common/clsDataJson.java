@@ -273,6 +273,7 @@ public class clsDataJson {
                 item.put(dataVisit.Property_txtAreaId, String.valueOf(data.getTxtAreaId()));
                 item.put(dataVisit.Property_dtStart, String.valueOf(data.getDtStart()));
                 item.put(dataVisit.Property_dtEnd, String.valueOf(data.getDtEnd()));
+                item.put(dataVisit.Property_bitNew, String.valueOf(data.isBitNew()));
                 itemLIstQuery.add(item);
             }
             resJson.put(dataVisit.Property_ListOfDatatProgramVisitSubActivity, new JSONArray(itemLIstQuery));

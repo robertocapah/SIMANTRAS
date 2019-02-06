@@ -98,6 +98,8 @@ import shp.kalbecallplanaedp.Utils.LongThread;
 import shp.kalbecallplanaedp.Utils.Tools;
 
 import com.kalbe.mobiledevknlibs.Helper.clsMainActivity;
+import com.kalbe.mobiledevknlibs.InputFilter.InputFilter;
+import com.kalbe.mobiledevknlibs.InputFilter.InputFilters;
 import com.kalbe.mobiledevknlibs.Maps.PopUpMaps;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
@@ -136,7 +138,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     CheckBox cbOutlet;
     Button btnCreate, btnViewMap, btnRefreshMap;
     private ImageView imgCamera1, imgCamera2;
-    LinearLayout lnOutlet;
+    LinearLayout lnOutlet, lnRadio_dokter;
     public List<String> listArea = new ArrayList<>();
     public HashMap<String, String> mapArea = new HashMap<>();
     public List<String> listActivity = new ArrayList<>();
@@ -198,6 +200,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         cbOutlet = (CheckBox)v.findViewById(R.id.cb_outlet_unplan);
         btnCreate = (Button)v.findViewById(R.id.button_add_unplan);
         lnOutlet = (LinearLayout)v.findViewById(R.id.ln_cb_unplan);
+        lnRadio_dokter = (LinearLayout)v.findViewById(R.id.ln_rdDokter);
 
         btnViewMap = (Button) v.findViewById(R.id.btnViewMap);
         btnRefreshMap = (Button) v.findViewById(R.id.btnRefreshMaps);
@@ -209,6 +212,8 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         tvAcc = (TextView) v.findViewById(R.id.tvAcc);
         cvImgview = (CardView)v.findViewById(R.id.llimgview);
 
+        char[] chars = {'\''};
+        new InputFilters().etCapsTextWatcherNoSpaceAtFirst(etOutlet, null, chars);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
         cvImgview.setVisibility(View.GONE);
@@ -244,6 +249,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         cbOutlet.setEnabled(false);
 
         lnOutlet.setVisibility(View.GONE);
+        lnRadio_dokter.setVisibility(View.GONE);
         spnOutlet.setVisibility(View.GONE);
 
         try {
@@ -448,8 +454,14 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 if (cbOutlet.isChecked()==true){
                     spnOutlet.setVisibility(View.GONE);
                     etOutlet.setVisibility(View.VISIBLE);
+                    if (mapActivity.get(spnActivity.getSelectedItem())==1){
+                        lnRadio_dokter.setVisibility(View.VISIBLE);
+                    }else {
+                        lnRadio_dokter.setVisibility(View.GONE);
+                    }
                 }else {
                     etOutlet.setVisibility(View.GONE);
+                    lnRadio_dokter.setVisibility(View.GONE);
                     spnOutlet.setVisibility(View.VISIBLE);
                 }
             }
@@ -466,13 +478,8 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-//                        long id = spnArea.getSelectedItemId();
-//                        int position = spnArea.getSelectedItemPosition();
-//                        String obj = spnArea.getSelectedItem().toString();
-//                        String obj2 = spnArea.getItemAtPosition(0).toString();
-
+//                        Toast.makeText(getContext(), etOutlet.getText().toString().replaceAll(" ", "").trim(), Toast.LENGTH_SHORT).show();
                         saveData();
-//                        dialog.dismiss();
                     }
                 });
 
@@ -771,18 +778,22 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 dataPlan.setTxtProgramVisitSubActivityId(new clsActivity().GenerateGuid());
                 if (mapActivity.get(spnActivity.getSelectedItem()) == 1) {
                     if (cbOutlet.isChecked()){
-                        dataPlan.setTxtDokterName(etOutlet.getText().toString());
-                        dataPlan.setTxtDokterId(etOutlet.getText().toString());
+                        dataPlan.setBitNew(true);
+                        dataPlan.setTxtDokterName(etOutlet.getText().toString().trim());
+                        dataPlan.setTxtDokterId(etOutlet.getText().toString().replaceAll(" ", "").trim());
                     }else {
+                        dataPlan.setBitNew(false);
                         dataPlan.setTxtDokterId(mapOutlet.get(spnOutlet.getSelectedItem()));
                         dataPlan.setTxtDokterName(spnOutlet.getSelectedItem().toString());
                     }
 
                 }else if (mapActivity.get(spnActivity.getSelectedItem())==2){
                     if (cbOutlet.isChecked()){
-                        dataPlan.setTxtApotekId(etOutlet.getText().toString());
-                        dataPlan.setTxtApotekName(etOutlet.getText().toString());
+                        dataPlan.setBitNew(true);
+                        dataPlan.setTxtApotekId(etOutlet.getText().toString().trim());
+                        dataPlan.setTxtApotekName(etOutlet.getText().toString().replaceAll(" ", "").trim());
                     }else {
+                        dataPlan.setBitNew(false);
                         dataPlan.setTxtApotekId(mapOutlet.get(spnOutlet.getSelectedItem()));
                         dataPlan.setTxtApotekName(spnOutlet.getSelectedItem().toString());
                     }
@@ -854,6 +865,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
 
 //                createUnplan(visitHeader, dataPlan, data);
                 createNewUnplan(visitHeader, dataPlan, data);
+
 
             } catch (ParseException e) {
                 e.printStackTrace();
