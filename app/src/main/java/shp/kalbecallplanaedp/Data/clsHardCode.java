@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Created by Rian Andrivani on 11/7/2017.
+ * Created Dewi on 11/7/2017.
+ * 
  */
 
 public class clsHardCode {
