@@ -94,7 +94,8 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".MainMenu"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -124,12 +125,14 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name=".ImageViewerActivity">
+        <activity android:name=".ImageViewerActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainMenu" />
         </activity>
-        <activity android:name=".PDFViewer">
+        <activity android:name=".PDFViewer"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainMenu" />
@@ -162,7 +165,8 @@
         <!-- &lt;!&ndash;<action android:name="android.intent.action.INPUT_METHOD_CHANGED" />&ndash;&gt; -->
         <!-- </intent-filter> -->
         <!-- </receiver> -->
-        <activity android:name=".ChangePasswordActivity">
+        <activity android:name=".ChangePasswordActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainMenu" />
