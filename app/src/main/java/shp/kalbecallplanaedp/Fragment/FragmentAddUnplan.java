@@ -969,7 +969,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     }
 
     List<VMDownloadFile> vmList = new ArrayList<>();
-    private void  createNewUnplan(tProgramVisit header, tProgramVisitSubActivity visitPlan, tRealisasiVisitPlan dataRealisasi, mDokter dokter, mApotek apotek) {
+    private void  createNewUnplan(tProgramVisit header, tProgramVisitSubActivity visitPlan, tRealisasiVisitPlan dataRealisasi, final mDokter dokter, final mApotek apotek) {
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
         pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -1003,7 +1003,6 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
             ListOfDatamAPotek.add(apotek);
         }
 
-
         final clsPushData dtJson = new clsHelperBL().pushDataNew(versionName, getContext(), ListOftProgramVisit, ListOftProgramSubActivity,ListoftRealisasiVisitData, ListOfDatamDokter, ListOfDatamAPotek);
         String linkPushData = new clsHardCode().linkCreateUnplan;
         new VolleyUtils().makeJsonObjectRequestPushData(getContext(), linkPushData, dtJson, pDialog, new VolleyResponseListener() {
@@ -1035,6 +1034,11 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                                 dataHeader.setDtStart(new clsActivity().parseDate(model.getData().getDataHeader().getDtStart()));
                                 dataHeader.setDtEnd(new clsActivity().parseDate(model.getData().getDataHeader().getDtEnd()));
 //                                dataHeader.setIntFlagPush(new clsHardCode().Sync);
+                            }
+                            if (mapActivity.get(spnActivity.getSelectedItem()) == 1){
+                                dokterRepo.createOrUpdate(dokter);
+                            }else {
+                                apotekRepo.createOrUpdate(apotek);
                             }
                             visitRepo.createOrUpdate(dataHeader);
                             visitSubActivityRepo.createOrUpdate(dataPlan);
