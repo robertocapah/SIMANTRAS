@@ -25,6 +25,13 @@ public class mDokter implements Serializable {
     private String txtSpecialist;
 
     public String Property_txtId = "txtId";
+    public String Property_txtFirstName = "txtFirstName";
+    public String Property_txtLastName = "txtLastName";
+    public String Property_txtGender = "txtGender";
+    public String Property_txtType = "txtType";
+    public String Property_txtSpecialist = "txtSpecialist";
+    public String Property_ListOfDatamDokter = "ListOfDatamDokter";
+
 
     public String getTxtId() {
         return txtId;

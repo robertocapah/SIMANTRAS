@@ -20,6 +20,10 @@ public class mApotek implements Serializable{
     private String txtKecName;
 
     public String Property_txtCode = "txtCode";
+    public String Property_txtName = "txtName";
+    public String Property_txtKecId = "txtKecId";
+    public String Property_txtKecName = "txtKecName";
+    public String Property_ListOfDatamApotek = "ListOfDatamApotek";
 
     public String getTxtCode() {
         return txtCode;

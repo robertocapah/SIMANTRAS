@@ -43,6 +43,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -139,6 +141,8 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     Button btnCreate, btnViewMap, btnRefreshMap;
     private ImageView imgCamera1, imgCamera2;
     LinearLayout lnOutlet, lnRadio_dokter;
+    RadioGroup rgGender;
+    RadioButton rbGender;
     public List<String> listArea = new ArrayList<>();
     public HashMap<String, String> mapArea = new HashMap<>();
     public List<String> listActivity = new ArrayList<>();
@@ -172,6 +176,8 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     boolean isCreateNotification = false;
 
     tProgramVisitSubActivity dataPlan;
+    mDokter dokter;
+    mApotek apotek;
     tRealisasiVisitPlan data;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -201,6 +207,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         btnCreate = (Button)v.findViewById(R.id.button_add_unplan);
         lnOutlet = (LinearLayout)v.findViewById(R.id.ln_cb_unplan);
         lnRadio_dokter = (LinearLayout)v.findViewById(R.id.ln_rdDokter);
+        rgGender = (RadioGroup)v.findViewById(R.id.radio);
 
         btnViewMap = (Button) v.findViewById(R.id.btnViewMap);
         btnRefreshMap = (Button) v.findViewById(R.id.btnRefreshMaps);
@@ -478,7 +485,8 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-//                        Toast.makeText(getContext(), etOutlet.getText().toString().replaceAll(" ", "").trim(), Toast.LENGTH_SHORT).show();
+//                        String nama = etOutlet.getText().toString().trim().substring(etOutlet.getText().toString().trim().indexOf(" "), etOutlet.getText().toString().trim().length()).trim();
+//                        Toast.makeText(getContext(), nama, Toast.LENGTH_SHORT).show();
                         saveData();
                     }
                 });
@@ -611,6 +619,10 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     }
     private void onAreaSelected(){
         try {
+            listActivity.clear();
+            mapActivity.clear();
+            listActivity.add("Select One");
+            mapActivity.put("Select One", 0);
             listdtActivity = (List<mActivity>) activityRepo.findAll();
             if (listdtActivity!=null&&listdtActivity.size()>0){
                 for (int i = 0; i <listdtActivity.size(); i++){
@@ -781,6 +793,14 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                         dataPlan.setBitNew(true);
                         dataPlan.setTxtDokterName(etOutlet.getText().toString().trim());
                         dataPlan.setTxtDokterId(etOutlet.getText().toString().replaceAll(" ", "").trim());
+                        dokter = new mDokter();
+                        dokter.setTxtId(dataPlan.getTxtDokterId());
+                        dokter.setTxtFirstName(etOutlet.getText().toString().trim().substring(0, etOutlet.getText().toString().trim().indexOf(" ")));
+                        dokter.setTxtLastName(etOutlet.getText().toString().trim().substring(etOutlet.getText().toString().trim().indexOf(" "), etOutlet.getText().toString().trim().length()).trim());
+                        rbGender = (RadioButton)v.findViewById(rgGender.getCheckedRadioButtonId());
+                        dokter.setTxtGender(rbGender.getText().toString().substring(0,1));
+                        dokter.setTxtSpecialist("1");
+                        dokter.setTxtType("1");
                     }else {
                         dataPlan.setBitNew(false);
                         dataPlan.setTxtDokterId(mapOutlet.get(spnOutlet.getSelectedItem()));
@@ -790,8 +810,13 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 }else if (mapActivity.get(spnActivity.getSelectedItem())==2){
                     if (cbOutlet.isChecked()){
                         dataPlan.setBitNew(true);
-                        dataPlan.setTxtApotekId(etOutlet.getText().toString().trim());
-                        dataPlan.setTxtApotekName(etOutlet.getText().toString().replaceAll(" ", "").trim());
+                        dataPlan.setTxtApotekId(etOutlet.getText().toString().replaceAll(" ", "").trim());
+                        dataPlan.setTxtApotekName(etOutlet.getText().toString().trim());
+                        apotek = new mApotek();
+                        apotek.setTxtCode(etOutlet.getText().toString().replaceAll(" ", "").trim());
+                        apotek.setTxtName(etOutlet.getText().toString().trim());
+                        apotek.setTxtKecId(mapArea.get(spnArea.getSelectedItem()));
+                        apotek.setTxtKecName(spnArea.getSelectedItem().toString());
                     }else {
                         dataPlan.setBitNew(false);
                         dataPlan.setTxtApotekId(mapOutlet.get(spnOutlet.getSelectedItem()));
@@ -817,8 +842,8 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
                 data.setIntRoleID(dtUserLogin.getIntRoleID());
                 if (mapActivity.get(spnActivity.getSelectedItem()) == 1) {
                     if (cbOutlet.isChecked()){
-                        data.setTxtDokterName(etOutlet.getText().toString());
-                        data.setTxtDokterId(etOutlet.getText().toString());
+                        data.setTxtDokterName(etOutlet.getText().toString().trim());
+                        data.setTxtDokterId(etOutlet.getText().toString().replaceAll(" ", "").trim());
                     }else {
                         data.setTxtDokterId(mapOutlet.get(spnOutlet.getSelectedItem()));
                         data.setTxtDokterName(spnOutlet.getSelectedItem().toString());
@@ -826,8 +851,8 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
 
                 }else if (mapActivity.get(spnActivity.getSelectedItem())==2){
                     if (cbOutlet.isChecked()){
-                        data.setTxtApotekId(etOutlet.getText().toString());
-                        data.setTxtApotekName(etOutlet.getText().toString());
+                        data.setTxtApotekId(etOutlet.getText().toString().replaceAll(" ", "").trim());
+                        data.setTxtApotekName(etOutlet.getText().toString().trim());
                     }else {
                         data.setTxtApotekId(mapOutlet.get(spnOutlet.getSelectedItem()));
                         data.setTxtApotekName(spnOutlet.getSelectedItem().toString());
@@ -864,7 +889,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
 //                realisasiVisitPlanRepo.createOrUpdate(data);
 
 //                createUnplan(visitHeader, dataPlan, data);
-                createNewUnplan(visitHeader, dataPlan, data);
+                createNewUnplan(visitHeader, dataPlan, data, dokter, apotek);
 
 
             } catch (ParseException e) {
@@ -944,7 +969,7 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
     }
 
     List<VMDownloadFile> vmList = new ArrayList<>();
-    private void  createNewUnplan(tProgramVisit header, tProgramVisitSubActivity visitPlan, tRealisasiVisitPlan dataRealisasi) {
+    private void  createNewUnplan(tProgramVisit header, tProgramVisitSubActivity visitPlan, tRealisasiVisitPlan dataRealisasi, mDokter dokter, mApotek apotek) {
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
         pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -966,12 +991,20 @@ public class FragmentAddUnplan extends Fragment implements IOBackPressed, Handle
         List<tProgramVisitSubActivity> ListOftProgramSubActivity = new ArrayList<>();
         List<tProgramVisit> ListOftProgramVisit = new ArrayList<>();
         List<tRealisasiVisitPlan> ListoftRealisasiVisitData = new ArrayList<>();
+        List<mDokter> ListOfDatamDokter = new ArrayList<>();
+        List<mApotek> ListOfDatamAPotek = new ArrayList<>();
 
         ListOftProgramVisit.add(header);
         ListOftProgramSubActivity.add(visitPlan);
         ListoftRealisasiVisitData.add(dataRealisasi);
+        if (mapActivity.get(spnActivity.getSelectedItem()) == 1){
+            ListOfDatamDokter.add(dokter);
+        }else {
+            ListOfDatamAPotek.add(apotek);
+        }
 
-        final clsPushData dtJson = new clsHelperBL().pushDataNew(versionName, getContext(), ListOftProgramVisit, ListOftProgramSubActivity,ListoftRealisasiVisitData);
+
+        final clsPushData dtJson = new clsHelperBL().pushDataNew(versionName, getContext(), ListOftProgramVisit, ListOftProgramSubActivity,ListoftRealisasiVisitData, ListOfDatamDokter, ListOfDatamAPotek);
         String linkPushData = new clsHardCode().linkCreateUnplan;
         new VolleyUtils().makeJsonObjectRequestPushData(getContext(), linkPushData, dtJson, pDialog, new VolleyResponseListener() {
             @Override

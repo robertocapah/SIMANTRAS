@@ -24,6 +24,8 @@ public class clsDataJson {
     private List<tMaintenanceDetail> ListOfDatatMaintenanceDetail;
     private List<tInfoProgramHeader> ListOfDatatInfoProogramHeader;
     private List<tInfoProgramDetail> ListOfDatatInfoProgramDetail;
+    private List<mDokter> ListOfDatamDokter;
+    private List<mApotek> ListOfDatamApotek;
 
     private String txtUserId;
     private String txtSessionLogiId;
@@ -133,6 +135,22 @@ public class clsDataJson {
         ListOfDatatInfoProgramDetail = listOfDatatInfoProgramDetail;
     }
 
+    public List<mDokter> getListOfDatamDokter() {
+        return ListOfDatamDokter;
+    }
+
+    public void setListOfDatamDokter(List<mDokter> listOfDatamDokter) {
+        ListOfDatamDokter = listOfDatamDokter;
+    }
+
+    public List<mApotek> getListOfDatamApotek() {
+        return ListOfDatamApotek;
+    }
+
+    public void setListOfDatamApotek(List<mApotek> listOfDatamApotek) {
+        ListOfDatamApotek = listOfDatamApotek;
+    }
+
     public String getTxtUserId() {
         return txtUserId;
     }
@@ -224,6 +242,36 @@ public class clsDataJson {
             for (mUserLogin data : this.getListDatamUserLogin()){
                 JSONObject item = new JSONObject();
             }
+        }
+
+        if (this.getListOfDatamDokter()!=null&&isFromUnplan()){
+            mDokter dokter = new mDokter();
+            itemLIstQuery = new ArrayList<>();
+            for (mDokter data : this.getListOfDatamDokter()){
+                JSONObject item = new JSONObject();
+                item.put(dokter.Property_txtId, String.valueOf(data.getTxtId()));
+                item.put(dokter.Property_txtFirstName, String.valueOf(data.getTxtFirstName()));
+                item.put(dokter.Property_txtLastName, String.valueOf(data.getTxtLastName()));
+                item.put(dokter.Property_txtGender, String.valueOf(data.getTxtGender()));
+                item.put(dokter.Property_txtSpecialist, String.valueOf(data.getTxtSpecialist()));
+                item.put(dokter.Property_txtType, String.valueOf(data.getTxtType()));
+                itemLIstQuery.add(item);
+            }
+            resJson.put(dokter.Property_ListOfDatamDokter, new JSONArray(itemLIstQuery));
+        }
+
+        if (this.getListOfDatamApotek()!=null&&isFromUnplan()){
+            mApotek apotek = new mApotek();
+            itemLIstQuery = new ArrayList<>();
+            for (mApotek data : this.getListOfDatamApotek()){
+                JSONObject item = new JSONObject();
+                item.put(apotek.Property_txtCode, String.valueOf(data.getTxtCode()));
+                item.put(apotek.Property_txtName, String.valueOf(data.getTxtName()));
+                item.put(apotek.Property_txtKecId, String.valueOf(data.getTxtKecId()));
+                item.put(apotek.Property_txtKecName, String.valueOf(data.getTxtKecName()));
+                itemLIstQuery.add(item);
+            }
+            resJson.put(apotek.Property_ListOfDatamApotek, new JSONArray(itemLIstQuery));
         }
 
         if (this.getListDataOftProgramVisit()!=null&&isFromUnplan()){

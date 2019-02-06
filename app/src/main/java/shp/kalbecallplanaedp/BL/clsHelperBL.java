@@ -26,8 +26,10 @@ import shp.kalbecallplanaedp.Common.clsDataError;
 import shp.kalbecallplanaedp.Common.clsDataJson;
 import shp.kalbecallplanaedp.Common.clsPushData;
 import shp.kalbecallplanaedp.Common.clsToken;
+import shp.kalbecallplanaedp.Common.mApotek;
 import shp.kalbecallplanaedp.Common.mConfigData;
 import shp.kalbecallplanaedp.Common.mCounterData;
+import shp.kalbecallplanaedp.Common.mDokter;
 import shp.kalbecallplanaedp.Common.mUserLogin;
 import shp.kalbecallplanaedp.Common.tAkuisisiDetail;
 import shp.kalbecallplanaedp.Common.tAkuisisiHeader;
@@ -205,7 +207,7 @@ public class clsHelperBL {
         return dtclsPushData;
     }
 
-    public clsPushData pushDataNew(String versionName, Context context,List<tProgramVisit> programVisit, List<tProgramVisitSubActivity> programVisitSubActivity, List<tRealisasiVisitPlan> realisasiVisitPlan){
+    public clsPushData pushDataNew(String versionName, Context context,List<tProgramVisit> programVisit, List<tProgramVisitSubActivity> programVisitSubActivity, List<tRealisasiVisitPlan> realisasiVisitPlan, List<mDokter> dokters, List<mApotek> apoteks){
         clsPushData dtclsPushData = new clsPushData();
         clsDataJson dtPush = new clsDataJson();
         mUserLoginRepo loginRepo = new mUserLoginRepo(context);
@@ -238,10 +240,15 @@ public class clsHelperBL {
             List<tProgramVisitSubActivity> ListOftProgramSubActivity = new ArrayList<>();
             List<tProgramVisit> ListOftProgramVisit = new ArrayList<>();
             List<tRealisasiVisitPlan> ListoftRealisasiVisitData = new ArrayList<>();
+            List<mDokter> ListOfDatamDokter = new ArrayList<>();
+            List<mApotek> ListOfDatamAPotek = new ArrayList<>();
 
                 ListOftProgramSubActivity = programVisitSubActivity;
                 ListOftProgramVisit = programVisit;
                 ListoftRealisasiVisitData = realisasiVisitPlan;
+                ListOfDatamAPotek = apoteks;
+                ListOfDatamDokter = dokters;
+
 
             FileUpload = new HashMap<>();
             dtPush.setFromUnplan(true);
@@ -265,6 +272,14 @@ public class clsHelperBL {
                         FileUpload.put("Visit" + data.getTxtRealisasiVisitId() + "-2", data.getBlobImg2());
                     }
                 }
+            }
+
+            if (ListOfDatamDokter!=null){
+                dtPush.setListOfDatamDokter(ListOfDatamDokter);
+            }
+
+            if (ListOfDatamAPotek!=null){
+                dtPush.setListOfDatamApotek(ListOfDatamAPotek);
             }
 
         }else {

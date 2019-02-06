@@ -86,6 +86,8 @@ public class HomeFragment extends Fragment {
         tRealisasiVisitPlan dataCheckinActive = (tRealisasiVisitPlan) repoRealisasi.getDataCheckinActive();
         List<tRealisasiVisitPlan> listRealisasi = (List<tRealisasiVisitPlan>) repoRealisasi.getAllRealisasi();
         List<tRealisasiVisitPlan> listPlan = (List<tRealisasiVisitPlan>) repoRealisasi.getAllPlan();
+        final boolean isDataReady = new clsMainBL().isDataReady(getContext());
+
         if (listRealisasi!=null){
             tvRealisasi_home.setText(String.valueOf(listRealisasi.size()));
         }
@@ -121,18 +123,24 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 //                int a = 5/0;
-                Bundle bundle = new Bundle();
-                bundle.putString(FRAG_VIEW, "Plan");
-                new Tools().intentFragmentSetArgument(FragmentHeaderCallPlan.class, "Call Plan", getContext(), bundle);
+                if (isDataReady){
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FRAG_VIEW, "Plan");
+                    new Tools().intentFragmentSetArgument(FragmentHeaderCallPlan.class, "Call Plan", getContext(), bundle);
+                }
+
             }
         });
 
         ln_realisasi_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString(FRAG_VIEW, "Realisasi");
-                new Tools().intentFragmentSetArgument(FragmentHeaderCallPlan.class, "Call Plan", getContext(), bundle);
+                if (isDataReady){
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FRAG_VIEW, "Realisasi");
+                    new Tools().intentFragmentSetArgument(FragmentHeaderCallPlan.class, "Call Plan", getContext(), bundle);
+                }
+
             }
         });
 
