@@ -6,10 +6,8 @@ import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,13 +16,9 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -36,18 +30,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
-import android.text.InputFilter;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,42 +56,23 @@ import com.google.gson.GsonBuilder;
 import shp.template.BL.clsActivity;
 import shp.template.BL.clsHelperBL;
 import shp.template.BL.clsMainBL;
-import shp.template.Common.clsPhotoProfile;
-import shp.template.Common.clsPushData;
 import shp.template.Common.clsStatusMenuStart;
 import shp.template.Common.clsToken;
-import shp.template.Common.mMenuData;
 import shp.template.Common.mUserLogin;
-import shp.template.Common.tNotification;
-import shp.template.Common.tProgramVisitSubActivity;
-import shp.template.Common.tRealisasiVisitPlan;
 import shp.template.Data.DatabaseHelper;
 import shp.template.Data.DatabaseManager;
 import shp.template.Data.VolleyResponseListener;
-import shp.template.Data.VolleyUtils;
 import shp.template.Data.clsHardCode;
-import shp.template.Fragment.FragementInfoProgram;
-import shp.template.Fragment.FragementMaintenance;
-import shp.template.Fragment.FragmentAkuisisi;
-import shp.template.Fragment.FragmentDownloadData;
-import shp.template.Fragment.FragmentHeaderCallPlan;
 import shp.template.Fragment.FragmentNotification;
 import shp.template.Fragment.FragmentPushData;
 import shp.template.Fragment.FragmentSetting;
-import shp.template.Repo.clsPhotoProfilRepo;
 import shp.template.Repo.clsTokenRepo;
 import shp.template.Repo.enumStatusMenuStart;
 import shp.template.Repo.mConfigRepo;
-import shp.template.Repo.mMenuRepo;
 import shp.template.Repo.mUserLoginRepo;
-import shp.template.Repo.tNotificationRepo;
-import shp.template.Repo.tProgramVisitSubActivityRepo;
-import shp.template.Repo.tRealisasiVisitPlanRepo;
 import shp.template.ResponseDataJson.loginMobileApps.LoginMobileApps;
-import shp.template.ResponseDataJson.responsePushData.ResponsePushData;
 import shp.template.Service.MyServiceNative;
 import shp.template.Utils.AuthenticatorUtil;
-import shp.template.Utils.CircularTextView;
 import shp.template.Utils.IOBackPressed;
 
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
@@ -112,21 +82,13 @@ import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.leolin.shortcutbadger.ShortcutBadgeException;
@@ -451,10 +413,7 @@ public class MainMenu extends AppCompatActivity implements GoogleApiClient.Conne
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            FragmentDownloadData fragmentDownloadData = new FragmentDownloadData();
-                            FragmentTransaction fragmentTransactionDownloadData = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionDownloadData.replace(R.id.frame, fragmentDownloadData);
-                            fragmentTransactionDownloadData.commit();
+
                             selectedId = 99;
                             break;
                         case R.id.mnCallPlan:
@@ -465,10 +424,7 @@ public class MainMenu extends AppCompatActivity implements GoogleApiClient.Conne
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 //                        FragmentListCallPlan fragmentCallPlan = new FragmentListCallPlan();
-                            FragmentHeaderCallPlan fragmentCallPlan = new FragmentHeaderCallPlan();
-                            FragmentTransaction fragmentTransactionCallPlan = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionCallPlan.replace(R.id.frame, fragmentCallPlan);
-                            fragmentTransactionCallPlan.commit();
+
                             selectedId = 99;
                             break;
                         case R.id.mnAkusisi:
@@ -478,11 +434,7 @@ public class MainMenu extends AppCompatActivity implements GoogleApiClient.Conne
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            FragmentAkuisisi fragmentAkuisisi = new FragmentAkuisisi();
-                            FragmentTransaction fragmentTransactionAkuisisi = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionAkuisisi.replace(R.id.frame, fragmentAkuisisi);
-                            fragmentTransactionAkuisisi.commit();
-                            selectedId = 99;
+
                             break;
                         case R.id.mnMaintenance:
                             checkNavItem = null;
@@ -491,11 +443,7 @@ public class MainMenu extends AppCompatActivity implements GoogleApiClient.Conne
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            FragementMaintenance fragmentMaintenance = new FragementMaintenance();
-                            FragmentTransaction fragmentTransactionMaintenance = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionMaintenance.replace(R.id.frame, fragmentMaintenance);
-                            fragmentTransactionMaintenance.commit();
-                            selectedId = 99;
+
                             break;
 
                         case R.id.mnInfoProgram:
@@ -505,11 +453,7 @@ public class MainMenu extends AppCompatActivity implements GoogleApiClient.Conne
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            FragementInfoProgram fragementInfoProgram = new FragementInfoProgram();
-                            FragmentTransaction fragmentTransactionInfoProgram = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionInfoProgram.replace(R.id.frame, fragementInfoProgram);
-                            fragmentTransactionInfoProgram.commit();
-                            selectedId = 99;
+
 
                             break;
                         case R.id.mnNotification:

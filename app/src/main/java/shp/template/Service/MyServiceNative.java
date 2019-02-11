@@ -103,7 +103,7 @@ public class MyServiceNative extends Service {
                             if (isStatus==true){
                                 if (model.getData().getModelData()!=null){
                                     if (model.getData().getModelData().size()>0){
-                                        new  clsHelperBL().SavePushData(getApplicationContext(), dtJson.getDataJson(), model);
+//                                        new  clsHelperBL().SavePushData(getApplicationContext(), dtJson.getDataJson(), model);
                                     }
                                 }
                             }

@@ -9,15 +9,9 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import shp.template.Common.VMDownloadFile;
-import shp.template.Common.mFileAttachment;
 import shp.template.Common.mUserLogin;
-import shp.template.Common.tAkuisisiDetail;
-import shp.template.Common.tRealisasiVisitPlan;
 import shp.template.Data.clsHardCode;
-import shp.template.Repo.mFileAttachmentRepo;
 import shp.template.Repo.mUserLoginRepo;
-import shp.template.Repo.tAkuisisiDetailRepo;
-import shp.template.Repo.tRealisasiVisitPlanRepo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,7 +46,7 @@ public class LongThread implements Runnable {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                try {
+                /*try {
                     if (data.getGroupDownload().equals(new clsHardCode().INFO_PROGRAM)){
                         mFileAttachment datum = (mFileAttachment) new mFileAttachmentRepo(context).findById(Integer.parseInt(data.getTxtId()));
                         datum.setBlobFile(file);
@@ -76,7 +70,7 @@ public class LongThread implements Runnable {
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
-                }
+                }*/
 //                Toast.makeText(context, String.valueOf(file), Toast.LENGTH_SHORT).show();
                 sendMessage(threadNo, "Thread Completed");
             }

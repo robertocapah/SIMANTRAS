@@ -10,12 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import shp.template.BL.clsMainBL;
-import shp.template.Common.mFileAttachment;
 import shp.template.Common.mUserLogin;
-import shp.template.Common.tAkuisisiDetail;
-import shp.template.Repo.mFileAttachmentRepo;
 import shp.template.Repo.mUserLoginRepo;
-import shp.template.Repo.tAkuisisiDetailRepo;
 import shp.template.Utils.TouchImageView;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 
@@ -38,7 +34,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.getString(ZOOM_IMAGE)!=null){
-                tAkuisisiDetailRepo detailRepo = new tAkuisisiDetailRepo(getApplicationContext());
+                /*tAkuisisiDetailRepo detailRepo = new tAkuisisiDetailRepo(getApplicationContext());
                 tAkuisisiDetail data = null;
                 try {
                     data = (tAkuisisiDetail) detailRepo.findByDetailId(bundle.getString(ZOOM_IMAGE));
@@ -47,21 +43,18 @@ public class ImageViewerActivity extends AppCompatActivity {
                 }
                 Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(data.getTxtImg());
                 if (bitmap!=null)
-                imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);*/
             }else if (bundle.getInt(ZOOM_IMAGE_INFO)!=0){
-//                tInfoProgramDetailRepo detailRepo = new tInfoProgramDetailRepo(getApplicationContext());
-//                tInfoProgramDetail dtDetail = null;
-                mFileAttachment attach = null;
+                /*mFileAttachment attach = null;
                 try {
                     attach = (mFileAttachment) new mFileAttachmentRepo(getApplicationContext()).findById(bundle.getInt(ZOOM_IMAGE_INFO));
-//                    dtDetail = (tInfoProgramDetail) detailRepo.findByDetailId(bundle.getString(ZOOM_IMAGE_INFO));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
                 byte[] arrayImage = new clsMainBL().arrayDecryptFile(attach.getBlobFile());
                 Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(arrayImage);
                 if (bitmap!=null)
-                imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);*/
             }else if (bundle.getString(ZOOM_PROFILE)!=null){
                 try {
                     dtLogin = (mUserLogin) new mUserLoginRepo(getApplicationContext()).findByTxtId(bundle.getString(ZOOM_PROFILE));

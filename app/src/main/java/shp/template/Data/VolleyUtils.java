@@ -459,11 +459,7 @@ public class VolleyUtils {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                try {
-                    params.put("txtParam", mRequestBody.getDataJson().txtJSON().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
                 return params;
             }
 
@@ -541,11 +537,7 @@ public class VolleyUtils {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                try {
-                    params.put("txtParam", mRequestBody.getDataJson().txtJSON().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
                 return params;
             }
 
