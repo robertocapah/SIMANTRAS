@@ -28,7 +28,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <shp.kalbecallplanaedp.Utils.CustomViewPager
+    <shp.template.Utils.CustomViewPager
         android:id="@+id/view_pager_InfoProgram"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

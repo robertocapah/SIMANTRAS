@@ -43,7 +43,7 @@
 
 
 
-    <shp.kalbecallplanaedp.Utils.CustomViewPager
+    <shp.template.Utils.CustomViewPager
         android:id="@+id/view_pager_akuisisi"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
