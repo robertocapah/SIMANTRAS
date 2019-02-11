@@ -56,7 +56,7 @@ public class RecyclerGridPickAccountAdapter extends RecyclerView.Adapter<Recycle
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        View convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_list_app, parent, false);
+        View convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_list_pick_account, parent, false);
         int height = parent.getMeasuredHeight() / 4;
         convertView.setMinimumHeight(height);
         vh = new ViewHolder(convertView);
