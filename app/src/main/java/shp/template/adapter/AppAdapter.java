@@ -1,4 +1,4 @@
-package shp.template.Common;
+package shp.template.adapter;
 
 import android.content.Context;
 import android.view.View;
