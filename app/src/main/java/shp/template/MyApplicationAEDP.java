@@ -4,11 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import shp.template.BL.clsMainBL;
-import shp.template.Common.mUserLogin;
-import shp.template.Common.tLogError;
-import shp.template.Data.clsHardCode;
-import shp.template.Repo.tLogErrorRepo;
+import shp.template.BL.BLMain;
+import shp.template.Common.ClsmUserLogin;
+import shp.template.Common.ClstLogError;
+import shp.template.Data.ClsHardCode;
+import shp.template.Repo.RepotLogError;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 
 import org.acra.ACRA;
@@ -60,14 +60,14 @@ public class MyApplicationAEDP extends Application {
 
         mContext = getApplicationContext();
         ACRA.init(this);
-        mUserLogin dtUserLogin = new clsMainBL().getUserLogin(mContext);
-        List<tLogError> dataError = new tLogErrorRepo(mContext).getAllPushData();
-        tLogError logError = new tLogError();
+        ClsmUserLogin dtUserLogin = new BLMain().getUserLogin(mContext);
+        List<ClstLogError> dataError = new RepotLogError(mContext).getAllPushData();
+        ClstLogError logError = new ClstLogError();
         if (dataError!=null){
             if (dataError.size()>0){
                 boolean exist = false;
                 String txtGuiId = "";
-                for (tLogError data : dataError){
+                for (ClstLogError data : dataError){
                     if (data.getTxtFileName().equals(fileName)){
                         txtGuiId = data.getTxtGuiId();
                         exist = true;
@@ -86,8 +86,8 @@ public class MyApplicationAEDP extends Application {
         }else {
             logError.setTxtGuiId(GenerateGuid());
         }
-        new UriData().getOutputFolder(new clsHardCode().txtFolderTemp);
-        String txtPath = new clsHardCode().txtFolderTemp;
+        new UriData().getOutputFolder(new ClsHardCode().txtFolderTemp);
+        String txtPath = new ClsHardCode().txtFolderTemp;
 //        ACRA.getErrorReporter().handleSilentException(new RuntimeException("whatever I want"));
         ACRA.getErrorReporter().setReportSender(new LocalReportSenderAcra(mContext,txtPath, dtUserLogin, logError, fileName));
 //        ACRA.getErrorReporter().checkReportsOnApplicationStart();

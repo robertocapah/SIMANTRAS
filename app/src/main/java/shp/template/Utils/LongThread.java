@@ -8,17 +8,13 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.util.Log;
 
-import shp.template.Common.VMDownloadFile;
-import shp.template.Common.mUserLogin;
-import shp.template.Data.clsHardCode;
-import shp.template.Repo.mUserLoginRepo;
+import shp.template.ViewModel.VmDownloadFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.SQLException;
 
 /**
  * Created by Dewi Oktaviani on 11/22/2018.
@@ -27,11 +23,11 @@ import java.sql.SQLException;
 public class LongThread implements Runnable {
     int threadNo;
     Handler handler;
-    VMDownloadFile data;
+    VmDownloadFile data;
     public static final String TAG = "LongThread";
     Context context;
 
-    public LongThread(Context context, int threadNo, VMDownloadFile data, Handler handler) {
+    public LongThread(Context context, int threadNo, VmDownloadFile data, Handler handler) {
         this.threadNo = threadNo;
         this.handler = handler;
         this.data = data;
@@ -47,26 +43,26 @@ public class LongThread implements Runnable {
             @Override
             public void run() {
                 /*try {
-                    if (data.getGroupDownload().equals(new clsHardCode().INFO_PROGRAM)){
+                    if (data.getGroupDownload().equals(new ClsHardCode().INFO_PROGRAM)){
                         mFileAttachment datum = (mFileAttachment) new mFileAttachmentRepo(context).findById(Integer.parseInt(data.getTxtId()));
                         datum.setBlobFile(file);
                         new mFileAttachmentRepo(context).createOrUpdate(datum);
-                    }else if (data.getGroupDownload().equals(new clsHardCode().AKUISISI)){
+                    }else if (data.getGroupDownload().equals(new ClsHardCode().AKUISISI)){
                         tAkuisisiDetail datum = new tAkuisisiDetailRepo(context).findByDetailId(data.getTxtId());
                         datum.setTxtImg(file);
                         new tAkuisisiDetailRepo(context).createOrUpdate(datum);
-                    }else if (data.getGroupDownload().equals(new clsHardCode().REALISASI_SATU)){
+                    }else if (data.getGroupDownload().equals(new ClsHardCode().REALISASI_SATU)){
                         tRealisasiVisitPlan datum = new tRealisasiVisitPlanRepo(context).findBytxtId(data.getTxtId());
                         datum.setBlobImg1(file);
                         new tRealisasiVisitPlanRepo(context).createOrUpdate(datum);
-                    }else if (data.getGroupDownload().equals(new clsHardCode().REALISASI_DUA)){
+                    }else if (data.getGroupDownload().equals(new ClsHardCode().REALISASI_DUA)){
                         tRealisasiVisitPlan datum = new tRealisasiVisitPlanRepo(context).findBytxtId(data.getTxtId());
                         datum.setBlobImg2(file);
                         new tRealisasiVisitPlanRepo(context).createOrUpdate(datum);
-                    }else if (data.getGroupDownload().equals(new clsHardCode().LOGIN)){
-                        mUserLogin datum = new mUserLoginRepo(context).findByTxtId(data.getTxtId());
+                    }else if (data.getGroupDownload().equals(new ClsHardCode().LOGIN)){
+                        ClsmUserLogin datum = new RepomUserLogin(context).findByTxtId(data.getTxtId());
                         datum.setBlobImg(file);
-                        new mUserLoginRepo(context).createOrUpdate(datum);
+                        new RepomUserLogin(context).createOrUpdate(datum);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -86,7 +82,7 @@ public class LongThread implements Runnable {
     private Bitmap getBitmap(String url) {
         Bitmap bitmap = null;
         try {
-            // Download Image from URL
+            // Download ClsImage from URL
             InputStream input = new URL(url).openStream();
             // Decode Bitmap
             bitmap = BitmapFactory.decodeStream(input);

@@ -9,10 +9,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
-import shp.template.LoginActivity;
-import shp.template.PickAccountActivity;
+import shp.template.ActivityLogin;
+import shp.template.ActivityPickAccount;
 
 import com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral;
 import com.oktaviani.dewi.mylibrary.authenticator.RecyclerGridPickAccountAdapter;
@@ -49,7 +48,7 @@ public class AuthenticatorUtil{
                     boolean newAccount = bnd.getBoolean(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
                     final Account availableAccounts[] = countingAccount(mAccountManager);
 
-                    Intent intent = new Intent(context, LoginActivity.class);
+                    Intent intent = new Intent(context, ActivityLogin.class);
                     intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, accountType);
                     intent.putExtra(AccountGeneral.ARG_AUTH_TYPE, authTokenType);
                     intent.putExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, newAccount);
@@ -79,7 +78,7 @@ public class AuthenticatorUtil{
                 name[i] = availableAccounts[i].name;
             }
 
-            Intent myIntent = new Intent(context, PickAccountActivity.class);
+            Intent myIntent = new Intent(context, ActivityPickAccount.class);
             myIntent.putExtra(ARG_ARRAY_ACCOUNT_AVAILABLE, availableAccounts);
             myIntent.putExtra(ARG_ARRAY_ACCOUNT_NAME, name);
             context.finish();
@@ -101,7 +100,7 @@ public class AuthenticatorUtil{
         String accountType = account.type;
         final String password = mAccountManager.getPassword(account);
         accounts = new String[]{userName, password, accountType, authTokenType};
-        new PickAccountActivity().getRole(accounts, activity, mAccountManager);
+        new ActivityPickAccount().getRole(accounts, activity, mAccountManager);
         Log.d("kalbe", "GetToken Bundle is ");
     }
 

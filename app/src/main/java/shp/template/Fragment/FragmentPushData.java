@@ -18,24 +18,24 @@ import android.widget.ExpandableListView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import shp.template.BL.clsHelperBL;
-import shp.template.BL.clsMainBL;
-import shp.template.Common.clsPushData;
-import shp.template.Common.clsToken;
-import shp.template.Common.mUserLogin;
+
+import shp.template.ActivitySplash;
+import shp.template.BL.BLHelper;
+import shp.template.BL.BLMain;
+import shp.template.Common.ClsPushData;
+import shp.template.Common.ClsToken;
+import shp.template.Common.ClsmUserLogin;
+import shp.template.Data.ClsHardCode;
 import shp.template.Data.DatabaseHelper;
 import shp.template.Data.DatabaseManager;
-import shp.template.Data.VolleyResponseListener;
+import shp.template.Data.InterfaceVolleyResponseListener;
 import shp.template.Data.VolleyUtils;
-import shp.template.Data.clsHardCode;
-import shp.template.Model.clsListItemAdapter;
+import shp.template.Model.ClsListItemAdapter;
 import shp.template.R;
-import shp.template.Repo.clsTokenRepo;
+import shp.template.Repo.RepoclsToken;
 import shp.template.ResponseDataJson.loginMobileApps.LoginMobileApps;
-import shp.template.ResponseDataJson.responsePushData.ResponsePushData;
-import shp.template.Service.MyServiceNative;
-import shp.template.SplashActivity;
-import shp.template.adapter.ExpandableListAdapter;
+import shp.template.Service.ServiceNative;
+import shp.template.adapter.AdapterExpandableList;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;
@@ -53,14 +53,14 @@ import java.util.List;
 public class FragmentPushData extends Fragment{
     View v;
     ExpandableListView mExpandableListView;
-    ExpandableListAdapter mExpandableListAdapter;
-    private static List<clsListItemAdapter> swipeListPlan = new ArrayList<>();
-    private static List<clsListItemAdapter> swipeListUnplan = new ArrayList<>();
-    private static List<clsListItemAdapter> swipeListAkuisisi = new ArrayList<>();
-    private static List<clsListItemAdapter> swipeListMaintenance = new ArrayList<>();
-    private static List<clsListItemAdapter> swipeListInfoProgram = new ArrayList<>();
+    AdapterExpandableList mAdapterExpandableList;
+    private static List<ClsListItemAdapter> swipeListPlan = new ArrayList<>();
+    private static List<ClsListItemAdapter> swipeListUnplan = new ArrayList<>();
+    private static List<ClsListItemAdapter> swipeListAkuisisi = new ArrayList<>();
+    private static List<ClsListItemAdapter> swipeListMaintenance = new ArrayList<>();
+    private static List<ClsListItemAdapter> swipeListInfoProgram = new ArrayList<>();
     private static List<String> listDataHeader = new ArrayList<>();
-    private static HashMap<String, List<clsListItemAdapter>> listDataChild = new HashMap<>();
+    private static HashMap<String, List<ClsListItemAdapter>> listDataChild = new HashMap<>();
 
 
     FloatingActionButton button_push_data;
@@ -68,8 +68,8 @@ public class FragmentPushData extends Fragment{
     private Gson gson;
     ProgressDialog pDialog;
     String myValue;
-    List<clsToken> dataToken;
-    clsTokenRepo tokenRepo;
+    List<ClsToken> dataToken;
+    RepoclsToken tokenRepo;
 
     @Nullable
     @Override
@@ -84,7 +84,7 @@ public class FragmentPushData extends Fragment{
 
         if(this.getArguments()!=null){
             myValue = this.getArguments().getString("message");
-            getContext().stopService(new Intent(getContext(), MyServiceNative.class));
+            getContext().stopService(new Intent(getContext(), ServiceNative.class));
             NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancelAll();
         }
@@ -123,11 +123,11 @@ public class FragmentPushData extends Fragment{
             // TODO Auto-generated catch block
             e2.printStackTrace();
         }
-        final clsPushData dtJson = new clsHelperBL().pushData(versionName, getContext());
+        final ClsPushData dtJson = new BLHelper().pushData(versionName, getContext());
         if (dtJson == null){
         }else {
-            String linkPushData = new clsHardCode().linkPushData;
-            new VolleyUtils().makeJsonObjectRequestPushData(getContext(), linkPushData, dtJson, pDialog, new VolleyResponseListener() {
+            String linkPushData = new ClsHardCode().linkPushData;
+            new VolleyUtils().makeJsonObjectRequestPushData(getContext(), linkPushData, dtJson, pDialog, new InterfaceVolleyResponseListener() {
                 @Override
                 public void onError(String message) {
                     new ToastCustom().showToasty(getContext(),message,4);
@@ -160,25 +160,25 @@ public class FragmentPushData extends Fragment{
 
 
 
-        mExpandableListAdapter = new shp.template.adapter.ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
-        mExpandableListView.setAdapter(mExpandableListAdapter);
+        mAdapterExpandableList = new AdapterExpandableList(getActivity(), listDataHeader, listDataChild);
+        mExpandableListView.setAdapter(mAdapterExpandableList);
         mExpandableListView.setEmptyView(v.findViewById(R.id.ln_empty));
 //    mExpandableListView.addFooterView(btn_push_error);
     }
 
     private void logout() {
-        String strLinkAPI = new clsHardCode().linkLogout;
+        String strLinkAPI = new ClsHardCode().linkLogout;
         JSONObject resJson = new JSONObject();
-        mUserLogin dtLogin = new clsMainBL().getUserLogin(getContext());
+        ClsmUserLogin dtLogin = new BLMain().getUserLogin(getContext());
         JSONObject dataJson = new JSONObject();
 
 
         try {
             dataJson.put("GuiId", dtLogin.getTxtGuID() );
-            tokenRepo = new clsTokenRepo(getContext());
-            dataToken = (List<clsToken>) tokenRepo.findAll();
+            tokenRepo = new RepoclsToken(getContext());
+            dataToken = (List<ClsToken>) tokenRepo.findAll();
             resJson.put("data", dataJson);
-            resJson.put("device_info", new clsHardCode().pDeviceInfo());
+            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
             resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -187,7 +187,7 @@ public class FragmentPushData extends Fragment{
         }
         final String mRequestBody = resJson.toString();
 
-        new clsHelperBL().volleyLogin(getActivity(), strLinkAPI, mRequestBody, "Logout....",false, new VolleyResponseListener() {
+        new BLHelper().volleyLogin(getActivity(), strLinkAPI, mRequestBody, "Logout....",false, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 new ToastCustom().showToasty(getContext(),message,4);
@@ -206,10 +206,10 @@ public class FragmentPushData extends Fragment{
 
                         if (txtStatus == true){
 
-                            getActivity().stopService(new Intent(getContext(), MyServiceNative.class));
+                            getActivity().stopService(new Intent(getContext(), ServiceNative.class));
                             NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
-                            new clsMainBL().deleteMediaStorage();
+                            new BLMain().deleteMediaStorage();
                             clearData();
 
                             Log.d("Data info", "logout Success");
@@ -227,7 +227,7 @@ public class FragmentPushData extends Fragment{
 
 
     private void clearData() {
-        Intent intent = new Intent(getContext(), SplashActivity.class);
+        Intent intent = new Intent(getContext(), ActivitySplash.class);
         DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
         helper.clearDataAfterLogout();
         getActivity().finish();
@@ -254,11 +254,11 @@ public class FragmentPushData extends Fragment{
 //            // TODO Auto-generated catch block
 //            e2.printStackTrace();
 //        }
-//        final clsPushData dtJson = new clsHelperBL().pushDataError(versionName, getContext());
+//        final ClsPushData dtJson = new BLHelper().pushDataError(versionName, getContext());
 //        if (dtJson == null){
 //        }else {
-//            String linkPushData = new clsHardCode().linkPushDataError;
-//            new VolleyUtils().makeJsonObjectRequestPushError(getContext(), linkPushData, dtJson, pDialog, new VolleyResponseListener() {
+//            String linkPushData = new ClsHardCode().linkPushDataError;
+//            new VolleyUtils().makeJsonObjectRequestPushError(getContext(), linkPushData, dtJson, pDialog, new InterfaceVolleyResponseListener() {
 //                @Override
 //                public void onError(String message) {
 //                    ToastCustom.showToasty(getContext(),message,4);
@@ -280,7 +280,7 @@ public class FragmentPushData extends Fragment{
 //                                if (dtJson.getDataError().getListOfDatatLogError()!=null){
 //                                    if (dtJson.getDataError().getListOfDatatLogError().size()>0){
 //                                        for (int i = 0; i < dtJson.getDataError().getListOfDatatLogError().size(); i++){
-//                                            new tLogErrorRepo(getContext()).delete(dtJson.getDataError().getListOfDatatLogError().get(i));
+//                                            new RepotLogError(getContext()).delete(dtJson.getDataError().getListOfDatatLogError().get(i));
 //                                        }
 //                                    }
 //                                }

@@ -49,7 +49,7 @@ public class Data{
 	@SerializedName("txtLinkFotoProfile")
 	private String txtLinkFotoProfile;
 
-	@SerializedName("mUserRole")
+	@SerializedName("ClsmUserRole")
 	private MUserRole mUserRole;
 
 	@SerializedName("BitActive")
@@ -245,7 +245,7 @@ public class Data{
 			",intUserID = '" + intUserID + '\'' + 
 			",txtEmpID = '" + txtEmpID + '\'' + 
 			",txtLinkFotoProfile = '" + txtLinkFotoProfile + '\'' + 
-			",mUserRole = '" + mUserRole + '\'' + 
+			",ClsmUserRole = '" + mUserRole + '\'' +
 			",bitActive = '" + bitActive + '\'' + 
 			",txtPassword = '" + txtPassword + '\'' + 
 			",txtCreateBy = '" + txtCreateBy + '\'' + 

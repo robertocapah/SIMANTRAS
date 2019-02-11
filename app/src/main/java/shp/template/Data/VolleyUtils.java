@@ -19,14 +19,14 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import shp.template.BL.clsHelperBL;
-import shp.template.Common.clsPushData;
-import shp.template.Common.clsToken;
-import shp.template.Common.mConfigData;
-import shp.template.Common.mUserLogin;
-import shp.template.Repo.clsTokenRepo;
-import shp.template.Repo.mConfigRepo;
-import shp.template.SplashActivity;
+import shp.template.BL.BLHelper;
+import shp.template.Common.ClsPushData;
+import shp.template.Common.ClsToken;
+import shp.template.Common.ClsmConfigData;
+import shp.template.Common.ClsmUserLogin;
+import shp.template.Repo.RepoclsToken;
+import shp.template.Repo.RepomConfig;
+import shp.template.ActivitySplash;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.apache.http.HttpStatus;
@@ -45,8 +45,8 @@ import java.util.Map;
 
 public class VolleyUtils {
     String access_token,clientId = "";
-    List<clsToken> dataToken;
-    public void makeJsonObjectRequestToken(final Context activity, String strLinkAPI, final String username, final String password, final String clientId, String progressBarType, final VolleyResponseListener listener) {
+    List<ClsToken> dataToken;
+    public void makeJsonObjectRequestToken(final Context activity, String strLinkAPI, final String username, final String password, final String clientId, String progressBarType, final InterfaceVolleyResponseListener listener) {
         final ProgressDialog Dialog = new ProgressDialog(activity);
         Dialog.setMessage(progressBarType);
         Dialog.setCancelable(false);
@@ -116,7 +116,7 @@ public class VolleyUtils {
                 builder.setPositiveButton("REFRESH", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        new SplashActivity().requestToken(activity);
+                        new ActivitySplash().requestToken(activity);
                         dialog.dismiss();
                     }
                 });
@@ -160,7 +160,7 @@ public class VolleyUtils {
         queue.add(req);
     }
 
-    public void requestTokenWithRefresh(final Context activity, String strLinkAPI, final String refreshToken, final String clientId, final VolleyResponseListener listener) {
+    public void requestTokenWithRefresh(final Context activity, String strLinkAPI, final String refreshToken, final String clientId, final InterfaceVolleyResponseListener listener) {
         StringRequest req = new StringRequest(Request.Method.POST, strLinkAPI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -218,8 +218,8 @@ public class VolleyUtils {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 try {
-                    mConfigData configDataUser = (mConfigData) new mConfigRepo(activity.getApplicationContext()).findById(5);
-                    mConfigData configDataClient = (mConfigData) new mConfigRepo(activity.getApplicationContext()).findById(4);
+                    ClsmConfigData configDataUser = (ClsmConfigData) new RepomConfig(activity.getApplicationContext()).findById(5);
+                    ClsmConfigData configDataClient = (ClsmConfigData) new RepomConfig(activity.getApplicationContext()).findById(4);
                     params.put("grant_type", "password");
                     params.put("client_id", configDataClient.getTxtDefaultValue().toString());
                     params.put("refresh_token", refreshToken);
@@ -242,7 +242,7 @@ public class VolleyUtils {
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
         queue.add(req);
     }
-    public void requestTokenWithRefresh2(final Context activity, String strLinkAPI, final String username, final String refreshToken, final String clientId, final VolleyResponseListener listener) {
+    public void requestTokenWithRefresh2(final Context activity, String strLinkAPI, final String username, final String refreshToken, final String clientId, final InterfaceVolleyResponseListener listener) {
         StringRequest req = new StringRequest(Request.Method.POST, strLinkAPI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -316,7 +316,7 @@ public class VolleyUtils {
         queue.add(req);
     }
 
-    public void makeJsonObjectRequestPushData(final Context ctx, String strLinkAPI, final clsPushData mRequestBody, final ProgressDialog pDialog, final VolleyResponseListener listener) {
+    public void makeJsonObjectRequestPushData(final Context ctx, String strLinkAPI, final ClsPushData mRequestBody, final ProgressDialog pDialog, final InterfaceVolleyResponseListener listener) {
         final String[] body = new String[1];
         final String[] message = new String[1];
 
@@ -330,7 +330,7 @@ public class VolleyUtils {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String strLinkAPI = new clsHardCode().linkToken;
+                String strLinkAPI = new ClsHardCode().linkToken;
                 final String refresh_token = dataToken.get(0).txtRefreshToken;
                 NetworkResponse networkResponse = error.networkResponse;
                 String msg = "";
@@ -347,12 +347,12 @@ public class VolleyUtils {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    mConfigRepo configRepo = new mConfigRepo(ctx);
-                    mConfigData configDataClient = null;
-                    mConfigData configDataUser = null;
+                    RepomConfig configRepo = new RepomConfig(ctx);
+                    ClsmConfigData configDataClient = null;
+                    ClsmConfigData configDataUser = null;
                     try {
-                        configDataClient = (mConfigData) configRepo.findById(4);
-                        configDataUser = (mConfigData) configRepo.findById(5);
+                        configDataClient = (ClsmConfigData) configRepo.findById(4);
+                        configDataUser = (ClsmConfigData) configRepo.findById(5);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -360,7 +360,7 @@ public class VolleyUtils {
                     String username = configDataUser.getTxtDefaultValue().toString();
                     clientId = configDataClient.getTxtDefaultValue().toString();
 //                    Activity activity = (Activity)ctx;
-                    new VolleyUtils().requestTokenWithRefresh2(ctx, strLinkAPI, username, refresh_token, clientId, new VolleyResponseListener() {
+                    new VolleyUtils().requestTokenWithRefresh2(ctx, strLinkAPI, username, refresh_token, clientId, new InterfaceVolleyResponseListener() {
                         @Override
                         public void onError(String message) {
                             new ToastCustom().showToasty(ctx,message,4);
@@ -379,13 +379,13 @@ public class VolleyUtils {
                                     refreshToken = jsonObject.getString("refresh_token");
                                     String dtIssued = jsonObject.getString(".issued");
 
-                                    clsToken data = new clsToken();
+                                    ClsToken data = new ClsToken();
                                     data.setIntId("1");
                                     data.setDtIssuedToken(dtIssued);
                                     data.setTxtUserToken(accessToken);
                                     data.setTxtRefreshToken(refreshToken);
 
-                                    clsTokenRepo tokenRepo = new clsTokenRepo(ctx);
+                                    RepoclsToken tokenRepo = new RepoclsToken(ctx);
                                     tokenRepo.createOrUpdate(data);
 //                                    Toast.makeText(ctx, "Success get new Access Token", Toast.LENGTH_SHORT).show();
                                     newRefreshToken = refreshToken;
@@ -447,7 +447,7 @@ public class VolleyUtils {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                dataToken = new clsHelperBL().getDataToken(ctx);
+                dataToken = new BLHelper().getDataToken(ctx);
                 access_token = dataToken.get(0).getTxtUserToken();
 //                access_token = "BRIVeCejVsSyXviEg56KyrqRl3ZjhrK7qanAeIEsJGJYWQhjhTVk-DHV7Mlsbdsx3ddSPB-zxBmRpoIynoA7tU2rU5qnmgT6-4aGjdF5XS__rVPcZDdqyTRIFSbW9CkAMX476bCdUZwnzr_5uCocTPgpPupl-ppyJ2GRm2n3rzNDDlgxYlS4raRDBUSwl_Bdicy9OfDr2Idci-5Kfnx5yYUOGUxGh6msTpP9fFpc4WkJR2CdLWNsZgcZRYhZBjNhx9TOwgki1LXFdVzbpEy1u_7FyQ3bJuKCo6k3rwg-i21IOF0BjXJYVhluFLpAkZQW81NyJfRYMlAeUAFMQcc_PS8zbmfuMIm-EJi_qj2Y_mJogttj-8sn7Vd-qLLJKnHU";
                 HashMap<String, String> headers = new HashMap<>();
@@ -490,7 +490,7 @@ public class VolleyUtils {
         RequestQueue queue = Volley.newRequestQueue(ctx.getApplicationContext());
         queue.add(multipartRequest);
     }
-    public void makeJsonObjectRequestPushDataBackground(final Context ctx, String strLinkAPI, final clsPushData mRequestBody, final VolleyResponseListener listener) {
+    public void makeJsonObjectRequestPushDataBackground(final Context ctx, String strLinkAPI, final ClsPushData mRequestBody, final InterfaceVolleyResponseListener listener) {
 //        strLinkAPI =  strLinkAPI+"?txtParam=\"test\"";
         RequestQueue queue = null;
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, strLinkAPI, new Response.Listener<String>() {
@@ -525,7 +525,7 @@ public class VolleyUtils {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                dataToken = new clsHelperBL().getDataToken(ctx);
+                dataToken = new BLHelper().getDataToken(ctx);
                 access_token = dataToken.get(0).getTxtUserToken();
 //                access_token = "BRIVeCejVsSyXviEg56KyrqRl3ZjhrK7qanAeIEsJGJYWQhjhTVk-DHV7Mlsbdsx3ddSPB-zxBmRpoIynoA7tU2rU5qnmgT6-4aGjdF5XS__rVPcZDdqyTRIFSbW9CkAMX476bCdUZwnzr_5uCocTPgpPupl-ppyJ2GRm2n3rzNDDlgxYlS4raRDBUSwl_Bdicy9OfDr2Idci-5Kfnx5yYUOGUxGh6msTpP9fFpc4WkJR2CdLWNsZgcZRYhZBjNhx9TOwgki1LXFdVzbpEy1u_7FyQ3bJuKCo6k3rwg-i21IOF0BjXJYVhluFLpAkZQW81NyJfRYMlAeUAFMQcc_PS8zbmfuMIm-EJi_qj2Y_mJogttj-8sn7Vd-qLLJKnHU";
                 HashMap<String, String> headers = new HashMap<>();
@@ -576,7 +576,7 @@ public class VolleyUtils {
         queue.add(multipartRequest);
     }
 
-    public void changeProfile(final Context ctx, String strLinkAPI, final String mRequestBody, final ProgressDialog progressDialog, final mUserLogin dtLogin, final VolleyResponseListener listener) {
+    public void changeProfile(final Context ctx, String strLinkAPI, final String mRequestBody, final ProgressDialog progressDialog, final ClsmUserLogin dtLogin, final InterfaceVolleyResponseListener listener) {
 //        strLinkAPI =  strLinkAPI+"?txtParam=\"test\"";
         final String[] body = new String[1];
         final String[] message = new String[1];
@@ -591,7 +591,7 @@ public class VolleyUtils {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String strLinkAPI = new clsHardCode().linkToken;
+                String strLinkAPI = new ClsHardCode().linkToken;
                 final String refresh_token = dataToken.get(0).txtRefreshToken;
                 NetworkResponse networkResponse = error.networkResponse;
                 String msg = "";
@@ -609,7 +609,7 @@ public class VolleyUtils {
                         e.printStackTrace();
                     }
 
-                    new VolleyUtils().requestTokenWithRefresh(ctx, strLinkAPI, refresh_token, clientId, new VolleyResponseListener() {
+                    new VolleyUtils().requestTokenWithRefresh(ctx, strLinkAPI, refresh_token, clientId, new InterfaceVolleyResponseListener() {
                         @Override
                         public void onError(String message) {
                             new ToastCustom().showToasty(ctx,message,4);
@@ -628,13 +628,13 @@ public class VolleyUtils {
                                     refreshToken = jsonObject.getString("refresh_token");
                                     String dtIssued = jsonObject.getString(".issued");
 
-                                    clsToken data = new clsToken();
+                                    ClsToken data = new ClsToken();
                                     data.setIntId("1");
                                     data.setDtIssuedToken(dtIssued);
                                     data.setTxtUserToken(accessToken);
                                     data.setTxtRefreshToken(refreshToken);
 
-                                    clsTokenRepo tokenRepo = new clsTokenRepo(ctx);
+                                    RepoclsToken tokenRepo = new RepoclsToken(ctx);
                                     tokenRepo.createOrUpdate(data);
                                     Toast.makeText(ctx, "Success get new Access Token", Toast.LENGTH_SHORT).show();
                                     newRefreshToken = refreshToken;
@@ -716,7 +716,7 @@ public class VolleyUtils {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                dataToken = new clsHelperBL().getDataToken(ctx);
+                dataToken = new BLHelper().getDataToken(ctx);
                 access_token = dataToken.get(0).getTxtUserToken();
 //                access_token = "BRIVeCejVsSyXviEg56KyrqRl3ZjhrK7qanAeIEsJGJYWQhjhTVk-DHV7Mlsbdsx3ddSPB-zxBmRpoIynoA7tU2rU5qnmgT6-4aGjdF5XS__rVPcZDdqyTRIFSbW9CkAMX476bCdUZwnzr_5uCocTPgpPupl-ppyJ2GRm2n3rzNDDlgxYlS4raRDBUSwl_Bdicy9OfDr2Idci-5Kfnx5yYUOGUxGh6msTpP9fFpc4WkJR2CdLWNsZgcZRYhZBjNhx9TOwgki1LXFdVzbpEy1u_7FyQ3bJuKCo6k3rwg-i21IOF0BjXJYVhluFLpAkZQW81NyJfRYMlAeUAFMQcc_PS8zbmfuMIm-EJi_qj2Y_mJogttj-8sn7Vd-qLLJKnHU";
                 HashMap<String, String> headers = new HashMap<>();
@@ -754,7 +754,7 @@ public class VolleyUtils {
         queue.add(multipartRequest);
     }
 
-    public void makeJsonObjectRequestPushError(final Context ctx, String strLinkAPI, final clsPushData mRequestBody, final ProgressDialog pDialog, final VolleyResponseListener listener) {
+    public void makeJsonObjectRequestPushError(final Context ctx, String strLinkAPI, final ClsPushData mRequestBody, final ProgressDialog pDialog, final InterfaceVolleyResponseListener listener) {
         final String[] body = new String[1];
         final String[] message = new String[1];
 
@@ -768,7 +768,7 @@ public class VolleyUtils {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String strLinkAPI = new clsHardCode().linkToken;
+                String strLinkAPI = new ClsHardCode().linkToken;
                 final String refresh_token = dataToken.get(0).txtRefreshToken;
                 NetworkResponse networkResponse = error.networkResponse;
                 String msg = "";
@@ -786,7 +786,7 @@ public class VolleyUtils {
                         e.printStackTrace();
                     }
 
-                    new VolleyUtils().requestTokenWithRefresh(ctx, strLinkAPI, refresh_token, clientId, new VolleyResponseListener() {
+                    new VolleyUtils().requestTokenWithRefresh(ctx, strLinkAPI, refresh_token, clientId, new InterfaceVolleyResponseListener() {
                         @Override
                         public void onError(String message) {
                             new ToastCustom().showToasty(ctx,message,4);
@@ -805,13 +805,13 @@ public class VolleyUtils {
                                     refreshToken = jsonObject.getString("refresh_token");
                                     String dtIssued = jsonObject.getString(".issued");
 
-                                    clsToken data = new clsToken();
+                                    ClsToken data = new ClsToken();
                                     data.setIntId("1");
                                     data.setDtIssuedToken(dtIssued);
                                     data.setTxtUserToken(accessToken);
                                     data.setTxtRefreshToken(refreshToken);
 
-                                    clsTokenRepo tokenRepo = new clsTokenRepo(ctx);
+                                    RepoclsToken tokenRepo = new RepoclsToken(ctx);
                                     tokenRepo.createOrUpdate(data);
 //                                    Toast.makeText(ctx, "Success get new Access Token", Toast.LENGTH_SHORT).show();
                                     newRefreshToken = refreshToken;
@@ -874,7 +874,7 @@ public class VolleyUtils {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                dataToken = new clsHelperBL().getDataToken(ctx);
+                dataToken = new BLHelper().getDataToken(ctx);
                 access_token = dataToken.get(0).getTxtUserToken();
 //                access_token = "BRIVeCejVsSyXviEg56KyrqRl3ZjhrK7qanAeIEsJGJYWQhjhTVk-DHV7Mlsbdsx3ddSPB-zxBmRpoIynoA7tU2rU5qnmgT6-4aGjdF5XS__rVPcZDdqyTRIFSbW9CkAMX476bCdUZwnzr_5uCocTPgpPupl-ppyJ2GRm2n3rzNDDlgxYlS4raRDBUSwl_Bdicy9OfDr2Idci-5Kfnx5yYUOGUxGh6msTpP9fFpc4WkJR2CdLWNsZgcZRYhZBjNhx9TOwgki1LXFdVzbpEy1u_7FyQ3bJuKCo6k3rwg-i21IOF0BjXJYVhluFLpAkZQW81NyJfRYMlAeUAFMQcc_PS8zbmfuMIm-EJi_qj2Y_mJogttj-8sn7Vd-qLLJKnHU";
                 HashMap<String, String> headers = new HashMap<>();

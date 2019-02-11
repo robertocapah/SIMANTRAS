@@ -82,7 +82,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name="shp.template.SplashActivity">
+        <activity android:name="shp.template.ActivitySplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -90,7 +90,7 @@
             </intent-filter >
         </activity>
         <activity
-            android:name="shp.template.MainMenu"
+            android:name="shp.template.ActivityMainMenu"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 
@@ -102,12 +102,12 @@
             android:value="AIzaSyDY5hiO3G32n4Tbkwan549NgM0zjFdhfUM" />
 
         <activity
-            android:name="shp.template.PickAccountActivity"
+            android:name="shp.template.ActivityPickAccount"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="shp.template.LoginActivity"
+            android:name="shp.template.ActivityLogin"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
@@ -122,20 +122,20 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name="shp.template.ImageViewerActivity"
+        <activity android:name="shp.template.ActivityImageViewer"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="shp.template.MainMenu" />
+                android:value="shp.template.ActivityMainMenu" />
         </activity>
-        <activity android:name="shp.template.PDFViewer"
+        <activity android:name="shp.template.ActivityPDFViewer"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="shp.template.MainMenu" />
+                android:value="shp.template.ActivityMainMenu" />
         </activity>
 
-        <service android:name="shp.template.Service.MyServiceNative">
+        <service android:name="shp.template.Service.ServiceNative">
             <intent-filter>
                 <action android:name=".Service.MyServiceNative" />
             </intent-filter>
@@ -162,11 +162,11 @@
         <!-- &lt;!&ndash;<action android:name="android.intent.action.INPUT_METHOD_CHANGED" />&ndash;&gt; -->
         <!-- </intent-filter> -->
         <!-- </receiver> -->
-        <activity android:name="shp.template.ChangePasswordActivity"
+        <activity android:name="shp.template.ActivityChangePasswordActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="shp.template.MainMenu" />
+                android:value="shp.template.ActivityMainMenu" />
         </activity>
         <activity android:name="eu.janmuller.android.simplecropimage.CropImage" />
     </application>

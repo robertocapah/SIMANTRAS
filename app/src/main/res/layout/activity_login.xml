@@ -6,7 +6,7 @@
     android:layout_height="fill_parent"
     android:fillViewport="true"
     android:background="@color/grey_10"
-    tools:context=".LoginActivity">
+    tools:context=".ActivityLogin">
 
     <!--<View-->
         <!--android:layout_width="match_parent"-->

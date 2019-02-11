@@ -4,10 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import shp.template.Common.mUserLogin;
-import shp.template.Common.tLogError;
-import shp.template.Data.clsHardCode;
-import shp.template.Repo.tLogErrorRepo;
+import shp.template.Common.ClsmUserLogin;
+import shp.template.Common.ClstLogError;
+import shp.template.Data.ClsHardCode;
+import shp.template.Repo.RepotLogError;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickFile;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 
@@ -42,10 +42,10 @@ public class LocalReportSenderAcra implements ReportSender {
     static SimpleDateFormat dateFormats = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     String fileName;
     String path;
-    mUserLogin dtLogin;
-    tLogError logError;
+    ClsmUserLogin dtLogin;
+    ClstLogError logError;
     Context mContext;
-    public LocalReportSenderAcra(Context mContext, String path, mUserLogin dtLogin, tLogError logError, String fileName) {
+    public LocalReportSenderAcra(Context mContext, String path, ClsmUserLogin dtLogin, ClstLogError logError, String fileName) {
         // the destination
         this.mContext = mContext;
         this.dtLogin = dtLogin;
@@ -87,7 +87,7 @@ public class LocalReportSenderAcra implements ReportSender {
 //        final Map<String, String> finalReport = remap(errorContent);
 //
 //        try {
-////            mUserLogin dtUserLogin = new clsMainBL().getUserLogin(context);
+////            ClsmUserLogin dtUserLogin = new BLMain().getUserLogin(context);
 //            BufferedWriter buf = new BufferedWriter(crashReport);
 //
 //            Set<Map.Entry<String, String>> set = finalReport.entrySet();
@@ -121,8 +121,8 @@ public class LocalReportSenderAcra implements ReportSender {
 //            logError.setTxtFileName(fileName);
 //            logError.setDtDateLog(dateFormats.format(new Date()));
 //            logError.setBlobImg(file);
-//            logError.setIntFlagPush(new clsHardCode().Save);
-//            new tLogErrorRepo(mContext).createOrUpdate(logError);
+//            logError.setIntFlagPush(new ClsHardCode().Save);
+//            new RepotLogError(mContext).createOrUpdate(logError);
 //        } catch (IOException e) {
 //            Log.e("TAG", "IO ERROR", e);
 //        }
@@ -185,8 +185,8 @@ public class LocalReportSenderAcra implements ReportSender {
             logError.setTxtFileName(fileName);
             logError.setDtDateLog(dateFormats.format(new Date()));
             logError.setBlobImg(file);
-            logError.setIntFlagPush(new clsHardCode().Save);
-            new tLogErrorRepo(mContext).createOrUpdate(logError);
+            logError.setIntFlagPush(new ClsHardCode().Save);
+            new RepotLogError(mContext).createOrUpdate(logError);
         } catch (IOException e) {
             Log.e("TAG", "IO ERROR", e);
         } catch (SQLException e) {

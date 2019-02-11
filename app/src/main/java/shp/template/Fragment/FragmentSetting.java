@@ -24,24 +24,25 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import shp.template.BL.clsActivity;
-import shp.template.BL.clsHelperBL;
-import shp.template.BL.clsMainBL;
-import shp.template.ChangePasswordActivity;
-import shp.template.Common.VMUploadFoto;
-import shp.template.Common.clsPushData;
-import shp.template.Common.clsToken;
-import shp.template.Common.mUserLogin;
-import shp.template.Data.VolleyResponseListener;
+
+import shp.template.ActivityMainMenu;
+import shp.template.BL.BLActivity;
+import shp.template.BL.BLHelper;
+import shp.template.BL.BLMain;
+import shp.template.ActivityChangePasswordActivity;
+import shp.template.Common.ClsToken;
+import shp.template.Common.ClsmUserLogin;
+import shp.template.Data.ClsHardCode;
+import shp.template.Data.InterfaceVolleyResponseListener;
+import shp.template.ViewModel.VmUploadFoto;
+import shp.template.Common.ClsPushData;
 import shp.template.Data.VolleyUtils;
-import shp.template.Data.clsHardCode;
-import shp.template.ImageViewerActivity;
-import shp.template.MainMenu;
+import shp.template.ActivityImageViewer;
 import shp.template.R;
 
-import shp.template.Repo.clsTokenRepo;
-import shp.template.Repo.mUserLoginRepo;
-import shp.template.Repo.tLogErrorRepo;
+import shp.template.Repo.RepoclsToken;
+import shp.template.Repo.RepomUserLogin;
+import shp.template.Repo.RepotLogError;
 import shp.template.ResponseDataJson.PushLogError.PushLogError;
 import shp.template.ResponseDataJson.loginMobileApps.LoginMobileApps;
 import com.kalbe.mobiledevknlibs.Helper.clsMainActivity;
@@ -81,20 +82,20 @@ public class FragmentSetting extends Fragment{
     CircleImageView ivProfile;
     FloatingActionButton fab;
     private static final int CAMERA_REQUEST_PROFILE = 100;
-    private static final String IMAGE_DIRECTORY_NAME = "Image Personal";
+    private static final String IMAGE_DIRECTORY_NAME = "ClsImage Personal";
     final int SELECT_FILE_PROFILE = 150;
     private static Bitmap photoProfile, mybitmapImageProfile;
     private static byte[] phtProfile;
     private static ByteArrayOutputStream output = new ByteArrayOutputStream();
     final int PIC_CROP_PROFILE = 130;
     private Uri uriImage,  selectedImage;
-    List<clsToken> dataToken;
-    clsTokenRepo tokenRepo;
+    List<ClsToken> dataToken;
+    RepoclsToken tokenRepo;
     private Gson gson;
-    mUserLoginRepo loginRepo;
+    RepomUserLogin loginRepo;
     ProgressDialog pDialog;
-    mUserLogin dtLogin;
-    MainMenu mm;
+    ClsmUserLogin dtLogin;
+    ActivityMainMenu mm;
     private String ZOOM_PROFILE = "photo profil";
     LinearLayout ln_error, ln_change_ps;
 
@@ -114,8 +115,8 @@ public class FragmentSetting extends Fragment{
                 selectImageProfile();
             }
         });
-        mm = (MainMenu)getActivity();
-        dtLogin = new clsMainBL().getUserLogin(getContext());
+        mm = (ActivityMainMenu)getActivity();
+        dtLogin = new BLMain().getUserLogin(getContext());
         if (dtLogin.getBlobImg()!=null){
             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
             new PickImage().previewCapturedImage(ivProfile, bitmap, 200, 200);
@@ -124,7 +125,7 @@ public class FragmentSetting extends Fragment{
         ivProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(getContext(), ImageViewerActivity.class);
+                Intent intent1 = new Intent(getContext(), ActivityImageViewer.class);
                 intent1.putExtra(ZOOM_PROFILE, dtLogin.getTxtGuID());
                 startActivity(intent1);
             }
@@ -142,7 +143,7 @@ public class FragmentSetting extends Fragment{
         ln_change_ps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
+                Intent intent = new Intent(getActivity(), ActivityChangePasswordActivity.class);
                 startActivity(intent);
             }
         });
@@ -160,8 +161,8 @@ public class FragmentSetting extends Fragment{
             public void onClick(DialogInterface dialog, int item) {
                 boolean result= PermissionChecker.Utility.checkPermission(getContext());
                 if (items[item].equals("Ambil Foto")) {
-                    uriImage = getOutputMediaImageUri(getContext(), new clsHardCode().txtFolderData, "tmp_act");
-                    new PickImage().CaptureImage(getActivity(), new clsHardCode().txtFolderData, "tmp_act",CAMERA_REQUEST_PROFILE );
+                    uriImage = getOutputMediaImageUri(getContext(), new ClsHardCode().txtFolderData, "tmp_act");
+                    new PickImage().CaptureImage(getActivity(), new ClsHardCode().txtFolderData, "tmp_act",CAMERA_REQUEST_PROFILE );
                 } else if (items[item].equals("Pilih dari Galeri")) {
                     if(result)
                         galleryIntentProfile();
@@ -175,15 +176,15 @@ public class FragmentSetting extends Fragment{
 
 //    protected void viewImageProfile() {
 //        try {
-//            repoUserImageProfile = new clsPhotoProfilRepo(getApplicationContext());
-//            dataImageProfile = (List<clsPhotoProfile>) repoUserImageProfile.findAll();
+//            repoUserImageProfile = new RepoPhotoProfil(getApplicationContext());
+//            dataImageProfile = (List<ClsPhotoProfile>) repoUserImageProfile.findAll();
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
 //        File folder = new File(Environment.getExternalStorageDirectory().toString() + "/data/data/KalbeFamily/tempdata/Foto_Profil");
 //        folder.mkdir();
 //
-//        for (clsPhotoProfile imgDt : dataImageProfile){
+//        for (ClsPhotoProfile imgDt : dataImageProfile){
 //            final byte[] imgFile = imgDt.getTxtImg();
 //            if (imgFile != null) {
 //                mybitmapImageProfile = BitmapFactory.decodeByteArray(imgFile, 0, imgFile.length);
@@ -196,7 +197,7 @@ public class FragmentSetting extends Fragment{
     // preview image profile
     private void previewCaptureImageProfile(Bitmap photo){
         try {
-            Bitmap bitmap = new clsActivity().resizeImageForBlob(photo);
+            Bitmap bitmap = new BLActivity().resizeImageForBlob(photo);
             ivProfile.setVisibility(View.VISIBLE);
             output = null;
             try {
@@ -214,7 +215,7 @@ public class FragmentSetting extends Fragment{
                 }
             }
             phtProfile = output.toByteArray();
-//            new PickImage().decodeByteArraytoImageFile(phtProfile, new clsHardCode().txtFolderData, "testing");
+//            new PickImage().decodeByteArraytoImageFile(phtProfile, new ClsHardCode().txtFolderData, "testing");
             dtLogin.setBlobImg(phtProfile);
             dtLogin.setTxtFileName("tmp_act");
             changeProfile(dtLogin);
@@ -271,7 +272,7 @@ public class FragmentSetting extends Fragment{
     private File getOutputMediaFile() {
         // External sdcard location
 
-        File mediaStorageDir = new File(new clsHardCode().txtFolderData + File.separator);
+        File mediaStorageDir = new File(new ClsHardCode().txtFolderData + File.separator);
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
@@ -325,8 +326,8 @@ public class FragmentSetting extends Fragment{
         if (requestCode == CAMERA_REQUEST_PROFILE) {
             if (resultCode == -1) {
                 try {
-//                    uriImage = getOutputMediaImageUri(getContext(), new clsHardCode().txtFolderData, "tmp_act");
-//                    PickImage.decodeByteArraytoImageFile(save, new clsHardCode().txtFolderData, "tmp_act");
+//                    uriImage = getOutputMediaImageUri(getContext(), new ClsHardCode().txtFolderData, "tmp_act");
+//                    PickImage.decodeByteArraytoImageFile(save, new ClsHardCode().txtFolderData, "tmp_act");
 //                    dtLogin.setBlobImg(save);
 //                    dtLogin.setTxtFileName("tmp_act");
 //                    Bitmap bmCameraCapture = BitmapFactory.decodeFile(uriImage.getPath());
@@ -358,7 +359,7 @@ public class FragmentSetting extends Fragment{
 //                Bitmap thePic = extras.getParcelable("data");
                 Bitmap thePic = BitmapFactory.decodeFile(uriImage.getPath());
 //                byte[] save = new PickImage().getByteImageToSaveRotate(getContext(), uriImage);
-//                new PickImage().decodeByteArraytoImageFile(save, new clsHardCode().txtFolderData, "test");
+//                new PickImage().decodeByteArraytoImageFile(save, new ClsHardCode().txtFolderData, "test");
 //                dtLogin.setBlobImg(save);
 //                dtLogin.setTxtFileName("tmp_act");
 //                changeProfile(dtLogin);
@@ -378,7 +379,7 @@ public class FragmentSetting extends Fragment{
             if(resultCode == RESULT_OK){
                 try {
                     selectedImage = data.getData();
-                    uriImage = getOutputMediaImageUri(getContext(), new clsHardCode().txtFolderData, "tmp_act");
+                    uriImage = getOutputMediaImageUri(getContext(), new ClsHardCode().txtFolderData, "tmp_act");
                     new PickFile().moveFileToSpecificUri(getContext(), data, uriImage);
                     runCropImage(uriImage.getPath());
 //                    performCropGalleryProfile();
@@ -409,7 +410,7 @@ public class FragmentSetting extends Fragment{
 //        return null;
 //    }
 
-    private void changeProfile(final mUserLogin dataLogin) {
+    private void changeProfile(final ClsmUserLogin dataLogin) {
         pDialog.setMessage("Please wait....");
         pDialog.setCancelable(false);
         pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -419,20 +420,20 @@ public class FragmentSetting extends Fragment{
             }
         });
         pDialog.show();
-        String strLinkAPI = new clsHardCode().linkChangeProfil;
+        String strLinkAPI = new ClsHardCode().linkChangeProfil;
         JSONObject resJson = new JSONObject();
 
         try {
-            tokenRepo = new clsTokenRepo(getContext());
-            dataToken = (List<clsToken>) tokenRepo.findAll();
-            VMUploadFoto dataUp = new VMUploadFoto();
+            tokenRepo = new RepoclsToken(getContext());
+            dataToken = (List<ClsToken>) tokenRepo.findAll();
+            VmUploadFoto dataUp = new VmUploadFoto();
             dataUp.setIntRoleId(dataLogin.getIntRoleID());
             dataUp.setIntUserId(dataLogin.getIntUserID());
             JSONObject userData = new JSONObject();
             userData.put("intUserId",dataLogin.getIntUserID());
             userData.put("intRoleId",dataLogin.getIntRoleID());
             resJson.put("data", userData);
-            resJson.put("device_info", new clsHardCode().pDeviceInfo());
+            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
             resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -441,7 +442,7 @@ public class FragmentSetting extends Fragment{
         }
         final String mRequestBody = resJson.toString();
 
-        new VolleyUtils().changeProfile(getContext(), strLinkAPI, mRequestBody, pDialog,  dataLogin, new VolleyResponseListener() {
+        new VolleyUtils().changeProfile(getContext(), strLinkAPI, mRequestBody, pDialog,  dataLogin, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 new ToastCustom().showToasty(getContext(),message,4);
@@ -462,10 +463,10 @@ public class FragmentSetting extends Fragment{
                         String accessToken = "dummy_access_token";
 
                         if (txtStatus == true){
-                            loginRepo = new mUserLoginRepo(getContext());
-                            mUserLogin data = dataLogin;
+                            loginRepo = new RepomUserLogin(getContext());
+                            ClsmUserLogin data = dataLogin;
                             loginRepo.createOrUpdate(data);
-                            dtLogin = new clsMainBL().getUserLogin(getContext());
+                            dtLogin = new BLMain().getUserLogin(getContext());
                             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
                             new PickImage().previewCapturedImage(ivProfile, bitmap, 200, 200);
                             new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
@@ -506,11 +507,11 @@ public class FragmentSetting extends Fragment{
             // TODO Auto-generated catch block
             e2.printStackTrace();
         }
-        final clsPushData dtJson = new clsHelperBL().pushDataError(versionName, getContext());
+        final ClsPushData dtJson = new BLHelper().pushDataError(versionName, getContext());
         if (dtJson == null){
         }else {
-            String linkPushData = new clsHardCode().linkPushDataError;
-            new VolleyUtils().makeJsonObjectRequestPushError(getContext(), linkPushData, dtJson, pDialog, new VolleyResponseListener() {
+            String linkPushData = new ClsHardCode().linkPushDataError;
+            new VolleyUtils().makeJsonObjectRequestPushError(getContext(), linkPushData, dtJson, pDialog, new InterfaceVolleyResponseListener() {
                 @Override
                 public void onError(String message) {
                     new ToastCustom().showToasty(getContext(),message,4);
@@ -531,9 +532,9 @@ public class FragmentSetting extends Fragment{
                                 if (dtJson.getDataError().getListOfDatatLogError()!=null){
                                     if (dtJson.getDataError().getListOfDatatLogError().size()>0){
                                         for (int i = 0; i < dtJson.getDataError().getListOfDatatLogError().size(); i++){
-                                            new tLogErrorRepo(getContext()).delete(dtJson.getDataError().getListOfDatatLogError().get(i));
+                                            new RepotLogError(getContext()).delete(dtJson.getDataError().getListOfDatatLogError().get(i));
                                         }
-                                        new clsMainBL().deleteMediaStorageDir();
+                                        new BLMain().deleteMediaStorageDir();
                                     }
                                 }
                                 new ToastCustom().showToasty(getContext(),"Success Push Data",1);
