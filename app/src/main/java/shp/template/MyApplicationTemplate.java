@@ -50,7 +50,7 @@ import java.util.UUID;
                 ReportField.DEVICE_ID,
                 ReportField.FILE_PATH}
 )
-public class MyApplicationAEDP extends Application {
+public class MyApplicationTemplate extends Application {
     private Context mContext;
     Date date = new Date();
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
