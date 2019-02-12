@@ -4,10 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import shp.template.Common.ClsmUserLogin;
-import shp.template.Common.ClstLogError;
+import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.Common.ClstLogError;
 import shp.template.Data.ClsHardCode;
-import shp.template.Repo.RepotLogError;
+import shp.template.Database.Repo.RepotLogError;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickFile;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 

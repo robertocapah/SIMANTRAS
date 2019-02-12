@@ -4,11 +4,11 @@ import android.content.Context;
 import android.util.Log;
 
 
-import shp.template.Common.ClsStatusMenuStart;
-import shp.template.Common.ClsmUserLogin;
+import shp.template.Database.Common.ClsStatusMenuStart;
+import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Data.ClsHardCode;
-import shp.template.Repo.EnumStatusMenuStart;
-import shp.template.Repo.RepomUserLogin;
+import shp.template.Database.Repo.EnumStatusMenuStart;
+import shp.template.Database.Repo.RepomUserLogin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

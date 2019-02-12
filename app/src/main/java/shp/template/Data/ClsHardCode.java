@@ -5,7 +5,7 @@ import android.os.Build;
 import android.os.Environment;
 
 
-import shp.template.Repo.RepomConfig;
+import shp.template.Database.Repo.RepomConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;

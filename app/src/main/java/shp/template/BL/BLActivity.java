@@ -14,8 +14,8 @@ import com.kalbe.mobiledevknlibs.library.swipemenu.bean.SwipeMenu;
 import com.kalbe.mobiledevknlibs.library.swipemenu.bean.SwipeMenuItem;
 import com.kalbe.mobiledevknlibs.library.swipemenu.interfaces.SwipeMenuCreator;
 
-import shp.template.adapter.AdapterApp;
-import shp.template.Data.ClsSwipeList;
+import shp.template.CustomView.Adapter.AdapterApp;
+import shp.template.Model.ClsSwipeList;
 import shp.template.R;
 
 import java.text.DecimalFormat;

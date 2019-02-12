@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import shp.template.BL.BLMain;
-import shp.template.Common.ClsmUserLogin;
+import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Data.ClsHardCode;
 
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;

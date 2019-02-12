@@ -5,10 +5,10 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import shp.template.BL.BLMain;
-import shp.template.Common.ClsmUserLogin;
-import shp.template.Common.ClstLogError;
+import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.Common.ClstLogError;
 import shp.template.Data.ClsHardCode;
-import shp.template.Repo.RepotLogError;
+import shp.template.Database.Repo.RepotLogError;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 
 import org.acra.ACRA;

@@ -19,7 +19,7 @@
         <!--android:background="@drawable/shape_round"-->
         <!--android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"-->
         <!--android:textColor="@color/grey_60" />-->
-    <shp.template.Utils.CircularTextView
+    <shp.template.CustomView.Utils.CircularTextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

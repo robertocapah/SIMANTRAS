@@ -43,7 +43,7 @@
 
 
 
-    <shp.template.Utils.CustomViewPager
+    <shp.template.CustomView.Utils.CustomViewPager
         android:id="@+id/view_pager_akuisisi"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

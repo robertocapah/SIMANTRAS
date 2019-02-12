@@ -11,7 +11,7 @@ import android.widget.ExpandableListView;
 import shp.template.Model.ClsItemGroupNotifAdapter;
 import shp.template.Model.ClsListItemAdapter;
 import shp.template.R;
-import shp.template.adapter.AdapterExpandableListNotif;
+import shp.template.CustomView.Adapter.AdapterExpandableListNotif;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -19,13 +19,13 @@ import com.google.gson.GsonBuilder;
 
 import shp.template.BL.BLHelper;
 import shp.template.BL.BLMain;
-import shp.template.Common.ClsToken;
-import shp.template.Common.ClsmUserLogin;
-import shp.template.Data.InterfaceVolleyResponseListener;
+import shp.template.Database.Common.ClsToken;
+import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Data.ClsHardCode;
-import shp.template.Repo.RepoclsToken;
-import shp.template.ResponseDataJson.PushLogError.PushLogError;
-import shp.template.Utils.AuthenticatorUtil;
+import shp.template.Database.Repo.RepoclsToken;
+import shp.template.Data.ResponseDataJson.PushLogError.PushLogError;
+import shp.template.CustomView.Utils.AuthenticatorUtil;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;

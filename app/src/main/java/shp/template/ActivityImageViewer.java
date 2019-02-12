@@ -9,9 +9,9 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import shp.template.Common.ClsmUserLogin;
-import shp.template.Repo.RepomUserLogin;
-import shp.template.Utils.ClsTouchImageView;
+import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.Repo.RepomUserLogin;
+import shp.template.CustomView.Utils.ClsTouchImageView;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 
 import java.sql.SQLException;
