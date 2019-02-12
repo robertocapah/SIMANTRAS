@@ -7,4 +7,4 @@
         android:id="@+id/action_submit"
         android:icon="@mipmap/ic_save_orange"
         android:title="Submit" />
-</menu>
+</menu> 
