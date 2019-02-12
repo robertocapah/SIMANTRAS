@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import shp.template.Model.ClsListItemAdapter;
+import shp.template.ViewModel.VmListItemAdapter;
 import shp.template.R;
 import shp.template.CustomView.Utils.ClsTools;
 
@@ -20,9 +20,9 @@ import java.util.List;
 
 public class AdapterAppList extends BaseAdapter{
     private Context mContext;
-    List<ClsListItemAdapter> mAppList;
+    List<VmListItemAdapter> mAppList;
 
-    public AdapterAppList(Context mContext, List<ClsListItemAdapter> mAppList){
+    public AdapterAppList(Context mContext, List<VmListItemAdapter> mAppList){
         this.mContext = mContext;
         this.mAppList = mAppList;
     }
@@ -50,7 +50,7 @@ public class AdapterAppList extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        final ClsListItemAdapter inbox = mAppList.get(position);
+        final VmListItemAdapter inbox = mAppList.get(position);
         if (convertView==null){
             if (inbox.isBoolSection()==true){
                 convertView = View.inflate(mContext, R.layout.item_section, null);
@@ -97,7 +97,7 @@ public class AdapterAppList extends BaseAdapter{
         }
     }
 
-    private void displayImage(ViewHolder holder, ClsListItemAdapter inbox) {
+    private void displayImage(ViewHolder holder, VmListItemAdapter inbox) {
         if (inbox.getIntImgView() != null) {
             new ClsTools().displayImageRound(mContext, holder.image, inbox.getIntImgView());
             holder.image.setColorFilter(null);

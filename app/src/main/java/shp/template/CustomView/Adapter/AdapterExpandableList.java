@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import shp.template.Model.ClsListItemAdapter;
+import shp.template.ViewModel.VmListItemAdapter;
 import shp.template.R;
 import shp.template.CustomView.Utils.ClsTools;
 
@@ -26,9 +26,9 @@ public class AdapterExpandableList extends BaseExpandableListAdapter {
     private Context _context;
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
-    private HashMap<String, List<ClsListItemAdapter>> _listDataChild;
+    private HashMap<String, List<VmListItemAdapter>> _listDataChild;
 
-    public AdapterExpandableList(Context mContex, List<String> _listDataHeader, HashMap<String, List<ClsListItemAdapter>> _listDataChild){
+    public AdapterExpandableList(Context mContex, List<String> _listDataHeader, HashMap<String, List<VmListItemAdapter>> _listDataChild){
         this._context = mContex;
         this._listDataHeader = _listDataHeader;
         this._listDataChild = _listDataChild;
@@ -91,7 +91,7 @@ public class AdapterExpandableList extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final ClsListItemAdapter child = (ClsListItemAdapter) getChild(groupPosition, childPosition);
+        final VmListItemAdapter child = (VmListItemAdapter) getChild(groupPosition, childPosition);
         if (convertView == null){
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -139,7 +139,7 @@ public class AdapterExpandableList extends BaseExpandableListAdapter {
         }
     }
 
-    private void displayImage(ViewHolder holder, ClsListItemAdapter inbox) {
+    private void displayImage(ViewHolder holder, VmListItemAdapter inbox) {
         if (inbox.getIntImgView() != null) {
             new ClsTools().displayImageRound(_context, holder.image, inbox.getIntImgView());
             holder.image.setColorFilter(null);

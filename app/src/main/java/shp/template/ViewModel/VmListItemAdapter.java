@@ -1,4 +1,4 @@
-package shp.template.Model;
+package shp.template.ViewModel;
 
 import android.graphics.drawable.Drawable;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Created by Dewi Oktaviani on 10/2/2018.
  */
 @DatabaseTable
-public class ClsListItemAdapter implements Serializable {
+public class VmListItemAdapter implements Serializable {
 
     public String getTxtId() {
         return txtId;

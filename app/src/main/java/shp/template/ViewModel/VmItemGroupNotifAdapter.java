@@ -1,10 +1,10 @@
-package shp.template.Model;
+package shp.template.ViewModel;
 
 /**
  * Created by Dewi Oktaviani on 11/8/2018.
  */
 
-public class ClsItemGroupNotifAdapter {
+public class VmItemGroupNotifAdapter {
     private String txtTittle;
     private String txtSubTittle;
     private String txtImgName;

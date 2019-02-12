@@ -1,4 +1,4 @@
-package shp.template.Model;
+package shp.template.ViewModel;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by Rian Andrivani on 11/23/2017.
  */
 
-public class ClsSwipeList implements Serializable {
+public class VmSwipeList implements Serializable {
     private String _txtId;
     private String _txtTitle;
     private String _txtDescription;

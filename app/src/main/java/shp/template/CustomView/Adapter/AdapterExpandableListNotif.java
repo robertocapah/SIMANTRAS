@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import shp.template.Model.ClsItemGroupNotifAdapter;
-import shp.template.Model.ClsListItemAdapter;
+import shp.template.ViewModel.VmItemGroupNotifAdapter;
+import shp.template.ViewModel.VmListItemAdapter;
 import shp.template.R;
 import shp.template.CustomView.Utils.ClsTools;
 
@@ -24,11 +24,11 @@ import java.util.List;
 
 public class AdapterExpandableListNotif extends BaseExpandableListAdapter {
     private Context _context;
-    private List<ClsItemGroupNotifAdapter> _listDataHeader; // header titles
+    private List<VmItemGroupNotifAdapter> _listDataHeader; // header titles
     // child data in format of header title, child title
-    private HashMap<ClsItemGroupNotifAdapter, List<ClsListItemAdapter>> _listDataChild;
+    private HashMap<VmItemGroupNotifAdapter, List<VmListItemAdapter>> _listDataChild;
 
-    public AdapterExpandableListNotif(Context mContex, List<ClsItemGroupNotifAdapter> _listDataHeader, HashMap<ClsItemGroupNotifAdapter, List<ClsListItemAdapter>> _listDataChild){
+    public AdapterExpandableListNotif(Context mContex, List<VmItemGroupNotifAdapter> _listDataHeader, HashMap<VmItemGroupNotifAdapter, List<VmListItemAdapter>> _listDataChild){
         this._context = mContex;
         this._listDataHeader = _listDataHeader;
         this._listDataChild = _listDataChild;
@@ -71,7 +71,7 @@ public class AdapterExpandableListNotif extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        final ClsItemGroupNotifAdapter group = (ClsItemGroupNotifAdapter) getGroup(groupPosition);
+        final VmItemGroupNotifAdapter group = (VmItemGroupNotifAdapter) getGroup(groupPosition);
         if (convertView == null){
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -97,7 +97,7 @@ public class AdapterExpandableListNotif extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final ClsListItemAdapter child = (ClsListItemAdapter) getChild(groupPosition, childPosition);
+        final VmListItemAdapter child = (VmListItemAdapter) getChild(groupPosition, childPosition);
         if (convertView == null){
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -138,7 +138,7 @@ public class AdapterExpandableListNotif extends BaseExpandableListAdapter {
         }
     }
 
-    private void displayImage(ViewHolder holder, ClsItemGroupNotifAdapter groupNotifAdapter) {
+    private void displayImage(ViewHolder holder, VmItemGroupNotifAdapter groupNotifAdapter) {
         if (groupNotifAdapter.getIntImgView() != null) {
             new ClsTools().displayImageRound(_context, holder.image, groupNotifAdapter.getIntImgView());
             holder.image.setColorFilter(null);

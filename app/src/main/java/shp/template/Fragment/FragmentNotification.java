@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import shp.template.Model.ClsItemGroupNotifAdapter;
-import shp.template.Model.ClsListItemAdapter;
+import shp.template.ViewModel.VmItemGroupNotifAdapter;
+import shp.template.ViewModel.VmListItemAdapter;
 import shp.template.R;
 import shp.template.CustomView.Adapter.AdapterExpandableListNotif;
 
@@ -27,8 +27,8 @@ public class FragmentNotification extends Fragment {
     View v;
     ExpandableListView mExpandableListView;
     AdapterExpandableListNotif mExpandableListAdapter;
-    private static List<ClsItemGroupNotifAdapter> listDataHeader = new ArrayList<>();
-    private static HashMap<ClsItemGroupNotifAdapter, List<ClsListItemAdapter>> listDataChild = new HashMap<>();
+    private static List<VmItemGroupNotifAdapter> listDataHeader = new ArrayList<>();
+    private static HashMap<VmItemGroupNotifAdapter, List<VmListItemAdapter>> listDataChild = new HashMap<>();
 
     String nama;
 

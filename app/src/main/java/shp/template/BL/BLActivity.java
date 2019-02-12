@@ -15,7 +15,7 @@ import com.kalbe.mobiledevknlibs.library.swipemenu.bean.SwipeMenuItem;
 import com.kalbe.mobiledevknlibs.library.swipemenu.interfaces.SwipeMenuCreator;
 
 import shp.template.CustomView.Adapter.AdapterApp;
-import shp.template.Model.ClsSwipeList;
+import shp.template.ViewModel.VmSwipeList;
 import shp.template.R;
 
 import java.text.DecimalFormat;
@@ -163,7 +163,7 @@ public class BLActivity extends Activity {
 
     }
 
-    public static AdapterApp setList(Context _ctx, final List<ClsSwipeList> swipeList) {
+    public static AdapterApp setList(Context _ctx, final List<VmSwipeList> swipeList) {
         final AdapterApp mAdapter;
         PullToRefreshSwipeMenuListView mListView;
         Handler mHandler;
@@ -171,7 +171,7 @@ public class BLActivity extends Activity {
         List<String> mAppList = new ArrayList<String>();
 
         for (int i = 0; i < swipeList.size(); i++) {
-            ClsSwipeList getswipeList = swipeList.get(i);
+            VmSwipeList getswipeList = swipeList.get(i);
             mAppList.add(getswipeList.get_txtTitle() + "\n" + getswipeList.get_txtDescription());
         }
 

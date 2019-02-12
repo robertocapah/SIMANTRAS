@@ -82,7 +82,7 @@ public class FragmentSetting extends Fragment{
     CircleImageView ivProfile;
     FloatingActionButton fab;
     private static final int CAMERA_REQUEST_PROFILE = 100;
-    private static final String IMAGE_DIRECTORY_NAME = "ClsImage Personal";
+    private static final String IMAGE_DIRECTORY_NAME = "VmImage Personal";
     final int SELECT_FILE_PROFILE = 150;
     private static Bitmap photoProfile, mybitmapImageProfile;
     private static byte[] phtProfile;

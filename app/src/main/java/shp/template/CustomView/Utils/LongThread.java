@@ -82,7 +82,7 @@ public class LongThread implements Runnable {
     private Bitmap getBitmap(String url) {
         Bitmap bitmap = null;
         try {
-            // Download ClsImage from URL
+            // Download VmImage from URL
             InputStream input = new URL(url).openStream();
             // Decode Bitmap
             bitmap = BitmapFactory.decodeStream(input);

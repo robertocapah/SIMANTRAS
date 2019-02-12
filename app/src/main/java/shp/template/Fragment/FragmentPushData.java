@@ -30,7 +30,7 @@ import shp.template.Database.DatabaseHelper;
 import shp.template.Database.DatabaseManager;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
-import shp.template.Model.ClsListItemAdapter;
+import shp.template.ViewModel.VmListItemAdapter;
 import shp.template.R;
 import shp.template.Database.Repo.RepoclsToken;
 import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
@@ -54,13 +54,13 @@ public class FragmentPushData extends Fragment{
     View v;
     ExpandableListView mExpandableListView;
     AdapterExpandableList mAdapterExpandableList;
-    private static List<ClsListItemAdapter> swipeListPlan = new ArrayList<>();
-    private static List<ClsListItemAdapter> swipeListUnplan = new ArrayList<>();
-    private static List<ClsListItemAdapter> swipeListAkuisisi = new ArrayList<>();
-    private static List<ClsListItemAdapter> swipeListMaintenance = new ArrayList<>();
-    private static List<ClsListItemAdapter> swipeListInfoProgram = new ArrayList<>();
+    private static List<VmListItemAdapter> swipeListPlan = new ArrayList<>();
+    private static List<VmListItemAdapter> swipeListUnplan = new ArrayList<>();
+    private static List<VmListItemAdapter> swipeListAkuisisi = new ArrayList<>();
+    private static List<VmListItemAdapter> swipeListMaintenance = new ArrayList<>();
+    private static List<VmListItemAdapter> swipeListInfoProgram = new ArrayList<>();
     private static List<String> listDataHeader = new ArrayList<>();
-    private static HashMap<String, List<ClsListItemAdapter>> listDataChild = new HashMap<>();
+    private static HashMap<String, List<VmListItemAdapter>> listDataChild = new HashMap<>();
 
 
     FloatingActionButton button_push_data;
