@@ -53,6 +53,7 @@ import shp.template.Database.Repo.RepomUserRole;
 import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
 import shp.template.CustomView.Utils.AuthenticatorUtil;
 import shp.template.CustomView.Utils.DrawableClickListener;
+import shp.template.Network.Volley.VolleyUtils;
 
 import com.kalbe.mobiledevknlibs.InputFilter.InputFilters;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
@@ -435,7 +436,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
         final boolean newAccount = getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false);
 
         final Bundle datum = new Bundle();
-        new BLHelper().volleyLoginCustom(ActivityLogin.this, strLinkAPI, mRequestBody, "Please Wait....", new InterfaceCustomVolleyResponseListener() {
+        new VolleyUtils().volleyLoginCustom(ActivityLogin.this, strLinkAPI, mRequestBody, "Please Wait....", new InterfaceCustomVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -617,7 +618,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new BLHelper().volleyLogin(ActivityLogin.this, strLinkAPI, mRequestBody, "Getting your role......",false, new InterfaceVolleyResponseListener() {
+        new VolleyUtils().volleyLogin(ActivityLogin.this, strLinkAPI, mRequestBody, "Getting your role......",false, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

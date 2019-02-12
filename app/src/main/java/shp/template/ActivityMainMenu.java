@@ -72,6 +72,7 @@ import shp.template.Database.Repo.RepoclsToken;
 import shp.template.Database.Repo.RepomConfig;
 import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
+import shp.template.Network.Volley.VolleyUtils;
 import shp.template.Service.ServiceNative;
 import shp.template.CustomView.Utils.AuthenticatorUtil;
 import shp.template.CustomView.Utils.IOBackPressed;
@@ -576,7 +577,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         }
         final String mRequestBody = resJson.toString();
 
-        new BLHelper().volleyLogin(ActivityMainMenu.this, strLinkAPI, mRequestBody, "Logout....", isMustLogout, new InterfaceVolleyResponseListener() {
+        new VolleyUtils().volleyLogin(ActivityMainMenu.this, strLinkAPI, mRequestBody, "Logout....", isMustLogout, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

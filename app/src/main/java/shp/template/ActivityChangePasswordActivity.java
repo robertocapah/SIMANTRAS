@@ -26,6 +26,8 @@ import shp.template.Data.ClsHardCode;
 import shp.template.Database.Repo.RepoclsToken;
 import shp.template.Data.ResponseDataJson.PushLogError.PushLogError;
 import shp.template.CustomView.Utils.AuthenticatorUtil;
+import shp.template.Network.Volley.VolleyUtils;
+
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;
@@ -159,7 +161,7 @@ public class ActivityChangePasswordActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new BLHelper().volleyLogin(ActivityChangePasswordActivity.this, strLinkAPI, mRequestBody, "Please Wait....", false, new InterfaceVolleyResponseListener() {
+        new VolleyUtils().volleyLogin(ActivityChangePasswordActivity.this, strLinkAPI, mRequestBody, "Please Wait....", false, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

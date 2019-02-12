@@ -397,7 +397,7 @@ public class ActivitySplash extends AppCompatActivity {
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new BLHelper().volleyCheckVersion(context, strLinkAPI, mRequestBody, accountManager, "Checking your version......", new InterfaceVolleyResponseListener() {
+        new VolleyUtils().volleyCheckVersion(context, strLinkAPI, mRequestBody, accountManager, "Checking your version......", new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -656,7 +656,7 @@ public class ActivitySplash extends AppCompatActivity {
         }
         final String mRequestBody = resJson.toString();
 
-        new BLHelper().volleyLogin(activity, strLinkAPI, mRequestBody, "Please Wait.....", true, new InterfaceVolleyResponseListener() {
+        new VolleyUtils().volleyLogin(activity, strLinkAPI, mRequestBody, "Please Wait.....", true, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 new ToastCustom().showToasty(activity.getApplicationContext(),message,4);
