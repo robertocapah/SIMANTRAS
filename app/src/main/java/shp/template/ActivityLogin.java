@@ -17,9 +17,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.CardView;
 import android.telephony.TelephonyManager;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -34,30 +36,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import shp.template.BL.BLHelper;
-import shp.template.Database.Common.ClsToken;
-import shp.template.Database.Common.ClsmUserLogin;
-import shp.template.Database.Common.ClsmUserRole;
-import shp.template.Network.Volley.InterfaceCustomVolleyResponseListener;
-import shp.template.Network.Volley.InterfaceVolleyResponseListener;
-import shp.template.Data.ClsHardCode;
-import shp.template.Database.Repo.RepoclsToken;
-import shp.template.Database.Repo.RepomUserLogin;
-import shp.template.Database.Repo.RepomMenu;
-import shp.template.Database.Repo.RepomUserRole;
-import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
-import shp.template.CustomView.Utils.AuthenticatorUtil;
-import shp.template.CustomView.Utils.DrawableClickListener;
-import shp.template.Network.Volley.VolleyUtils;
-
 import com.kalbe.mobiledevknlibs.InputFilter.InputFilters;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,6 +65,24 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import shp.template.CustomView.Utils.AuthenticatorUtil;
+import shp.template.CustomView.Utils.DrawableClickListener;
+import shp.template.Data.ClsHardCode;
+import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
+import shp.template.Database.Common.ClsToken;
+import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.Common.ClsmUserRole;
+import shp.template.Database.Repo.RepoclsToken;
+import shp.template.Database.Repo.RepomMenu;
+import shp.template.Database.Repo.RepomUserLogin;
+import shp.template.Database.Repo.RepomUserRole;
+import shp.template.Network.Volley.InterfaceCustomVolleyResponseListener;
+import shp.template.Network.Volley.InterfaceVolleyResponseListener;
+import shp.template.Network.Volley.VolleyUtils;
+
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.ARG_ACCOUNT_NAME;
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.ARG_AUTH_TYPE;
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT;
@@ -87,12 +91,28 @@ import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.PARAM_US
 
 
 /**
- * Created by Rian Andrivani on 11/22/2017.
+ * Robert on 02/13/2019.
  */
 
-public class ActivityLogin extends AccountAuthenticatorActivity{
+public class ActivityLogin extends AccountAuthenticatorActivity {
     Account availableAccounts[];
     String name[];
+    @BindView(R.id.editTextUsername)
+    TextInputEditText editTextUsername;
+    @BindView(R.id.spnRoleLogin)
+    AppCompatSpinner spnRoleLogin;
+    @BindView(R.id.editTextPass)
+    TextInputEditText editTextPass;
+    @BindView(R.id.buttonLogin)
+    Button buttonLogin;
+    @BindView(R.id.buttonRefreshApp)
+    Button buttonRefreshApp;
+    @BindView(R.id.tvVersionLogin)
+    TextView tvVersionLogin;
+    @BindView(R.id.ln_form_login2)
+    LinearLayout lnFormLogin2;
+    @BindView(R.id.cd_login)
+    CardView cdLogin;
     private String mAuthTokenType;
     private AlertDialog mAlertDialog;
     private AccountManager mAccountManager;
@@ -102,12 +122,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
     private PackageInfo pInfo = null;
     private static final int REQUEST_READ_PHONE_STATE = 0;
     private String IS_FROM_PICK_ACCOUNT = "is from pick account";
-    EditText etUsername, etPassword;
-    TextView tvVersionLogin;
-    private AppCompatSpinner spnRoleLogin;
     String txtUsername, txtPassword, imeiNumber, deviceName, access_token, selectedRole;
-    Button btnSubmit, btnExit, btnRefreshApp;
-    //    Spinner spnRole;
     private final List<String> roleName = new ArrayList<String>();
     private int intSet = 1;
     int intProcesscancel = 0;
@@ -121,12 +136,13 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
     ThreadPoolExecutor executor;
     ProgressDialog progress;
     ArrayAdapter<String> spinnerArrayAdapter;
+    Unbinder unbinder;
 
     @Override
     public void onBackPressed() {
-        if (isFromPickAccount){
+        if (isFromPickAccount) {
             new AuthenticatorUtil().showAccountPicker(ActivityLogin.this, mAccountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
-        }else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
             builder.setTitle("Exit");
@@ -167,6 +183,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             e.printStackTrace();
         }
         setContentView(R.layout.activity_login);
+        unbinder = ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -180,11 +197,11 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
 
             imeiNumber = tm.getDeviceId().toString();
-            deviceName = Build.MANUFACTURER+" "+ Build.MODEL;
+            deviceName = Build.MANUFACTURER + " " + Build.MODEL;
         } else {
             //TODO
             imeiNumber = tm.getDeviceId().toString();
-            deviceName = Build.MANUFACTURER+" "+ Build.MODEL;
+            deviceName = Build.MANUFACTURER + " " + Build.MODEL;
         }
 
         mAccountManager = AccountManager.get(getBaseContext());
@@ -197,38 +214,31 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
 
         tvVersionLogin = (TextView) findViewById(R.id.tvVersionLogin);
         tvVersionLogin.setText(pInfo.versionName);
-        etUsername = (EditText) findViewById(R.id.editTextUsername);
-        etPassword = (EditText) findViewById(R.id.editTextPass);
-        spnRoleLogin = (AppCompatSpinner) findViewById(R.id.spnRoleLogin);
-        btnSubmit = (Button) findViewById(R.id.buttonLogin);
-//        btnExit = (Button) findViewById(R.id.buttonExit);
-        btnRefreshApp = (Button) findViewById(R.id.buttonRefreshApp);
-//        spnRole = (Spinner) findViewById(R.id.spnRole);
-//        final CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
+
         char[] chars = {'.'};
-        new InputFilters().etCapsTextWatcherNoSpace(etUsername, null, chars);
+        new InputFilters().etCapsTextWatcherNoSpace(editTextUsername, null, chars);
         spnRoleLogin.setEnabled(false);
-        if (accountName != null){
-            etUsername.setText(accountName);
+        if (accountName != null) {
+            editTextUsername.setText(accountName);
         }
         // Spinner Drop down elements
 
         roleName.add("Select One");
         HMRole.put("Select One", 0);
 
-        etUsername.setOnKeyListener(new View.OnKeyListener() {
+        editTextUsername.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     intProcesscancel = 0;
-                    txtUsername = etUsername.getText().toString();
-                    txtPassword = etPassword.getText().toString();
+                    txtUsername = editTextUsername.getText().toString();
+                    txtPassword = editTextPass.getText().toString();
                     if (!txtUsername.equals("")) {
                         getRole();
                     } else {
-                        etUsername.requestFocusFromTouch();
-                        new ToastCustom().showToasty(ActivityLogin.this,"Please input username",4);
+                        editTextUsername.requestFocusFromTouch();
+                        new ToastCustom().showToasty(ActivityLogin.this, "Please input username", 4);
                     }
                     return true;
                 }
@@ -244,30 +254,27 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
 
         // Initializing an ArrayAdapter with initial text like select one
         spinnerArrayAdapter = new ArrayAdapter<String>(
-                this,android.R.layout.simple_spinner_dropdown_item, roleName){
+                this, android.R.layout.simple_spinner_dropdown_item, roleName) {
             @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
+            public boolean isEnabled(int position) {
+                if (position == 0) {
                     // Disable the first item from Spinner
                     // First item will be use for hint
                     return false;
-                }
-                else
-                {
+                } else {
                     return true;
                 }
             }
+
             @Override
             public View getDropDownView(int position, View convertView,
                                         ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
-                if(position == 0){
+                if (position == 0) {
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
-                }
-                else {
+                } else {
                     tv.setTextColor(getResources().getColor(R.color.green_300));
                 }
                 return view;
@@ -285,20 +292,20 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                new ToastCustom().showToasty(ActivityLogin.this,"Please select role",4);
+                new ToastCustom().showToasty(ActivityLogin.this, "Please select role", 4);
                 // put code here
             }
         });
 
-        etPassword.setOnTouchListener(new DrawableClickListener.RightDrawableClickListener(etPassword) {
+        editTextPass.setOnTouchListener(new DrawableClickListener.RightDrawableClickListener(editTextPass) {
             public boolean onDrawableClick() {
                 if (intSet == 1) {
-                    etPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    etPassword.setCompoundDrawablesWithIntrinsicBounds(0,0,R.mipmap.ic_lock,0);
+                    editTextPass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    editTextPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_lock, 0);
                     intSet = 0;
                 } else {
-                    etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    etPassword.setCompoundDrawablesWithIntrinsicBounds(0,0,R.mipmap.ic_lock_close,0);
+                    editTextPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    editTextPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_lock_close, 0);
                     intSet = 1;
                 }
 
@@ -306,13 +313,13 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             }
         });
 
-        etPassword.setOnKeyListener(new View.OnKeyListener() {
+        editTextPass.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||
                             keyCode == KeyEvent.KEYCODE_ENTER) {
-                        btnSubmit.performClick();
+                        buttonLogin.performClick();
                         return true;
                     }
                 }
@@ -321,38 +328,37 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             }
         });
 
-        etPassword.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        editTextPass.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    btnSubmit.performClick();
+                    buttonLogin.performClick();
                     return true;
                 }
                 return false;
             }
         });
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (etUsername.getText().toString().equals("")){
-                    new ToastCustom().showToasty(ActivityLogin.this,"Please fill Username",4);
-                }else if (etPassword.getText().toString().equals("")){
-                    new ToastCustom().showToasty(ActivityLogin.this,"Please fill Password",4);
-                } else if (roleName.size()==1){
+                if (editTextUsername.getText().toString().equals("")) {
+                    new ToastCustom().showToasty(ActivityLogin.this, "Please fill Username", 4);
+                } else if (editTextPass.getText().toString().equals("")) {
+                    new ToastCustom().showToasty(ActivityLogin.this, "Please fill Password", 4);
+                } else if (roleName.size() == 1) {
                     getRole();
-                } else if (HMRole.get(spnRoleLogin.getSelectedItem())==0){
-                    new ToastCustom().showToasty(ActivityLogin.this,"Please select role",4);
-                }
-                else {
+                } else if (HMRole.get(spnRoleLogin.getSelectedItem()) == 0) {
+                    new ToastCustom().showToasty(ActivityLogin.this, "Please select role", 4);
+                } else {
                     popupSubmit();
                 }
             }
         });
 //
 //        checkVersion();
-        btnRefreshApp.setOnClickListener(new View.OnClickListener() {
+        buttonRefreshApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -365,7 +371,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             }
         });
 
-        btnRefreshApp.setVisibility(View.GONE);
+        buttonRefreshApp.setVisibility(View.GONE);
         int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
         executor = new ThreadPoolExecutor(
@@ -405,15 +411,15 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
 
     // sesuaikan username dan password dengan data di server
     private void login() {
-        txtUsername = etUsername.getText().toString();
-        txtPassword = etPassword.getText().toString();
+        txtUsername = editTextUsername.getText().toString();
+        txtPassword = editTextPass.getText().toString();
         int intRoleId = HMRole.get(spnRoleLogin.getSelectedItem());
         String strLinkAPI = new ClsHardCode().linkLogin;
         JSONObject resJson = new JSONObject();
         JSONObject jData = new JSONObject();
 
         try {
-            jData.put("username",txtUsername );
+            jData.put("username", txtUsername);
             jData.put("intRoleId", intRoleId);
             jData.put("password", txtPassword);
         } catch (JSONException e) {
@@ -455,7 +461,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
 
                         String accessToken = "dummy_access_token";
 
-                        if (txtStatus == true){
+                        if (txtStatus == true) {
                             loginRepo = new RepomUserLogin(getApplicationContext());
                             ClsmUserLogin data = new ClsmUserLogin();
                             data.setTxtGuID(model.getData().getTxtGuiID());
@@ -467,16 +473,16 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
                             data.setIntDepartmentID(model.getData().getIntDepartmentID());
                             data.setIntLOBID(model.getData().getIntLOBID());
                             data.setTxtCompanyCode(model.getData().getTxtCompanyCode());
-                            if (model.getData().getMUserRole()!=null){
+                            if (model.getData().getMUserRole() != null) {
                                 data.setIntRoleID(model.getData().getMUserRole().getIntRoleID());
                                 data.setTxtRoleName(model.getData().getMUserRole().getTxtRoleName());
                             }
                             data.setDtLogIn(parseDate(model.getData().getDtDateLogin()));
 
                             byte[] file = getByte(model.getData().getTxtLinkFotoProfile());
-                            if (file!=null){
+                            if (file != null) {
                                 data.setBlobImg(file);
-                            }else {
+                            } else {
                                 data.setBlobImg(null);
                             }
                             loginRepo.createOrUpdate(data);
@@ -496,7 +502,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
                             finish();
                             startActivity(intent);
                         } else {
-                            new ToastCustom().showToasty(ActivityLogin.this,txtMessage,4);
+                            new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
                             dialog.dismiss();
                         }
                     } catch (JSONException e) {
@@ -508,9 +514,10 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             }
         });
     }
+
     public byte[] getByte(String url) {
-        if (url!=null){
-            if (url.length()>0){
+        if (url != null) {
+            if (url.length() > 0) {
                 try {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                     StrictMode.setThreadPolicy(policy);
@@ -520,10 +527,10 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
                     String contentType = ucon.getHeaderField("Content-Type");
                     boolean image = contentType.startsWith("image/");
                     boolean text = contentType.startsWith("application/");
-                    if (image||text){
+                    if (image || text) {
                         byte[] data = null;
                         InputStream is = ucon.getInputStream();
-                        int length =  ucon.getContentLength();
+                        int length = ucon.getContentLength();
                         data = new byte[length];
                         int bytesRead;
                         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -531,8 +538,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
                             output.write(data, 0, bytesRead);
                         }
                         return output.toByteArray();
-                    }
-                    else {
+                    } else {
                         return null;
                     }
                 } catch (IOException e) {
@@ -545,22 +551,24 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
         }
         return null;
     }
-    private String parseDate(String dateParse){
+
+    private String parseDate(String dateParse) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         Date date = null;
         try {
-            if (dateParse!=null&& dateParse!="")
+            if (dateParse != null && dateParse != "")
                 date = sdf.parse(dateParse);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (date!=null){
+        if (date != null) {
             return dateFormat.format(date);
-        }else {
+        } else {
             return "";
         }
     }
+
     public void finishLogin(Intent intent, AccountManager mAccountManager) {
         Log.d("kalbe", TAG + "> finishLogin");
 
@@ -585,14 +593,14 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
         finish();
     }
 
-    private void getRole(){
+    private void getRole() {
         String strLinkAPI = new ClsHardCode().LinkUserRole;
         JSONObject resJson = new JSONObject();
         JSONObject jData = new JSONObject();
-        txtUsername = etUsername.getText().toString();
-        txtPassword = etPassword.getText().toString();
+        txtUsername = editTextUsername.getText().toString();
+        txtPassword = editTextPass.getText().toString();
         try {
-            jData.put("username",txtUsername );
+            jData.put("username", txtUsername);
             jData.put("intRoleId", 0);
             jData.put("password", txtPassword);
         } catch (JSONException e) {
@@ -611,7 +619,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new VolleyUtils().volleyLogin(ActivityLogin.this, strLinkAPI, mRequestBody, "Getting your role......",false, new InterfaceVolleyResponseListener() {
+        new VolleyUtils().volleyLogin(ActivityLogin.this, strLinkAPI, mRequestBody, "Getting your role......", false, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -619,7 +627,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
 
             @Override
             public void onResponse(String response, Boolean status, String strErrorMsg) {
-                if (response!=null){
+                if (response != null) {
                     JSONObject jsonObject = null;
                     try {
                         jsonObject = new JSONObject(response);
@@ -630,13 +638,13 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
                         JSONArray arrayData = jsonObject.getJSONArray("data");
                         roleName.clear();
                         HMRole.clear();
-                        if (txtStatus==true){
+                        if (txtStatus == true) {
                             roleName.add("Select One");
                             HMRole.put("Select One", 0);
                             if (arrayData != null) {
-                                if (arrayData.length()>0){
+                                if (arrayData.length() > 0) {
                                     int index = 0;
-                                    for (int i = 0; i < arrayData.length(); i++){
+                                    for (int i = 0; i < arrayData.length(); i++) {
                                         JSONObject object = arrayData.getJSONObject(i);
                                         String txtRoleName = object.getString("txtRoleName");
                                         int intRoleId = object.getInt("intRoleId");
@@ -645,7 +653,8 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
                                         ClsmUserRole data = new ClsmUserRole();
                                         data.setTxtId(String.valueOf(index));
                                         data.setIntRoleId(intRoleId);
-                                        data.setTxtRoleName(txtRoleName);;
+                                        data.setTxtRoleName(txtRoleName);
+                                        ;
                                         RepomUserRole userRoleRepo = new RepomUserRole(getApplicationContext());
                                         userRoleRepo.createOrUpdate(data);
 
@@ -654,21 +663,20 @@ public class ActivityLogin extends AccountAuthenticatorActivity{
                                     }
                                     spinnerArrayAdapter.notifyDataSetChanged();
                                     spnRoleLogin.setEnabled(true);
-                                }
-                                else {
+                                } else {
                                     roleName.add("-");
                                     HMRole.put("-", 0);
                                     spinnerArrayAdapter.notifyDataSetChanged();
                                     spnRoleLogin.setEnabled(false);
                                 }
                             }
-                        }else {
+                        } else {
                             roleName.add("-");
                             HMRole.put("-", 0);
                             spinnerArrayAdapter.notifyDataSetChanged();
                             spnRoleLogin.setEnabled(false);
-                            etUsername.requestFocus();
-                            new ToastCustom().showToasty(ActivityLogin.this,txtMessage,4);
+                            editTextUsername.requestFocus();
+                            new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
