@@ -137,14 +137,6 @@ public class ActivitySplash extends AppCompatActivity {
                 StartAnimations();
                 checkStatusMenu();
             }
-//        } else if (Build.VERSION.SDK_INT >= 23
-//                && hasWriteExternalStoragePermission == PackageManager.PERMISSION_GRANTED
-//                && hasReadExternalStoragePermission == PackageManager.PERMISSION_GRANTED
-//                && hasAccessFineLocationPermission == PackageManager.PERMISSION_GRANTED
-//                && hasCameraPermission == PackageManager.PERMISSION_GRANTED
-//                && hasReadPhoneState == PackageManager.PERMISSION_GRANTED
-//                ){
-
         }
         else {
             StartAnimations();
@@ -169,16 +161,15 @@ public class ActivitySplash extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         &&!ActivityCompat.shouldShowRequestPermissionRationale(ActivitySplash.this,
                         Manifest.permission.CAMERA)
-                        &&!ActivityCompat.shouldShowRequestPermissionRationale(ActivitySplash.this,
-                        Manifest.permission.READ_PHONE_STATE)){
+                        ){
                     ActivityCompat.requestPermissions(ActivitySplash.this,
-                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE},
+                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                             REQUEST_CODE_ASK_PERMISSIONS);
                     dialog.dismiss();
 
                 }else{
                     ActivityCompat.requestPermissions(ActivitySplash.this,
-                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE},
+                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                             REQUEST_CODE_ASK_PERMISSIONS);
                     dialog.dismiss();
                 }

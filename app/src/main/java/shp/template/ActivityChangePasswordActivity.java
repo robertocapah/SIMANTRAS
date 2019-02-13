@@ -125,6 +125,7 @@ public class ActivityChangePasswordActivity extends AppCompatActivity {
                     }else if (!et_new_pw.getText().toString().equals(et_confirm_pw.getText().toString())){
                         new ToastCustom().showToasty(ActivityChangePasswordActivity.this,"New passwords do not match",4);
                     }else if (et_new_pw.getText().toString().equals(et_confirm_pw.getText().toString())&&et_current_pw.getText().length()>0){
+//                        ubah bagian method ini aja
                         ChangePassword();
                     }
                 }else {
