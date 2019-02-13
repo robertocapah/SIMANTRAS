@@ -20,7 +20,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        app:srcCompat="@mipmap/ic_notifikasi_v1_round"
+        app:srcCompat="@drawable/ic_kalbe"
         android:layout_above="@+id/iv_anim"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/iv_anim"
-        android:text="@string/app_name_call_plan"
+        android:text="@string/app_name"
         android:textSize="@dimen/text_size_large"
         android:textColor="@color/white"
         android:textStyle="bold"
