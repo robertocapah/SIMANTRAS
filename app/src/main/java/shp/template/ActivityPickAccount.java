@@ -520,10 +520,6 @@ public class ActivityPickAccount extends Activity {
                             res = new Intent();
                             res.putExtras(datum);
                             new ActivityLogin().finishLogin(res, mAccountManager);
-
-                            List<Long> listId = new ArrayList<>();
-//                            registerReceiver(new ReceiverDownloadManager(listId).receiver, new IntentFilter(
-//                                    DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                             Intent intent = new Intent(activity, ActivityMainMenu.class);
                             activity.finish();
                             activity.startActivity(intent);

@@ -156,12 +156,6 @@
                 <action android:name="com.kalbe.kalbecallplanaedp.RestartSensor" />
             </intent-filter>
         </receiver>
-        <!-- <receiver android:name=".Receiver.ReceiverDownloadManager"  android:exported="true"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/> -->
-        <!-- &lt;!&ndash;<action android:name="android.intent.action.INPUT_METHOD_CHANGED" />&ndash;&gt; -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
         <activity android:name="shp.template.ActivityChangePasswordActivity"
             android:screenOrientation="portrait">
             <meta-data

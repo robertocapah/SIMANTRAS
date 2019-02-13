@@ -349,25 +349,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface dialog, int which) {
-
-//                                final ProgressDialog dialog2 = new ProgressDialog(ActivityMainMenu.this, ProgressDialog.STYLE_SPINNER);
-//                                dialog2.setIndeterminate(true);
-//                                dialog2.setMessage("Logging out...");
-//                                dialog2.setCancelable(false);
-//                                dialog2.show();
-//
-//                                new Handler().postDelayed(
-//                                        new Runnable() {
-//                                            public void run() {
-//
-//                                                List<Long> listId = new ArrayList<>();
-////                                                unregisterReceiver(new ReceiverDownloadManager(listId).receiver);
-//                                                // On complete call either onLoginSuccess or onLoginFailed
-//                                                clearData();
-//                                                // onLoginFailed();
-//                                                dialog2.dismiss();
-//                                            }
-//                                        }, 3000);
                                 }
                             });
 
