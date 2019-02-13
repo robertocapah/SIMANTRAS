@@ -418,46 +418,46 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
                             selectedId = 99;
                             break;
-                        case R.id.mnCallPlan:
-                            checkNavItem = null;
-                            toolbar.setTitle("Call Plan");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-//                        FragmentListCallPlan fragmentCallPlan = new FragmentListCallPlan();
-
-                            selectedId = 99;
-                            break;
-                        case R.id.mnAkusisi:
-                            checkNavItem = null;
-                            toolbar.setTitle("Akusisi");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-
-                            break;
-                        case R.id.mnMaintenance:
-                            checkNavItem = null;
-                            toolbar.setTitle("Maintenance");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-
-                            break;
-
-                        case R.id.mnInfoProgram:
-                            checkNavItem = null;
-                            toolbar.setTitle("Info Program");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-
-
-                            break;
+//                        case R.id.mnCallPlan:
+//                            checkNavItem = null;
+//                            toolbar.setTitle("Call Plan");
+//                            toolbar.setSubtitle(null);
+//
+//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//
+////                        FragmentListCallPlan fragmentCallPlan = new FragmentListCallPlan();
+//
+//                            selectedId = 99;
+//                            break;
+//                        case R.id.mnAkusisi:
+//                            checkNavItem = null;
+//                            toolbar.setTitle("Akusisi");
+//                            toolbar.setSubtitle(null);
+//
+//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//
+//
+//                            break;
+//                        case R.id.mnMaintenance:
+//                            checkNavItem = null;
+//                            toolbar.setTitle("Maintenance");
+//                            toolbar.setSubtitle(null);
+//
+//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//
+//
+//                            break;
+//
+//                        case R.id.mnInfoProgram:
+//                            checkNavItem = null;
+//                            toolbar.setTitle("Info Program");
+//                            toolbar.setSubtitle(null);
+//
+//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//
+//
+//
+//                            break;
                         case R.id.mnNotification:
                             checkNavItem = null;
                             toolbar.setTitle("Notification");

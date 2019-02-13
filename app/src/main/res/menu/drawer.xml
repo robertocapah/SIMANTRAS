@@ -14,33 +14,27 @@
             android:title="Home"
             app:actionLayout="@layout/menu_counter"/>
 
-        <item
-            android:id="@+id/mnCallPlan"
-            android:icon="@mipmap/ic_asg_unplan"
-            android:orderInCategory="0"
-            android:title="Call Plan" />
-
     </group>
     <group
         android:checkableBehavior="single"
         android:id="@+id/groupMenuDinamis">
-        <item
-            android:id="@+id/mnAkusisi"
-            android:icon="@mipmap/ic_akuisisi"
-            android:orderInCategory="0"
-            android:title="Akuisisi" />
+        <!--<item-->
+            <!--android:id="@+id/mnAkusisi"-->
+            <!--android:icon="@mipmap/ic_akuisisi"-->
+            <!--android:orderInCategory="0"-->
+            <!--android:title="Akuisisi" />-->
 
-        <item
-            android:id="@+id/mnMaintenance"
-            android:icon="@mipmap/ic_asg_plan"
-            android:orderInCategory="0"
-            android:title="Maintenance" />
+        <!--<item-->
+            <!--android:id="@+id/mnMaintenance"-->
+            <!--android:icon="@mipmap/ic_asg_plan"-->
+            <!--android:orderInCategory="0"-->
+            <!--android:title="Maintenance" />-->
 
-        <item
-            android:id="@+id/mnInfoProgram"
-            android:icon="@mipmap/ic_info_program"
-            android:orderInCategory="0"
-            android:title="Info Program" />
+        <!--<item-->
+            <!--android:id="@+id/mnInfoProgram"-->
+            <!--android:icon="@mipmap/ic_info_program"-->
+            <!--android:orderInCategory="0"-->
+            <!--android:title="Info Program" />-->
     </group>
     <group
         android:checkableBehavior="single"
