@@ -19,8 +19,8 @@ public class RepomConfig {
     //    public String API = "http://10.171.14.10/WebAPITemplate/API/";
 //    public String APIToken = "http://10.171.14.10/WebAPITemplate/";
 //    public String APIToken = "http://10.171.13.50:8013/";
-    public String APIToken = "http://aedp.kalbenutritionals.web.id/api/";
-//    public String APIToken = "http://10.171.14.26/apiAEDP/";
+//    public String APIToken = "http://aedp.kalbenutritionals.web.id/api/";
+    public String APIToken = "http://10.171.163.235/apiAEDP/";
     //    public String APIToken = "http://10.171.14.16/apiAEDP/";
 //    public String API = "http://10.171.13.50:8013/api/";
     public String API = APIToken + "api/";

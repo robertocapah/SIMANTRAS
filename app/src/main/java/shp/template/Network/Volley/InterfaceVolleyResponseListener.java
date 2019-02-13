@@ -6,6 +6,5 @@ package shp.template.Network.Volley;
 
 public interface InterfaceVolleyResponseListener {
     void onError(String message);
-
     void onResponse(String response, Boolean status, String strErrorMsg);
 }
