@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -42,6 +43,8 @@ import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Data.ClsHardCode;
 import shp.template.Database.DatabaseHelper;
 import shp.template.Database.DatabaseManager;
+import shp.template.Network.FastNetworking.FastNetworkingUtils;
+import shp.template.Network.FastNetworking.InterfaceFastNetworking;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
 import shp.template.Database.Repo.RepoclsToken;
@@ -314,41 +317,15 @@ public class ActivitySplash extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        new VolleyUtils().makeJsonObjectRequestToken(activity, strLinkAPI, username, "", clientId, "Request Token, Please Wait", new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestToken(activity, strLinkAPI, username, clientId, "Request Token, Please Wait", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                Toast.makeText(activity.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            public void onResponse(JSONObject response) {
+                int a= 0;
             }
 
             @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
-                if (response != null) {
-                    try {
-                        String accessToken = "";
-                        String refreshToken = "";
-                        JSONObject jsonObject = new JSONObject(response);
-                        accessToken = jsonObject.getString("access_token");
-                        refreshToken = jsonObject.getString("refresh_token");
-                        String dtIssued = jsonObject.getString(".issued");
-
-                        ClsToken data = new ClsToken();
-                        data.setIntId("1");
-                        data.setDtIssuedToken(dtIssued);
-                        data.setTxtUserToken(accessToken);
-                        data.setTxtRefreshToken(refreshToken);
-
-                        tokenRepo.createOrUpdate(data);
-
-                        Log.d("Data info", "get access_token & refresh_token, Success");
-
-                        checkVersion(activity, mAccountManager);
-
-//                        Toast.makeText(activity.getApplicationContext(), "Ready For Login", Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
+            public void onError(ANError error) {
+                int a = 0;
             }
         });
     }
