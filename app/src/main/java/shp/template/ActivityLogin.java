@@ -342,8 +342,9 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                popupSubmit();
 
-                if (editTextUsername.getText().toString().equals("")) {
+                /*if (editTextUsername.getText().toString().equals("")) {
                     new ToastCustom().showToasty(ActivityLogin.this, "Please fill Username", 4);
                 } else if (editTextPass.getText().toString().equals("")) {
                     new ToastCustom().showToasty(ActivityLogin.this, "Please fill Password", 4);
@@ -353,7 +354,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                     new ToastCustom().showToasty(ActivityLogin.this, "Please select role", 4);
                 } else {
                     popupSubmit();
-                }
+                }*/
             }
         });
 //
@@ -392,7 +393,8 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         builder.setPositiveButton("LOGIN", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
-                login();
+//                login();
+                startActivity(new Intent(ActivityLogin.this,ActivityMainMenu.class));
                 dialog.dismiss();
             }
         });

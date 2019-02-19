@@ -51,6 +51,7 @@
 
     <!-- Solid -->
     <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
 
     <!-- Huawei -->
     <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />

@@ -285,13 +285,13 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        tvUsername.setText(new BLActivity().greetings() + dataLogin.get(0).getTxtUserName().toString());
-        tvEmail.setText(dataLogin.get(0).getTxtEmail().toString());
-        if (dataLogin.get(0).getBlobImg()!=null){
+        tvUsername.setText("Roberto Oloan Capah");
+        tvEmail.setText("Roberto.capah@kalbenutritionals.com");
+        /*if (dataLogin.get(0).getBlobImg()!=null){
             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dataLogin.get(0).getBlobImg());
             Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
             ivProfile.setImageBitmap(bitmap1);
-        }
+        }*/
 
         String linkAPI = new RepomConfig(getApplicationContext()).APIToken;
         try {

@@ -84,7 +84,7 @@ public class ServiceNative extends Service {
             _shutdownService();
         }else {
             String linkPushData = new ClsHardCode().linkPushData;
-            new VolleyUtils().makeJsonObjectRequestPushDataBackground(getApplicationContext(), linkPushData, dtJson, new InterfaceVolleyResponseListener() {
+            /*new VolleyUtils().makeJsonObjectRequestPushDataBackground(getApplicationContext(), linkPushData, dtJson, new InterfaceVolleyResponseListener() {
                 @Override
                 public void onError(String message) {
 //                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -112,7 +112,7 @@ public class ServiceNative extends Service {
                         }
                     }
                 }
-            });
+            });*/
         }
 
         RepomUserLogin loginRepo = new RepomUserLogin(getApplicationContext());
