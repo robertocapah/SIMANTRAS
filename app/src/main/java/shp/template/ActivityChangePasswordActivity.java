@@ -21,6 +21,7 @@ import shp.template.BL.BLHelper;
 import shp.template.BL.BLMain;
 import shp.template.Database.Common.ClsToken;
 import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Data.ClsHardCode;
 import shp.template.Database.Repo.RepoclsToken;
@@ -69,7 +70,11 @@ public class ActivityChangePasswordActivity extends AppCompatActivity {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
 
-        dtLogin = new BLMain().getUserLogin(getApplicationContext());
+        try {
+            dtLogin = new RepomUserLogin(getApplicationContext()).getUserLogin(getApplicationContext());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         et_current_pw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

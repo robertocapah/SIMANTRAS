@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,6 +25,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import shp.template.BL.BLMain;
 import shp.template.Data.ClsHardCode;
 import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.R;
 
 /**
@@ -67,7 +69,12 @@ public class FragmentHome extends Fragment {
         unbinder = ButterKnife.bind(this, v);
 
 
-        ClsmUserLogin dtLogin = new BLMain().getUserLogin(getContext());
+        ClsmUserLogin dtLogin = null;
+        try {
+            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         if (dtLogin.getBlobImg() != null) {
             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
             imageProfilHome.setImageBitmap(bitmap);

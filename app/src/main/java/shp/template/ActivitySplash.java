@@ -43,6 +43,7 @@ import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Data.ClsHardCode;
 import shp.template.Database.DatabaseHelper;
 import shp.template.Database.DatabaseManager;
+import shp.template.Database.Repo.EnumStatusMenuStart;
 import shp.template.Network.FastNetworking.FastNetworkingUtils;
 import shp.template.Network.FastNetworking.InterfaceFastNetworking;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
@@ -66,6 +67,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
 
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
@@ -217,90 +219,77 @@ public class ActivitySplash extends AppCompatActivity {
 
 
     private void checkStatusMenu() {
-        new AuthenticatorUtil().showAccountPicker(ActivitySplash.this, mAccountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
-//        try {
-//            new RepomConfig(getApplicationContext()).InsertDefaultmConfig();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            new ClsHardCode().copydb(getApplicationContext());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            _clsStatusMenuStart = new BLMain().checkUserActive(getApplicationContext());
-//            if (_clsStatusMenuStart.get_intStatus() != null){
-//                if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.FormLogin) {
-//                    ClsmUserLogin dtLogin = new BLMain().getUserLogin(getApplicationContext());
-//                    if (dtLogin!=null){
-//                        logout(this);
-//                    }else {
-//                        try {
-//                            tokenRepo = new RepoclsToken(getApplicationContext());
-//                            dataToken = (List<ClsToken>) tokenRepo.findAll();
-//                            if (dataToken.size() == 0) {
-//                                requestToken(this);
-//                            }else {
-//                                checkVersion(this, mAccountManager);
-//                            }
-//                        } catch (SQLException e) {
-//                            e.printStackTrace();
-//                        }
-////                        new AuthenticatorUtil().showAccountPicker(ActivitySplash.this, mAccountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
-//                    }
-////                    logout();
-////                    if (new AuthenticatorUtil().countingAccount(mAccountManager).length==0){
-////                        myIntent = new Intent(getApplicationContext(), ActivityLogin.class);
-////                        finish();
-////                        startActivity(myIntent);
-//////                            logout();
-////                    } else {
-////                        myIntent = new Intent(getApplicationContext(), Pi.class);
-////                        finish();
-////                        startActivity(myIntent);
-////                    }
-//
-//                } else if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.UserActiveLogin) {
-//                    if (new AuthenticatorUtil().countingAccount(mAccountManager).length==0){
-////                        myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
-////                        finish();
-////                        startActivity(myIntent);
-//                        myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
-//                        myIntent.putExtra(i_View, "FragmentPushData");
+        try {
+            new RepomConfig(getApplicationContext()).InsertDefaultmConfig();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            new ClsHardCode().copydb(getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            _clsStatusMenuStart = new BLMain().checkUserActive(this);
+            if (_clsStatusMenuStart.get_intStatus() != null){
+                if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.FormLogin.FormLogin) {
+                    ClsmUserLogin dtLogin = new RepomUserLogin(getApplicationContext()).getUserLogin(getApplicationContext());
+                    if (dtLogin!=null){
+                        logout(this);
+                    }else {
+                        try {
+                            tokenRepo = new RepoclsToken(getApplicationContext());
+                            dataToken = (List<ClsToken>) tokenRepo.findAll();
+                            if (dataToken.size() == 0) {
+                                requestToken(this);
+                            }else {
+                                checkVersion(this, mAccountManager);
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                } else if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.UserActiveLogin) {
+                    if (new AuthenticatorUtil().countingAccount(mAccountManager).length==0){
+//                        myIntent = new Intent(getApplicationContext(), MainMenu.class);
 //                        finish();
 //                        startActivity(myIntent);
-//                    } else {
-//                        myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
-//                        finish();
-//                        startActivity(myIntent);
-//                    }
-//                }else if (_clsStatusMenuStart.get_intStatus()== EnumStatusMenuStart.PushDataMobile){
-//                    myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
-//                    myIntent.putExtra(i_View, "FragmentPushData");
-//                    finish();
-//                    startActivity(myIntent);
-//                }
-//            } else {
-//                try {
-//                    tokenRepo = new RepoclsToken(getApplicationContext());
-//                    dataToken = (List<ClsToken>) tokenRepo.findAll();
-//                    if (dataToken.size() == 0) {
-//                        requestToken(this);
-//                    }else {
-//                        checkVersion(this, mAccountManager);
-//                    }
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+                        myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
+                        myIntent.putExtra(i_View, "FragmentPushData");
+                        finish();
+                        startActivity(myIntent);
+                    } else {
+                        myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
+                        finish();
+                        startActivity(myIntent);
+                    }
+                }else if (_clsStatusMenuStart.get_intStatus()== EnumStatusMenuStart.PushDataMobile){
+                    myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
+                    myIntent.putExtra(i_View, "FragmentPushData");
+                    finish();
+                    startActivity(myIntent);
+                }
+            } else {
+                try {
+                    tokenRepo = new RepoclsToken(getApplicationContext());
+                    dataToken = (List<ClsToken>) tokenRepo.findAll();
+                    if (dataToken.size() == 0) {
+                        requestToken(this);
+                    }else {
+                        checkVersion(this, mAccountManager);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void requestToken(final Context activity){
@@ -320,7 +309,27 @@ public class ActivitySplash extends AppCompatActivity {
         new FastNetworkingUtils().FNRequestToken(activity, strLinkAPI, username, clientId, "Request Token, Please Wait", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
-                int a= 0;
+                try{
+                    String accessToken = "";
+                    String refreshToken = "";
+                    accessToken = response.getString("access_token");
+                    refreshToken = response.getString("refresh_token");
+                    String dtIssued = response.getString(".issued");
+
+                    ClsToken data = new ClsToken();
+                    data.setIntId("1");
+                    data.setDtIssuedToken(dtIssued);
+                    data.setTxtUserToken(accessToken);
+                    data.setTxtRefreshToken(refreshToken);
+
+                    tokenRepo.createOrUpdate(data);
+
+                    Log.d("Data info", "get access_token & refresh_token, Success");
+                }catch (Exception ex){
+
+                }
+
+
             }
 
             @Override
@@ -364,21 +373,12 @@ public class ActivitySplash extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        final String mRequestBody = resJson.toString();
-        new VolleyUtils().volleyCheckVersion(context, strLinkAPI, mRequestBody, accountManager, "Checking your version......", new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestPostData(context, strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
+            public void onResponse(JSONObject response) {
                 if (response!=null){
-                    JSONObject jsonObject = null;
                     try {
-                        jsonObject = new JSONObject(response);
-                        jsonObject = new JSONObject(response);
-                        JSONObject jsn = jsonObject.getJSONObject("result");
+                        JSONObject jsn = response.getJSONObject("result");
                         boolean txtStatus = jsn.getBoolean("status");
                         String txtMessage = jsn.getString("message");
                         String txtMethode_name = jsn.getString("method_name");
@@ -386,7 +386,7 @@ public class ActivitySplash extends AppCompatActivity {
                         if (txtStatus == true){
                             Boolean resUpdate = false;
                             String txtLink = "";
-                            JSONObject objData = jsonObject.getJSONObject("data");
+                            JSONObject objData = response.getJSONObject("data");
                             if (txtVersionName.equals(objData.getString("version_name"))) {
                                 resUpdate = false;
                             }else {
@@ -402,7 +402,9 @@ public class ActivitySplash extends AppCompatActivity {
                                 mProgressDialog.setCancelable(false);
 
                                 // execute this when the downloader must be fired
-                                final DownloadTask downloadTask = new DownloadTask(context);
+                                getDownloadAPK (mProgressDialog, txtLink);
+
+                                /*final DownloadTask downloadTask = new DownloadTask(context);
                                 downloadTask.execute(txtLink);
 
                                 mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -410,14 +412,14 @@ public class ActivitySplash extends AppCompatActivity {
                                     public void onCancel(DialogInterface dialog) {
                                         downloadTask.cancel(true);
                                     }
-                                });
+                                });*/
                             }else {
                                 new AuthenticatorUtil().showAccountPicker((Activity) context, accountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
                             }
                         } else {
                             Boolean resUpdate = false;
                             String txtLink = "";
-                            JSONObject objData = jsonObject.getJSONObject("data");
+                            JSONObject objData = response.getJSONObject("data");
                             if (txtVersionName.equals(objData.getString("version_name"))) {
                                 resUpdate = false;
                             }else {
@@ -452,11 +454,17 @@ public class ActivitySplash extends AppCompatActivity {
                     }
 
                 }
+            }
+
+            @Override
+            public void onError(ANError error) {
 
             }
         });
     }
+    private void getDownloadAPK(ProgressDialog dialog,String txtLink){
 
+    }
     private class DownloadTask extends AsyncTask<String, Integer, String> {
         private Context context;
         private PowerManager.WakeLock mWakeLock;
@@ -606,7 +614,12 @@ public class ActivitySplash extends AppCompatActivity {
     public void logout(final Activity activity) {
         String strLinkAPI = new ClsHardCode().linkLogout;
         JSONObject resJson = new JSONObject();
-        ClsmUserLogin dtLogin = new BLMain().getUserLogin(activity.getApplicationContext());
+        ClsmUserLogin dtLogin = null;
+        try {
+            dtLogin = new RepomUserLogin(activity.getApplicationContext()).getUserLogin(activity.getApplicationContext());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         JSONObject dataJson = new JSONObject();
 
 

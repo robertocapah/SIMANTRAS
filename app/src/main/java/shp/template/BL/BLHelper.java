@@ -40,7 +40,12 @@ public class BLHelper {
         HashMap<String, byte[]> FileUpload = null;
         List<String> FileName = new ArrayList<>();
         if (loginRepo.getContactCount(context)>0){
-            ClsmUserLogin dataLogin = new BLMain().getUserLogin(context);
+            ClsmUserLogin dataLogin = null;
+            try {
+                dataLogin = new RepomUserLogin(context).getUserLogin(context);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             dtPush.setDtLogin(dataLogin.getDtLogIn());
             dtPush.setTxtVersionApp(versionName);
             dtPush.setTxtUserId(String.valueOf(dataLogin.getIntUserID()));
@@ -82,7 +87,12 @@ public class BLHelper {
         HashMap<String, byte[]> FileUpload = null;
         List<String> FileName = new ArrayList<>();
         if (loginRepo.getContactCount(context)>0){
-            ClsmUserLogin dataLogin = new BLMain().getUserLogin(context);
+            ClsmUserLogin dataLogin = null;
+            try {
+                dataLogin = new RepomUserLogin(context).getUserLogin(context);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             dtPush.setTxtVersionApp(versionName);
             dtPush.setTxtUserId(String.valueOf(dataLogin.getIntUserID()));
             try {

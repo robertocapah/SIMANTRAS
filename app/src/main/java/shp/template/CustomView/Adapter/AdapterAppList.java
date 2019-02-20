@@ -84,7 +84,7 @@ public class AdapterAppList extends BaseAdapter{
 
         public ViewHolder(View view) {
             from = (TextView) view.findViewById(R.id.from);
-            email = (TextView) view.findViewById(R.id.email);
+            email = (TextView) view.findViewById(R.id.tvEmail);
             txtSection = (TextView) view.findViewById(R.id.title_section);
 //            message = (TextView) view.findViewById(R.id.message);
             date = (TextView) view.findViewById(R.id.date);

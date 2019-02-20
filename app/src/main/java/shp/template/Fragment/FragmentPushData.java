@@ -15,27 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import shp.template.ActivitySplash;
-import shp.template.BL.BLHelper;
-import shp.template.BL.BLMain;
-import shp.template.Database.Common.ClsPushData;
-import shp.template.Database.Common.ClsToken;
-import shp.template.Database.Common.ClsmUserLogin;
-import shp.template.Data.ClsHardCode;
-import shp.template.Database.DatabaseHelper;
-import shp.template.Database.DatabaseManager;
-import shp.template.Network.Volley.InterfaceVolleyResponseListener;
-import shp.template.Network.Volley.VolleyUtils;
-import shp.template.ViewModel.VmListItemAdapter;
-import shp.template.R;
-import shp.template.Database.Repo.RepoclsToken;
-import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
-import shp.template.Service.ServiceNative;
-import shp.template.CustomView.Adapter.AdapterExpandableList;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;
@@ -46,11 +31,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import shp.template.ActivitySplash;
+import shp.template.BL.BLHelper;
+import shp.template.BL.BLMain;
+import shp.template.CustomView.Adapter.AdapterExpandableList;
+import shp.template.Data.ClsHardCode;
+import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
+import shp.template.Database.Common.ClsPushData;
+import shp.template.Database.Common.ClsToken;
+import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.DatabaseHelper;
+import shp.template.Database.DatabaseManager;
+import shp.template.Database.Repo.RepoclsToken;
+import shp.template.Database.Repo.RepomUserLogin;
+import shp.template.Network.Volley.InterfaceVolleyResponseListener;
+import shp.template.Network.Volley.VolleyUtils;
+import shp.template.R;
+import shp.template.Service.ServiceNative;
+import shp.template.ViewModel.VmListItemAdapter;
+
 /**
  * Created by Dewi Oktaviani on 9/26/2018.
  */
 
-public class FragmentPushData extends Fragment{
+public class FragmentPushData extends Fragment {
     View v;
     ExpandableListView mExpandableListView;
     AdapterExpandableList mAdapterExpandableList;
@@ -64,25 +71,39 @@ public class FragmentPushData extends Fragment{
 
 
     FloatingActionButton button_push_data;
+    @BindView(R.id.image)
+    ImageView image;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.brief)
+    TextView brief;
+    @BindView(R.id.ln_empty)
+    LinearLayout lnEmpty;
+    @BindView(R.id.exp_lv_call_plan)
+    ExpandableListView expLvCallPlan;
+    @BindView(R.id.button_push_data)
+    FloatingActionButton buttonPushData;
     //    Button btn_push_error;
     private Gson gson;
     ProgressDialog pDialog;
     String myValue;
     List<ClsToken> dataToken;
     RepoclsToken tokenRepo;
+    Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_push_data, container, false);
+        unbinder = ButterKnife.bind(this, v);
         mExpandableListView = (ExpandableListView) v.findViewById(R.id.exp_lv_call_plan);
-        button_push_data = (FloatingActionButton)v.findViewById(R.id.button_push_data);
+        button_push_data = (FloatingActionButton) v.findViewById(R.id.button_push_data);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
-        pDialog = new ProgressDialog(getContext(),ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        pDialog = new ProgressDialog(getContext(), ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
 
 
-        if(this.getArguments()!=null){
+        if (this.getArguments() != null) {
             myValue = this.getArguments().getString("message");
             getContext().stopService(new Intent(getContext(), ServiceNative.class));
             NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -124,24 +145,24 @@ public class FragmentPushData extends Fragment{
             e2.printStackTrace();
         }
         final ClsPushData dtJson = new BLHelper().pushData(versionName, getContext());
-        if (dtJson == null){
-        }else {
+        if (dtJson == null) {
+        } else {
             String linkPushData = new ClsHardCode().linkPushData;
             new VolleyUtils().makeJsonObjectRequestPushData(getContext(), linkPushData, dtJson, pDialog, new InterfaceVolleyResponseListener() {
                 @Override
                 public void onError(String message) {
-                    new ToastCustom().showToasty(getContext(),message,4);
+                    new ToastCustom().showToasty(getContext(), message, 4);
 //                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     pDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(String response, Boolean status, String strErrorMsg) {
-                    if (response!=null){
+                    if (response != null) {
                         JSONObject jsonObject = null;
 
-                    }else {
-                        new ToastCustom().showToasty(getContext(),strErrorMsg,4);
+                    } else {
+                        new ToastCustom().showToasty(getContext(), strErrorMsg, 4);
                         pDialog.dismiss();
                     }
                 }
@@ -149,7 +170,7 @@ public class FragmentPushData extends Fragment{
         }
     }
 
-    public void setListData(){
+    public void setListData() {
         listDataHeader.clear();
         listDataChild.clear();
         swipeListPlan.clear();
@@ -157,7 +178,6 @@ public class FragmentPushData extends Fragment{
         swipeListAkuisisi.clear();
         swipeListInfoProgram.clear();
         swipeListMaintenance.clear();
-
 
 
         mAdapterExpandableList = new AdapterExpandableList(getActivity(), listDataHeader, listDataChild);
@@ -169,12 +189,17 @@ public class FragmentPushData extends Fragment{
     private void logout() {
         String strLinkAPI = new ClsHardCode().linkLogout;
         JSONObject resJson = new JSONObject();
-        ClsmUserLogin dtLogin = new BLMain().getUserLogin(getContext());
+        ClsmUserLogin dtLogin = null;
+        try {
+            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         JSONObject dataJson = new JSONObject();
 
 
         try {
-            dataJson.put("GuiId", dtLogin.getTxtGuID() );
+            dataJson.put("GuiId", dtLogin.getTxtGuID());
             tokenRepo = new RepoclsToken(getContext());
             dataToken = (List<ClsToken>) tokenRepo.findAll();
             resJson.put("data", dataJson);
@@ -187,10 +212,10 @@ public class FragmentPushData extends Fragment{
         }
         final String mRequestBody = resJson.toString();
 
-        new VolleyUtils().volleyLogin(getActivity(), strLinkAPI, mRequestBody, "Logout....",false, new InterfaceVolleyResponseListener() {
+        new VolleyUtils().volleyLogin(getActivity(), strLinkAPI, mRequestBody, "Logout....", false, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
-                new ToastCustom().showToasty(getContext(),message,4);
+                new ToastCustom().showToasty(getContext(), message, 4);
             }
 
             @Override
@@ -204,7 +229,7 @@ public class FragmentPushData extends Fragment{
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
 
-                        if (txtStatus == true){
+                        if (txtStatus == true) {
 
                             getActivity().stopService(new Intent(getContext(), ServiceNative.class));
                             NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -215,7 +240,7 @@ public class FragmentPushData extends Fragment{
                             Log.d("Data info", "logout Success");
 
                         } else {
-                            new ToastCustom().showToasty(getContext(),txtMessage,4);
+                            new ToastCustom().showToasty(getContext(), txtMessage, 4);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -232,6 +257,12 @@ public class FragmentPushData extends Fragment{
         helper.clearDataAfterLogout();
         getActivity().finish();
         startActivity(intent);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
 //    private void pushDataError() throws JSONException {

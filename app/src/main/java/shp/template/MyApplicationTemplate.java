@@ -8,6 +8,7 @@ import shp.template.BL.BLMain;
 import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Database.Common.ClstLogError;
 import shp.template.Data.ClsHardCode;
+import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.Database.Repo.RepotLogError;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 
@@ -16,6 +17,7 @@ import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -60,7 +62,12 @@ public class MyApplicationTemplate extends Application {
 
         mContext = getApplicationContext();
         ACRA.init(this);
-        ClsmUserLogin dtUserLogin = new BLMain().getUserLogin(mContext);
+        ClsmUserLogin dtUserLogin = null;
+        try {
+            dtUserLogin = new RepomUserLogin(mContext).getUserLogin(mContext);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         List<ClstLogError> dataError = new RepotLogError(mContext).getAllPushData();
         ClstLogError logError = new ClstLogError();
         if (dataError!=null){

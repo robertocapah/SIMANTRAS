@@ -19,8 +19,8 @@ public class RepomConfig {
     //    public String API = "http://10.171.14.10/WebAPITemplate/API/";
 //    public String APIToken = "http://10.171.14.10/WebAPITemplate/";
 //    public String APIToken = "http://10.171.13.50:8013/";
-//    public String APIToken = "http://aedp.kalbenutritionals.web.id/api/";
-    public String APIToken = "http://10.171.163.235/apiAEDP/";
+    public String APIToken = "http://appgwdev.kalbenutritionals.com/api/aedp/";
+//    public String APIToken = "http://10.171.163.235/apiAEDP/";
     //    public String APIToken = "http://10.171.14.16/apiAEDP/";
 //    public String API = "http://10.171.13.50:8013/api/";
     public String API = APIToken + "api/";
@@ -79,7 +79,7 @@ public class RepomConfig {
         data = new ClsmConfigData();
         data.setIntId(4);
         data.setTxtName("Application Name");
-        data.setTxtValue("Rian Application");
+        data.setTxtValue("AEDP MOBILE");
         data.setTxtDefaultValue("3VyizZ7haX2KCvR0wl64YwulEteHqsq5FLncJSL+pBM=");
         data.setIntEditAdmin("1");
         helper.getmConfigDao().createOrUpdate(data);
@@ -87,8 +87,8 @@ public class RepomConfig {
         data = new ClsmConfigData();
         data.setIntId(5);
         data.setTxtName("UserId");
-        data.setTxtValue("rian.andrivani");
-        data.setTxtDefaultValue("rian.andrivani");
+        data.setTxtValue("6zHEhSQ93ik+yzSDoXlhnbKCfNljoITN0W0ApaORt33mhSHHLDhUMX5SdsG7IAHo");
+        data.setTxtDefaultValue("6zHEhSQ93ik+yzSDoXlhnbKCfNljoITN0W0ApaORt33mhSHHLDhUMX5SdsG7IAHo");
         data.setIntEditAdmin("1");
         helper.getmConfigDao().createOrUpdate(data);
 
@@ -129,6 +129,14 @@ public class RepomConfig {
         data.setTxtName("Password");
         data.setTxtValue("1234567890");
         data.setTxtDefaultValue("1234567890");
+        data.setIntEditAdmin("1");
+        helper.getmConfigDao().createOrUpdate(data);
+
+        data = new ClsmConfigData();
+        data.setIntId(11);
+        data.setTxtName("intBitFaceDetection");
+        data.setTxtValue("1");
+        data.setTxtDefaultValue("1");
         data.setIntEditAdmin("1");
         helper.getmConfigDao().createOrUpdate(data);
     }

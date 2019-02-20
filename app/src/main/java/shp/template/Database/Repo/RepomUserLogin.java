@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -132,5 +133,19 @@ public class RepomUserLogin implements CRUD {
             e.printStackTrace();
         }
         return item;
+    }
+    public ClsmUserLogin getUserLogin(Context context)throws SQLException{
+        List <ClsmUserLogin> dtList = new ArrayList<>();
+        RepomUserLogin dtRepo= new RepomUserLogin(context);
+        try {
+            dtList = (List<ClsmUserLogin>) dtRepo.findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (dtList.size()>0){
+            return dtList.get(0);
+        }else {
+            return null;
+        }
     }
 }

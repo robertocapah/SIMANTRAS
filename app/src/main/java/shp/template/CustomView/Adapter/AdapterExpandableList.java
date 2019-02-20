@@ -125,7 +125,7 @@ public class AdapterExpandableList extends BaseExpandableListAdapter {
 
         public ViewHolder(View view) {
             from = (TextView) view.findViewById(R.id.from);
-            email = (TextView) view.findViewById(R.id.email);
+            email = (TextView) view.findViewById(R.id.tvEmail);
             txtSection = (TextView) view.findViewById(R.id.title_section);
             imgArrow = (ImageView) view.findViewById(R.id.bt_expand);
 //            message = (TextView) view.findViewById(R.id.message);

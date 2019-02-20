@@ -44,7 +44,7 @@ public class BLMain {
     public ClsStatusMenuStart checkUserActive(Context context) throws ParseException, SQLException {
 
         RepomUserLogin loginRepo = new RepomUserLogin(context);
-        ClsmUserLogin dtLogin = getUserLogin(context);
+        ClsmUserLogin dtLogin = new RepomUserLogin(context).getUserLogin(context);
         ClsStatusMenuStart _clsStatusMenuStart =new ClsStatusMenuStart();
 //        if (dtLogin!=null){
 //
@@ -67,24 +67,6 @@ public class BLMain {
         }
         return _clsStatusMenuStart;
     }
-
-    public ClsmUserLogin getUserLogin(Context context){
-        List <ClsmUserLogin> dtList = new ArrayList<>();
-        RepomUserLogin dtRepo= new RepomUserLogin(context);
-        try {
-            dtList = (List<ClsmUserLogin>) dtRepo.findAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        if (dtList.size()>0){
-            return dtList.get(0);
-        }else {
-            return null;
-        }
-    }
-
-
-
     public byte[] arrayDecryptFile(byte[] blobFile){
         String key = "kalbenutritionals";
         byte[] arrayFileDecrypt = null;

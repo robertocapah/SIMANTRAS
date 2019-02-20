@@ -70,7 +70,7 @@ public class RepoclsToken implements CRUD {
     }
 
     @Override
-    public List<?> findAll() throws SQLException {
+    public List<ClsToken> findAll() throws SQLException {
         List<ClsToken> items = null;
         try{
             items = helper.getTokenDao().queryForAll();

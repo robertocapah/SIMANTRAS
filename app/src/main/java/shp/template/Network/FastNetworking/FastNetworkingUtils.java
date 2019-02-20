@@ -11,7 +11,11 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.List;
+
+import shp.template.Database.Common.ClsToken;
+import shp.template.Database.Repo.RepoclsToken;
 
 /**
  * Created by Robert on 2/12/2019.
@@ -41,24 +45,30 @@ public class FastNetworkingUtils {
                     }
                 });
     }
-    public void FNRequestPostData(final Context activity,JSONObject JObject, String progressBarType, final InterfaceFastNetworking listener){
+    public void FNRequestPostData(final Context activity,String txtLink,JSONObject JObject, String progressBarType, final InterfaceFastNetworking listener){
         String access_token = "";
-        //        List<clsToken> dataToken = new clsTokenRepo(context).findAll();
-//        access_token = dataToken.get(0).txtUserToken.toString();
-        AndroidNetworking.post("http://aedp.kalbenutritionals.web.id/api/api/downloadtAkuisisi")
+        List<ClsToken> dataToken = null;
+        try {
+            dataToken = new RepoclsToken(activity).findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        access_token = dataToken.get(0).txtUserToken.toString();
+        AndroidNetworking.post(txtLink)
                 .addJSONObjectBody(JObject)
-                .addHeaders("Authorization", access_token)
+                .addHeaders("Authorization","Bearer " + access_token)
                 .setTag("test")
                 .setPriority(Priority.LOW)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        int a = 2;
+                        listener.onResponse(response);
                     }
 
                     @Override
                     public void onError(ANError error) {
+                        listener.onError(error);
                         writeErrorLog(error);
                     }
                 });

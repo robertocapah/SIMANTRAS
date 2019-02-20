@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,36 +25,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import shp.template.ActivityMainMenu;
-import shp.template.BL.BLActivity;
-import shp.template.BL.BLHelper;
-import shp.template.BL.BLMain;
-import shp.template.ActivityChangePasswordActivity;
-import shp.template.Database.Common.ClsToken;
-import shp.template.Database.Common.ClsmUserLogin;
-import shp.template.Data.ClsHardCode;
-import shp.template.Network.Volley.InterfaceVolleyResponseListener;
-import shp.template.ViewModel.VmUploadFoto;
-import shp.template.Database.Common.ClsPushData;
-import shp.template.Network.Volley.VolleyUtils;
-import shp.template.ActivityImageViewer;
-import shp.template.R;
-
-import shp.template.Database.Repo.RepoclsToken;
-import shp.template.Database.Repo.RepomUserLogin;
-import shp.template.Database.Repo.RepotLogError;
-import shp.template.Data.ResponseDataJson.PushLogError.PushLogError;
-import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
 import com.kalbe.mobiledevknlibs.Helper.clsMainActivity;
 import com.kalbe.mobiledevknlibs.PermissionChecker.PermissionChecker;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickFile;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
-
-
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,7 +44,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import de.hdodenhof.circleimageview.CircleImageView;
 import eu.janmuller.android.simplecropimage.CropImage;
+import shp.template.ActivityChangePasswordActivity;
+import shp.template.ActivityImageViewer;
+import shp.template.ActivityMainMenu;
+import shp.template.BL.BLActivity;
+import shp.template.BL.BLHelper;
+import shp.template.BL.BLMain;
+import shp.template.Data.ClsHardCode;
+import shp.template.Data.ResponseDataJson.PushLogError.PushLogError;
+import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
+import shp.template.Database.Common.ClsPushData;
+import shp.template.Database.Common.ClsToken;
+import shp.template.Database.Common.ClsmUserLogin;
+import shp.template.Database.Repo.RepoclsToken;
+import shp.template.Database.Repo.RepomUserLogin;
+import shp.template.Database.Repo.RepotLogError;
+import shp.template.Network.Volley.InterfaceVolleyResponseListener;
+import shp.template.Network.Volley.VolleyUtils;
+import shp.template.R;
+import shp.template.ViewModel.VmUploadFoto;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -77,10 +76,8 @@ import static android.app.Activity.RESULT_OK;
  * Created by Dewi Oktaviani on 11/21/2018.
  */
 
-public class FragmentSetting extends Fragment{
+public class FragmentSetting extends Fragment {
     View v;
-    CircleImageView ivProfile;
-    FloatingActionButton fab;
     private static final int CAMERA_REQUEST_PROFILE = 100;
     private static final String IMAGE_DIRECTORY_NAME = "VmImage Personal";
     final int SELECT_FILE_PROFILE = 150;
@@ -88,7 +85,17 @@ public class FragmentSetting extends Fragment{
     private static byte[] phtProfile;
     private static ByteArrayOutputStream output = new ByteArrayOutputStream();
     final int PIC_CROP_PROFILE = 130;
-    private Uri uriImage,  selectedImage;
+    @BindView(R.id.image_setting)
+    CircleImageView imageSetting;
+    @BindView(R.id.fab_add_img_setting)
+    FloatingActionButton fabAddImgSetting;
+    @BindView(R.id.ln_change_ps)
+    LinearLayout lnChangePs;
+    @BindView(R.id.ln_push_error)
+    LinearLayout lnPushError;
+    @BindView(R.id.nested_content)
+    NestedScrollView nestedContent;
+    private Uri uriImage, selectedImage;
     List<ClsToken> dataToken;
     RepoclsToken tokenRepo;
     private Gson gson;
@@ -97,32 +104,27 @@ public class FragmentSetting extends Fragment{
     ClsmUserLogin dtLogin;
     ActivityMainMenu mm;
     private String ZOOM_PROFILE = "photo profil";
-    LinearLayout ln_error, ln_change_ps;
+    Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_setting, container, false);
-        ivProfile = (CircleImageView) v.findViewById(R.id.image_setting);
-        fab = (FloatingActionButton)v.findViewById(R.id.fab_add_img_setting);
-        ln_error = (LinearLayout)v.findViewById(R.id.ln_push_error);
-        ln_change_ps = (LinearLayout)v.findViewById(R.id.ln_change_ps);
+        unbinder = ButterKnife.bind(this, v);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectImageProfile();
-            }
-        });
-        mm = (ActivityMainMenu)getActivity();
-        dtLogin = new BLMain().getUserLogin(getContext());
-        if (dtLogin.getBlobImg()!=null){
+        mm = (ActivityMainMenu) getActivity();
+        try {
+            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (dtLogin.getBlobImg() != null) {
             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
-            new PickImage().previewCapturedImage(ivProfile, bitmap, 200, 200);
+            new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
         }
         pDialog = new ProgressDialog(getContext());
-        ivProfile.setOnClickListener(new View.OnClickListener() {
+        imageSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent1 = new Intent(getContext(), ActivityImageViewer.class);
@@ -130,7 +132,7 @@ public class FragmentSetting extends Fragment{
                 startActivity(intent1);
             }
         });
-        ln_error.setOnClickListener(new View.OnClickListener() {
+        lnPushError.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -140,7 +142,7 @@ public class FragmentSetting extends Fragment{
                 }
             }
         });
-        ln_change_ps.setOnClickListener(new View.OnClickListener() {
+        lnChangePs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ActivityChangePasswordActivity.class);
@@ -152,19 +154,19 @@ public class FragmentSetting extends Fragment{
 
 
     private void selectImageProfile() {
-        final CharSequence[] items = { "Ambil Foto", "Pilih dari Galeri",
-                "Batal" };
+        final CharSequence[] items = {"Ambil Foto", "Pilih dari Galeri",
+                "Batal"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Add Photo");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                boolean result= PermissionChecker.Utility.checkPermission(getContext());
+                boolean result = PermissionChecker.Utility.checkPermission(getContext());
                 if (items[item].equals("Ambil Foto")) {
                     uriImage = getOutputMediaImageUri(getContext(), new ClsHardCode().txtFolderData, "tmp_act");
-                    new PickImage().CaptureImage(getActivity(), new ClsHardCode().txtFolderData, "tmp_act",CAMERA_REQUEST_PROFILE );
+                    new PickImage().CaptureImage(getActivity(), new ClsHardCode().txtFolderData, "tmp_act", CAMERA_REQUEST_PROFILE);
                 } else if (items[item].equals("Pilih dari Galeri")) {
-                    if(result)
+                    if (result)
                         galleryIntentProfile();
                 } else if (items[item].equals("Batal")) {
                     dialog.dismiss();
@@ -195,10 +197,10 @@ public class FragmentSetting extends Fragment{
 //    }
 
     // preview image profile
-    private void previewCaptureImageProfile(Bitmap photo){
+    private void previewCaptureImageProfile(Bitmap photo) {
         try {
             Bitmap bitmap = new BLActivity().resizeImageForBlob(photo);
-            ivProfile.setVisibility(View.VISIBLE);
+            imageSetting.setVisibility(View.VISIBLE);
             output = null;
             try {
                 output = new ByteArrayOutputStream();
@@ -207,7 +209,7 @@ public class FragmentSetting extends Fragment{
                 e.printStackTrace();
             } finally {
                 try {
-                    if (output != null){
+                    if (output != null) {
                         output.close();
                     }
                 } catch (IOException e) {
@@ -223,6 +225,7 @@ public class FragmentSetting extends Fragment{
             e.printStackTrace();
         }
     }
+
     public void runCropImage(String path) {
         Intent intent = new Intent(getContext(), CropImage.class);
         intent.putExtra(CropImage.IMAGE_PATH, path);
@@ -236,10 +239,10 @@ public class FragmentSetting extends Fragment{
     private void galleryIntentProfile() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        getActivity().startActivityForResult(pickPhoto , SELECT_FILE_PROFILE);//one can be replaced with any action code
+        getActivity().startActivityForResult(pickPhoto, SELECT_FILE_PROFILE);//one can be replaced with any action code
     }
 
-    private void performCropProfile(){
+    private void performCropProfile() {
         try {
             //call the standard crop action intent (the user device may not support it)
             Intent cropIntent = new Intent("com.android.camera.action.CROP");
@@ -258,17 +261,18 @@ public class FragmentSetting extends Fragment{
             cropIntent.putExtra("return-data", true);
             //start the activity - we handle returning in onActivityResult
             getActivity().startActivityForResult(cropIntent, PIC_CROP_PROFILE);
-        }
-        catch(ActivityNotFoundException anfe){
+        } catch (ActivityNotFoundException anfe) {
             //display an error message
             String errorMessage = "Whoops - your device doesn't support the crop action!";
             Toast toast = Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
     }
+
     public Uri getOutputMediaImageUri(Context context, String folderName, String fileName) {
         return Uri.fromFile(getOutputMediaFile());
     }
+
     private File getOutputMediaFile() {
         // External sdcard location
 
@@ -286,7 +290,8 @@ public class FragmentSetting extends Fragment{
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "tmp_act" + ".png");
         return mediaFile;
     }
-    private void performCropGalleryProfile(){
+
+    private void performCropGalleryProfile() {
         try {
             //call the standard crop action intent (the user device may not support it)
             Intent cropIntent = new Intent("com.android.camera.action.CROP");
@@ -305,18 +310,18 @@ public class FragmentSetting extends Fragment{
             cropIntent.putExtra("return-data", true);
             //start the activity - we handle returning in onActivityResult
             getActivity().startActivityForResult(cropIntent, PIC_CROP_PROFILE);
-        }
-        catch(ActivityNotFoundException anfe){
+        } catch (ActivityNotFoundException anfe) {
             //display an error message
             String errorMessage = "Whoops - your device doesn't support the crop action!";
             Toast toast = Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
     }
+
     private Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title",null);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
 
@@ -338,10 +343,9 @@ public class FragmentSetting extends Fragment{
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-            else if (resultCode == 0) {
+            } else if (resultCode == 0) {
                 new clsMainActivity().showCustomToast(getContext(), "User cancel take image", false);
-            }  else {
+            } else {
                 try {
                     photoProfile = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
                 } catch (FileNotFoundException e) {
@@ -350,8 +354,7 @@ public class FragmentSetting extends Fragment{
                     e.printStackTrace();
                 }
             }
-        }
-        else if (requestCode == PIC_CROP_PROFILE) {
+        } else if (requestCode == PIC_CROP_PROFILE) {
             if (resultCode == -1) {
                 //get the returned data
                 Bundle extras = data.getExtras();
@@ -374,9 +377,8 @@ public class FragmentSetting extends Fragment{
             } else if (resultCode == 0) {
                 new clsMainActivity().showCustomToast(getContext(), "User cancel take image", false);
             }
-        }
-        else if (requestCode == SELECT_FILE_PROFILE) {
-            if(resultCode == RESULT_OK){
+        } else if (requestCode == SELECT_FILE_PROFILE) {
+            if (resultCode == RESULT_OK) {
                 try {
                     selectedImage = data.getData();
                     uriImage = getOutputMediaImageUri(getContext(), new ClsHardCode().txtFolderData, "tmp_act");
@@ -430,8 +432,8 @@ public class FragmentSetting extends Fragment{
             dataUp.setIntRoleId(dataLogin.getIntRoleID());
             dataUp.setIntUserId(dataLogin.getIntUserID());
             JSONObject userData = new JSONObject();
-            userData.put("intUserId",dataLogin.getIntUserID());
-            userData.put("intRoleId",dataLogin.getIntRoleID());
+            userData.put("intUserId", dataLogin.getIntUserID());
+            userData.put("intRoleId", dataLogin.getIntRoleID());
             resJson.put("data", userData);
             resJson.put("device_info", new ClsHardCode().pDeviceInfo());
             resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
@@ -442,10 +444,10 @@ public class FragmentSetting extends Fragment{
         }
         final String mRequestBody = resJson.toString();
 
-        new VolleyUtils().changeProfile(getContext(), strLinkAPI, mRequestBody, pDialog,  dataLogin, new InterfaceVolleyResponseListener() {
+        new VolleyUtils().changeProfile(getContext(), strLinkAPI, mRequestBody, pDialog, dataLogin, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
-                new ToastCustom().showToasty(getContext(),message,4);
+                new ToastCustom().showToasty(getContext(), message, 4);
                 pDialog.dismiss();
             }
 
@@ -462,19 +464,19 @@ public class FragmentSetting extends Fragment{
 
                         String accessToken = "dummy_access_token";
 
-                        if (txtStatus == true){
+                        if (txtStatus == true) {
                             loginRepo = new RepomUserLogin(getContext());
                             ClsmUserLogin data = dataLogin;
                             loginRepo.createOrUpdate(data);
-                            dtLogin = new BLMain().getUserLogin(getContext());
+                            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
                             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
-                            new PickImage().previewCapturedImage(ivProfile, bitmap, 200, 200);
+                            new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
                             new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
                             pDialog.dismiss();
-                            new ToastCustom().showToasty(getContext(),"Success Change photo profile",1);
+                            new ToastCustom().showToasty(getContext(), "Success Change photo profile", 1);
 
                         } else {
-                            new ToastCustom().showToasty(getContext(),txtMessage,4);
+                            new ToastCustom().showToasty(getContext(), txtMessage, 4);
                             pDialog.dismiss();
                         }
                     } catch (JSONException e) {
@@ -482,8 +484,8 @@ public class FragmentSetting extends Fragment{
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                }else {
-                    new ToastCustom().showToasty(getContext(),strErrorMsg,4);
+                } else {
+                    new ToastCustom().showToasty(getContext(), strErrorMsg, 4);
                     pDialog.dismiss();
                 }
             }
@@ -508,19 +510,19 @@ public class FragmentSetting extends Fragment{
             e2.printStackTrace();
         }
         final ClsPushData dtJson = new BLHelper().pushDataError(versionName, getContext());
-        if (dtJson == null){
-        }else {
+        if (dtJson == null) {
+        } else {
             String linkPushData = new ClsHardCode().linkPushDataError;
             new VolleyUtils().makeJsonObjectRequestPushError(getContext(), linkPushData, dtJson, pDialog, new InterfaceVolleyResponseListener() {
                 @Override
                 public void onError(String message) {
-                    new ToastCustom().showToasty(getContext(),message,4);
+                    new ToastCustom().showToasty(getContext(), message, 4);
                     pDialog.dismiss();
                 }
 
                 @Override
                 public void onResponse(String response, Boolean status, String strErrorMsg) {
-                    if (response!=null){
+                    if (response != null) {
                         JSONObject jsonObject = null;
                         try {
                             jsonObject = new JSONObject(response);
@@ -528,18 +530,18 @@ public class FragmentSetting extends Fragment{
                             boolean isStatus = model.getResult().isStatus();
                             String txtMessage = model.getResult().getMessage();
                             String txtMethod = model.getResult().getMethodName();
-                            if (isStatus==true){
-                                if (dtJson.getDataError().getListOfDatatLogError()!=null){
-                                    if (dtJson.getDataError().getListOfDatatLogError().size()>0){
-                                        for (int i = 0; i < dtJson.getDataError().getListOfDatatLogError().size(); i++){
+                            if (isStatus == true) {
+                                if (dtJson.getDataError().getListOfDatatLogError() != null) {
+                                    if (dtJson.getDataError().getListOfDatatLogError().size() > 0) {
+                                        for (int i = 0; i < dtJson.getDataError().getListOfDatatLogError().size(); i++) {
                                             new RepotLogError(getContext()).delete(dtJson.getDataError().getListOfDatatLogError().get(i));
                                         }
                                         new BLMain().deleteMediaStorageDir();
                                     }
                                 }
-                                new ToastCustom().showToasty(getContext(),"Success Push Data",1);
-                            }else {
-                                new ToastCustom().showToasty(getContext(),txtMessage, 4);
+                                new ToastCustom().showToasty(getContext(), "Success Push Data", 1);
+                            } else {
+                                new ToastCustom().showToasty(getContext(), txtMessage, 4);
                             }
 
                             pDialog.dismiss();
@@ -548,12 +550,18 @@ public class FragmentSetting extends Fragment{
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
-                    }else {
-                        new ToastCustom().showToasty(getContext(),strErrorMsg,4);
+                    } else {
+                        new ToastCustom().showToasty(getContext(), strErrorMsg, 4);
                         pDialog.dismiss();
                     }
                 }
             });
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }
