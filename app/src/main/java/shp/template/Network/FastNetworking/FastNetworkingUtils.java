@@ -1,5 +1,6 @@
 package shp.template.Network.FastNetworking;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
@@ -7,6 +8,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,16 +42,21 @@ public class FastNetworkingUtils {
                     }
                     @Override
                     public void onError(ANError error) {
-                        writeErrorLog(error);
+                        ErrorHandlerFN(activity,error,TAG);
                         listener.onError(error);
                     }
                 });
     }
-    public void FNRequestPostData(final Context activity,String txtLink,JSONObject JObject, String progressBarType, final InterfaceFastNetworking listener){
+    public void FNRequestPostData(final Context context, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener){
         String access_token = "";
         List<ClsToken> dataToken = null;
+
+        final ProgressDialog Dialog = new ProgressDialog(context);
+        Dialog.setMessage(progressBarType);
+        Dialog.setCancelable(false);
+        Dialog.show();
         try {
-            dataToken = new RepoclsToken(activity).findAll();
+            dataToken = new RepoclsToken(context).findAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,16 +71,18 @@ public class FastNetworkingUtils {
                     @Override
                     public void onResponse(JSONObject response) {
                         listener.onResponse(response);
+                        Dialog.dismiss();
                     }
 
                     @Override
                     public void onError(ANError error) {
                         listener.onError(error);
-                        writeErrorLog(error);
+                        Dialog.dismiss();
+                        ErrorHandlerFN(context,error,TAG);
                     }
                 });
     }
-    public void writeErrorLog(ANError error){
+    public void ErrorHandlerFN(Context context,ANError error, String TAG){
         if (error.getErrorCode() != 0) {
             Log.d(TAG, "onError errorCode : " + error.getErrorCode());
             Log.d(TAG, "onError errorBody : " + error.getErrorBody());
@@ -81,5 +90,6 @@ public class FastNetworkingUtils {
         } else {
             Log.d(TAG, "onError errorDetail : " + error.getErrorDetail());
         }
+        new ToastCustom().showToasty(context,error.getErrorBody()+" "+error.getErrorDetail(),4);
     }
 }

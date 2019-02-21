@@ -42,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -92,6 +93,8 @@ import shp.template.Fragment.FragmentHome;
 import shp.template.Fragment.FragmentNotification;
 import shp.template.Fragment.FragmentPushData;
 import shp.template.Fragment.FragmentSetting;
+import shp.template.Network.FastNetworking.FastNetworkingUtils;
+import shp.template.Network.FastNetworking.InterfaceFastNetworking;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
 import shp.template.Service.ServiceNative;
@@ -217,9 +220,11 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         }
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
-        tvUsername = (TextView) findViewById(R.id.tvUsername);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        tvEmail = (TextView) findViewById(R.id.tvEmail);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        View headerNav = navigationView.getHeaderView(0);
+        tvEmail = (TextView) headerNav.findViewById(R.id.tvEmail);
+        tvUsername = (TextView) headerNav.findViewById(R.id.tvUsername);
         pDialog = new ProgressDialog(ActivityMainMenu.this, ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -307,8 +312,14 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        tvUsername.setText("Roberto Oloan Capah");
-        tvEmail.setText("Roberto.capah@kalbenutritionals.com");
+        if (dataLogin.size()>0){
+            tvUsername.setText(dataLogin.get(0).getTxtUserName());
+            tvEmail.setText(dataLogin.get(0).getTxtEmail());
+        }else{
+            tvUsername.setText("Roberto Oloan Capah");
+            tvEmail.setText("Roberto.capah@kalbenutritionals.com");
+        }
+
         /*if (dataLogin.get(0).getBlobImg()!=null){
             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dataLogin.get(0).getBlobImg());
             Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
@@ -421,46 +432,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
                             selectedId = 99;
                             break;
-//                        case R.id.mnCallPlan:
-//                            checkNavItem = null;
-//                            toolbar.setTitle("Call Plan");
-//                            toolbar.setSubtitle(null);
-//
-//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//
-////                        FragmentListCallPlan fragmentCallPlan = new FragmentListCallPlan();
-//
-//                            selectedId = 99;
-//                            break;
-//                        case R.id.mnAkusisi:
-//                            checkNavItem = null;
-//                            toolbar.setTitle("Akusisi");
-//                            toolbar.setSubtitle(null);
-//
-//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//
-//
-//                            break;
-//                        case R.id.mnMaintenance:
-//                            checkNavItem = null;
-//                            toolbar.setTitle("Maintenance");
-//                            toolbar.setSubtitle(null);
-//
-//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//
-//
-//                            break;
-//
-//                        case R.id.mnInfoProgram:
-//                            checkNavItem = null;
-//                            toolbar.setTitle("Info Program");
-//                            toolbar.setSubtitle(null);
-//
-//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//
-//
-//
-//                            break;
                         case R.id.mnNotification:
                             checkNavItem = null;
                             toolbar.setTitle("Notification");
@@ -584,20 +555,13 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-
-        new VolleyUtils().volleyLogin(ActivityMainMenu.this, strLinkAPI, mRequestBody, "Logout....", isMustLogout, new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestPostData(ActivityMainMenu.this, strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
+            public void onResponse(JSONObject response) {
                 Intent res = null;
                 if (response != null) {
                     try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        LoginMobileApps model = gson.fromJson(jsonObject.toString(), LoginMobileApps.class);
+                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
                         boolean txtStatus = model.getResult().isStatus();
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
@@ -610,23 +574,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             deleteMediaStorage();
                             clearData();
                             ShortcutBadger.removeCountOrThrow(getApplicationContext());
-//                            loginRepo = new RepomUserLogin(getApplicationContext());
-//                            ClsmUserLogin data = new ClsmUserLogin();
-//                            data.setTxtGuID(model.getData().getTxtGuiID());
-//                            data.setIntUserID(model.getData().getIntUserID());
-//                            data.setTxtUserName(model.getData().getTxtUserName());
-//                            data.setTxtNick(model.getData().getTxtNick());
-//                            data.setTxtEmpID(model.getData().getTxtEmpID());
-//                            data.setTxtEmail(model.getData().getTxtEmail());
-//                            data.setIntDepartmentID(model.getData().getIntDepartmentID());
-//                            data.setIntLOBID(model.getData().getIntLOBID());
-//                            data.setTxtCompanyCode(model.getData().getTxtCompanyCode());
-//                            if (model.getData().getMUserRole()!=null){
-//                                data.setIntRoleID(model.getData().getMUserRole().getIntRoleID());
-//                                data.setTxtRoleName(model.getData().getMUserRole().getTxtRoleName());
-//                            }
-//                            data.setDtLogIn(parseDate(model.getData().getDtDateLogin()));
-//                            loginRepo.createOrUpdate(data);
 
                             Log.d("Data info", "logout Success");
 
@@ -637,8 +584,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                         } else {
                             new ToastCustom().showToasty(ActivityMainMenu.this, txtMessage, 4);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     } catch (ShortcutBadgeException e) {
                         Intent intent = new Intent(ActivityMainMenu.this, ActivitySplash.class);
                         finish();
@@ -646,6 +591,11 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                         e.printStackTrace();
                     }
                 }
+            }
+
+            @Override
+            public void onError(ANError error) {
+
             }
         });
     }

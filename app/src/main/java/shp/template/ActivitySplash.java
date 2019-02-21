@@ -547,7 +547,6 @@ public class ActivitySplash extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), "Download Failed", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
                         });
@@ -581,21 +580,14 @@ public class ActivitySplash extends AppCompatActivity {
         }
         final String mRequestBody = resJson.toString();
 
-        new VolleyUtils().volleyLogin(activity, strLinkAPI, mRequestBody, "Please Wait.....", true, new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestPostData(activity.getApplicationContext(), strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                new ToastCustom().showToasty(activity.getApplicationContext(),message,4);
-            }
-
-            @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
-                Intent res = null;
+            public void onResponse(JSONObject response) {
                 if (response != null) {
                     try {
                         GsonBuilder gsonBuilder = new GsonBuilder();
                         gson = gsonBuilder.create();
-                        JSONObject jsonObject = new JSONObject(response);
-                        LoginMobileApps model = gson.fromJson(jsonObject.toString(), LoginMobileApps.class);
+                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
                         boolean txtStatus = model.getResult().isStatus();
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
@@ -610,8 +602,6 @@ public class ActivitySplash extends AppCompatActivity {
                             new BLMain().deleteMediaStorage();
                             helper.clearDataAfterLogout();
                             checkVersion(activity, mAccountManager);
-//                            new AuthenticatorUtil().showAccountPicker(ActivitySplash.this, mAccountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
-//                            Log.d("Data info", "logout Success");
 
                         } else {
                             activity.stopService(new Intent(activity, ServiceNative.class));
@@ -620,14 +610,19 @@ public class ActivitySplash extends AppCompatActivity {
                             DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
                             helper.clearDataAfterLogout();
                             checkVersion(activity, mAccountManager);
-//                            new AuthenticatorUtil().showAccountPicker(ActivitySplash.this, mAccountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
                             new ToastCustom().showToasty(ActivitySplash.this,txtMessage,4);
                         }
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
+
+            @Override
+            public void onError(ANError error) {
+
+            }
         });
+
     }
 }

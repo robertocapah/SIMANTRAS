@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import com.androidnetworking.error.ANError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import shp.template.BL.BLHelper;
@@ -41,6 +42,8 @@ import shp.template.Database.Common.ClsmConfigData;
 import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Database.Common.ClsmUserRole;
 import shp.template.Data.ClsHardCode;
+import shp.template.Network.FastNetworking.FastNetworkingUtils;
+import shp.template.Network.FastNetworking.InterfaceFastNetworking;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
 import shp.template.Database.Repo.RepoclsToken;
@@ -278,23 +281,16 @@ public class ActivityPickAccount extends Activity {
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new VolleyUtils().volleyLogin(activity, strLinkAPI, mRequestBody, "Getting your role......",false, new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestPostData(activity, strLinkAPI, resJson, "Getting your role", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
+            public void onResponse(JSONObject response) {
                 if (response!=null){
-                    JSONObject jsonObject = null;
                     try {
-                        jsonObject = new JSONObject(response);
-                        JSONObject jsn = jsonObject.getJSONObject("result");
+                        JSONObject jsn = response.getJSONObject("result");
                         boolean txtStatus = jsn.getBoolean("status");
                         String txtMessage = jsn.getString("message");
                         String txtMethode_name = jsn.getString("method_name");
-                        JSONArray arrayData = jsonObject.getJSONArray("data");
+                        JSONArray arrayData = response.getJSONArray("data");
                         if (txtStatus==true){
                             if (arrayData != null) {
                                 if (arrayData.length()>0){
@@ -367,6 +363,10 @@ public class ActivityPickAccount extends Activity {
                     }
 
                 }
+            }
+
+            @Override
+            public void onError(ANError error) {
 
             }
         });
@@ -431,21 +431,15 @@ public class ActivityPickAccount extends Activity {
         final String accountType = data_token[2];
         final boolean newAccount = false;
         final Bundle datum = new Bundle();
-        volleyLogin(activity, strLinkAPI, mRequestBody, data_token, txtRoleName, "Please Wait....", new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestPostData(activity, strLinkAPI, resJson, "Getting your role", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                Toast.makeText(activity.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
+            public void onResponse(JSONObject response) {
                 Intent res = null;
                 if (response != null) {
                     try {
                         GsonBuilder gsonBuilder = new GsonBuilder();
                         gson = gsonBuilder.create();
-                        JSONObject jsonObject = new JSONObject(response);
-                        LoginMobileApps model = gson.fromJson(jsonObject.toString(), LoginMobileApps.class);
+                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
                         boolean txtStatus = model.getResult().isStatus();
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
@@ -495,12 +489,15 @@ public class ActivityPickAccount extends Activity {
                         } else {
                             new ToastCustom().showToasty(activity.getApplicationContext(),txtMessage,4);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 }
+            }
+
+            @Override
+            public void onError(ANError error) {
+
             }
         });
     }
