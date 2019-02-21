@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_edtext">
+            <TextView
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Downloading new Aplication"/>
+            <com.github.lzyzsd.circleprogress.DonutProgress
+                android:id="@+id/progressPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/translucte"
+                custom:donut_background_color="@color/translucte"
+                custom:donut_progress="0"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please wait ...."
+                android:padding="10dp"/>
+        </LinearLayout>
+
+    </RelativeLayout>

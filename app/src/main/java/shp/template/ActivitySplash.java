@@ -4,6 +4,7 @@ import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -30,7 +33,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.AnalyticsListener;
+import com.androidnetworking.interfaces.DownloadListener;
+import com.androidnetworking.interfaces.DownloadProgressListener;
+import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -82,11 +91,14 @@ public class ActivitySplash extends AppCompatActivity {
     private AccountManager mAccountManager;
     List<ClsToken> dataToken;
     RepomUserLogin loginRepo;
+    private static final String TAG = "Activity Spash Network";
     RepoclsToken tokenRepo;
     String clientId = "";
     ProgressDialog mProgressDialog;
+    Dialog dialog;
     private Gson gson;
     private String i_View ="Fragment";
+    private final String TAG_DOWNlOAD_APK = "Download_apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -393,26 +405,9 @@ public class ActivitySplash extends AppCompatActivity {
                                 resUpdate = true;
                                 txtLink =  objData.getString("link_app");
                             }
-
                             if (resUpdate){
-                                mProgressDialog = new ProgressDialog(context);
-                                mProgressDialog.setMessage("Please Wait For Downloading File....");
-                                mProgressDialog.setIndeterminate(true);
-                                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                                mProgressDialog.setCancelable(false);
-
                                 // execute this when the downloader must be fired
-                                getDownloadAPK (mProgressDialog, txtLink);
-
-                                /*final DownloadTask downloadTask = new DownloadTask(context);
-                                downloadTask.execute(txtLink);
-
-                                mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        downloadTask.cancel(true);
-                                    }
-                                });*/
+                                getDownloadAPK (txtLink);
                             }else {
                                 new AuthenticatorUtil().showAccountPicker((Activity) context, accountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
                             }
@@ -428,26 +423,17 @@ public class ActivitySplash extends AppCompatActivity {
                             }
 
                             if (resUpdate){
-                                mProgressDialog = new ProgressDialog(context);
-                                mProgressDialog.setMessage("Please Wait For Downloading File....");
-                                mProgressDialog.setIndeterminate(true);
-                                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                                mProgressDialog.setCancelable(false);
+
+                                DonutProgress donutProgress = new DonutProgress(context);
+                                donutProgress.setFinishedStrokeColor(R.color.success_stroke_color);
+                                donutProgress.setText("Downloading New App");
+                                donutProgress.setUnfinishedStrokeColor(R.color.red_800);
 
                                 // execute this when the downloader must be fired
-                                final DownloadTask downloadTask = new DownloadTask(context);
-                                downloadTask.execute(txtLink);
-
-                                mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        downloadTask.cancel(true);
-                                    }
-                                });
+                                getDownloadAPK ( txtLink);
                             }else {
                                 new AuthenticatorUtil().showAccountPicker((Activity) context, accountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
                             }
-//                            ToastCustom.showToasty(getApplicationContext(),txtMessage,4);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -462,154 +448,112 @@ public class ActivitySplash extends AppCompatActivity {
             }
         });
     }
-    private void getDownloadAPK(ProgressDialog dialog,String txtLink){
+    private void getDownloadAPK(String txtLink){
+        final String txtPathUserData = Environment.getExternalStorageDirectory() + File.separator;
+        final String apkName = new ClsHardCode().txtApkName;
+        dialog = new Dialog(ActivitySplash.this);
+        dialog.setContentView(R.layout.layout_progress_download_apk);
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        final DonutProgress progressD =(DonutProgress) dialog.findViewById(R.id.progressPercentage);
+        dialog.show();
 
-    }
-    private class DownloadTask extends AsyncTask<String, Integer, String> {
-        private Context context;
-        private PowerManager.WakeLock mWakeLock;
-
-        DownloadTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected String doInBackground(String... sUrl) {
-            InputStream input = null;
-            OutputStream output = null;
-            HttpURLConnection connection = null;
-            try {
-                URL url = new URL(sUrl[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                // expect HTTP 200 OK, so we don't mistakenly save error report
-                // instead of the file
-                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    return "Server returned HTTP " + connection.getResponseCode()
-                            + " " + connection.getResponseMessage();
-                }
-
-                // this will be useful to display download percentage
-                // might be -1: server did not report the length
-                int fileLength = connection.getContentLength();
-
-                // download the file
-                input = connection.getInputStream();
-                String txtPath = new ClsHardCode().txtPathUserData;
-                File mediaStorageDir = new File(txtPath);
-                // Create the storage directory if it does not exist
-                if (!mediaStorageDir.exists()) {
-                    if (!mediaStorageDir.mkdirs()) {
-                        return null;
-                    }
-                }
-                output = new FileOutputStream(txtPath + "kalbecallplanaedp.apk");
-
-                byte data[] = new byte[4096];
-                long total = 0;
-                int count;
-                while ((count = input.read(data)) != -1) {
-                    // allow canceling with back button
-                    if (isCancelled()) {
-                        input.close();
-                        return null;
-                    }
-                    total += count;
-                    // publishing the progress....
-                    if (fileLength > 0) // only if total length is known
-                        publishProgress((int) (total * 100 / fileLength));
-                    output.write(data, 0, count);
-                }
-            } catch (Exception e) {
-                return e.toString();
-            } finally {
-                try {
-                    if (output != null)
-                        output.close();
-                    if (input != null)
-                        input.close();
-                } catch (IOException ignored) {
-                }
-
-                if (connection != null)
-                    connection.disconnect();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                    getClass().getName());
-            mWakeLock.acquire();
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            super.onProgressUpdate(progress);
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.setMax(100);
-            mProgressDialog.setProgress(progress[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            mWakeLock.release();
-            mProgressDialog.dismiss();
-            if (result != null)
-                Toast.makeText(context, "Download error: " + result, Toast.LENGTH_LONG).show();
-//                new clsMainActivity().showToast(context, "Download error: " + result);
-            else {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Toast.makeText(context, "File downloaded", Toast.LENGTH_LONG).show();
-//                   new clsMainExlActivity().showToast(context,"File downloaded");
-//                  new clsMainActivity().showToast(context, );
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-                        String txtPath = new ClsHardCode().txtPathUserData + "kalbecallplanaedp.apk";
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        File file = new File(txtPath);
-                        Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
-                        intent.setData(uri);
-//                        intent.setDataAndType(FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(txtPath)), "application/vnd.android.package-archive");
-                        startActivity(intent);
-                        finish();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        try {
+            File yourFile = new File(txtPathUserData);
+            if (!yourFile.exists()) {
+                if (yourFile.mkdirs()) {
+                    Log.d(TAG, "Successfully created the parent dir:" + yourFile.getName());
                 } else {
-                    Toast.makeText(context, "File downloaded", Toast.LENGTH_LONG).show();
-//                    new clsMainActivity().showToast(context, "File downloaded");
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    String txtPath = new ClsHardCode().txtPathUserData + "kalbecallplanaedp.apk";
-                    intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    if (Build.VERSION.SDK_INT >= 24) {
-                        intent.setDataAndType(FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(txtPath)), "application/vnd.android.package-archive");
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    } else {
-                        intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
-                    }
-                    //intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
-
-                    startActivity(intent);
-                    finish();
+                    Log.d(TAG, "Failed to create the parent dir:" + yourFile.getName());
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }
+        AndroidNetworking.download(txtLink, txtPathUserData, apkName)
+                .setTag(TAG_DOWNlOAD_APK)
+                .setPriority(Priority.MEDIUM)
+                .doNotCacheResponse()
+                .setPercentageThresholdForCancelling(50) // even if at the time of cancelling it will not cancel if 50%
+                .build()
+                .setAnalyticsListener(new AnalyticsListener() {
+                    @Override
+                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
+                        Log.d(TAG, " timeTakenInMillis : " + timeTakenInMillis);
+                        Log.d(TAG, " bytesSent : " + bytesSent);
+                        Log.d(TAG, " bytesReceived : " + bytesReceived);
+                        Log.d(TAG, " isFromCache : " + isFromCache);
+                    }
+                })
+                .setDownloadProgressListener(new DownloadProgressListener() {
+                    @Override
+                    public void onProgress(final long bytesDownloaded, final long totalBytes) {
+                        // do anything with progress
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                double precentage = ((double) bytesDownloaded / (double) totalBytes) * 100;
+                                progressD.setProgress((int) precentage);
+//                                tvProgress.setText("bytes downloaded :" + bytesDownloaded + ". total bytes : " + totalBytes + " precentage : " + precentage + " %");
+                            }
+                        });
+                    }
+                })
+                .startDownload(new DownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        // do anything after completion
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                                Toast.makeText(getApplicationContext(), "Download Complete", Toast.LENGTH_SHORT).show();
+                                String txtPath = txtPathUserData + apkName;
+                                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                        Toast.makeText(getApplicationContext(), "File downloaded", Toast.LENGTH_LONG).show();
+                                        try {
+                                            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                            File file = new File(txtPath);
+                                            Uri uri = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", file);
+                                            intent.setData(uri);
+                                            startActivity(intent);
+                                            finish();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "File downloaded", Toast.LENGTH_LONG).show();
+                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                        intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-//    private void logout() {
-//        DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
-//        helper.clearDataAfterLogout();
-////        new AuthenticatorUtil().addNewAccount(ActivitySplash.this, mAccountManager, AccountGeneral.ACCOUNT_TYPE, AUTHTOKEN_TYPE_FULL_ACCESS);
-//    }
+                                        if (Build.VERSION.SDK_INT >= 24) {
+                                            intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(txtPath)), "application/vnd.android.package-archive");
+                                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                        } else {
+                                            intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
+                                        }
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        // handle error
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Download Failed", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                });
+    }
 
     public void logout(final Activity activity) {
         String strLinkAPI = new ClsHardCode().linkLogout;

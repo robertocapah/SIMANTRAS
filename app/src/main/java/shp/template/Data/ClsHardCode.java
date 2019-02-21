@@ -3,9 +3,11 @@ package shp.template.Data;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.res.TypedArrayUtils;
 
 
 import shp.template.Database.Repo.RepomConfig;
+import shp.template.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,12 +27,13 @@ public class ClsHardCode {
     Context context;
     //    public String txtPathApp= Environment.getExternalStorageDirectory()+ File.separator+"data"+File.separator+"data"+File.separator+"KalbeCallPlanAEDP"+File.separator+"app_database"+File.separator;
     /* path root */
-    public String txtPathApp = "data" + File.separator + "data" + File.separator + "shpnutritionals.kalbecallplanaedp" + File.separator + "databases" + File.separator;
+    public String txtPathApp = "data" + File.separator + "data" + File.separator + "shp.template" + File.separator + "databases" + File.separator;
 
     //    public String txtFolderData = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"KalbeCallPlanAEDP"+File.separator+"image_Person"+File.separator;
-    public String pathApp = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"shpnutritionals.kalbecallplanaedp"+File.separator;
+    public String pathApp = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"shp.template"+File.separator;
     public String txtPathUserData = pathApp + "user_data"+File.separator;
     public String txtPathTempData = pathApp + "tempdata" + File.separator;
+    public String txtApkName = "KN2019_Template_Mobile.apk";
 
     //    public String dbName = "KalbeCallPlanAEDP.db";
     public String dbName = "AEDP.db";
@@ -68,7 +71,6 @@ public class ClsHardCode {
     /*Link klik apotek*/
     public String linkApotek = new RepomConfig(context).APIKLB +"mae/apotek";
     public String linkDokter = new RepomConfig(context).APIKLB + "mae/dokter";
-
 
     public int Draft = 0;
     public int Save = 1;
