@@ -1142,8 +1142,6 @@ public class VolleyUtils {
 
                                     RepoclsToken tokenRepo = new RepoclsToken(context);
                                     tokenRepo.createOrUpdate(data);
-//                                    ToastCustom.showToasty(context,"Success get new Access Token",1);
-//                                    Toast.makeText(context, "Success get new Access Token", Toast.LENGTH_SHORT).show();
                                     newRefreshToken = refreshToken;
                                     if (refreshToken == newRefreshToken && !newRefreshToken.equals("")) {
                                         new ActivitySplash().checkVersion(context, accountManager);
@@ -1228,14 +1226,6 @@ public class VolleyUtils {
                 dialog.dismiss();
             }
         });
-
-//        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-//
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//            }
-//        });
 
         android.app.AlertDialog alert = builder.create();
         alert.show();

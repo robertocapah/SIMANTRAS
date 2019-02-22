@@ -13,10 +13,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -24,7 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -33,17 +30,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.AnalyticsListener;
-import com.androidnetworking.interfaces.DownloadListener;
-import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import shp.template.BL.BLHelper;
 import shp.template.BL.BLMain;
 import shp.template.Database.Common.ClsStatusMenuStart;
 import shp.template.Database.Common.ClsToken;
@@ -55,8 +46,7 @@ import shp.template.Database.DatabaseManager;
 import shp.template.Database.Repo.EnumStatusMenuStart;
 import shp.template.Network.FastNetworking.FastNetworkingUtils;
 import shp.template.Network.FastNetworking.InterfaceFastNetworking;
-import shp.template.Network.Volley.InterfaceVolleyResponseListener;
-import shp.template.Network.Volley.VolleyUtils;
+import shp.template.Network.FastNetworking.InterfaceFastNetworkingDownloadFile;
 import shp.template.Database.Repo.RepoclsToken;
 import shp.template.Database.Repo.RepomConfig;
 import shp.template.Database.Repo.RepomUserLogin;
@@ -69,12 +59,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -456,7 +441,6 @@ public class ActivitySplash extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         final DonutProgress progressD =(DonutProgress) dialog.findViewById(R.id.progressPercentage);
-        dialog.show();
 
         try {
             File yourFile = new File(txtPathUserData);
@@ -470,88 +454,70 @@ public class ActivitySplash extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        AndroidNetworking.download(txtLink, txtPathUserData, apkName)
-                .setTag(TAG_DOWNlOAD_APK)
-                .setPriority(Priority.MEDIUM)
-                .doNotCacheResponse()
-                .setPercentageThresholdForCancelling(50) // even if at the time of cancelling it will not cancel if 50%
-                .build()
-                .setAnalyticsListener(new AnalyticsListener() {
+        new FastNetworkingUtils().FNRequestDownloadAPKFile(this, txtLink, txtPathUserData, apkName, TAG_DOWNlOAD_APK, dialog, new InterfaceFastNetworkingDownloadFile() {
+            @Override
+            public void onProgress(final long bytesDownloaded, final long totalBytes) {
+                // do anything with progress
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
-                        Log.d(TAG, " timeTakenInMillis : " + timeTakenInMillis);
-                        Log.d(TAG, " bytesSent : " + bytesSent);
-                        Log.d(TAG, " bytesReceived : " + bytesReceived);
-                        Log.d(TAG, " isFromCache : " + isFromCache);
-                    }
-                })
-                .setDownloadProgressListener(new DownloadProgressListener() {
-                    @Override
-                    public void onProgress(final long bytesDownloaded, final long totalBytes) {
-                        // do anything with progress
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                double precentage = ((double) bytesDownloaded / (double) totalBytes) * 100;
-                                progressD.setProgress((int) precentage);
+                    public void run() {
+                        double precentage = ((double) bytesDownloaded / (double) totalBytes) * 100;
+                        progressD.setProgress((int) precentage);
 //                                tvProgress.setText("bytes downloaded :" + bytesDownloaded + ". total bytes : " + totalBytes + " precentage : " + precentage + " %");
-                            }
-                        });
-                    }
-                })
-                .startDownload(new DownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        // do anything after completion
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Download Complete", Toast.LENGTH_SHORT).show();
-                                String txtPath = txtPathUserData + apkName;
-                                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        Toast.makeText(getApplicationContext(), "File downloaded", Toast.LENGTH_LONG).show();
-                                        try {
-                                            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-                                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                            File file = new File(txtPath);
-                                            Uri uri = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", file);
-                                            intent.setData(uri);
-                                            startActivity(intent);
-                                            finish();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "File downloaded", Toast.LENGTH_LONG).show();
-                                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                                        intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                                        if (Build.VERSION.SDK_INT >= 24) {
-                                            intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(txtPath)), "application/vnd.android.package-archive");
-                                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                        } else {
-                                            intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
-                                        }
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(ANError error) {
-                        // handle error
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dialog.dismiss();
-                            }
-                        });
                     }
                 });
+            }
+
+            @Override
+            public void onDownloadComplete() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Download Complete", Toast.LENGTH_SHORT).show();
+                        String txtPath = txtPathUserData + apkName;
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Toast.makeText(getApplicationContext(), "File downloaded", Toast.LENGTH_LONG).show();
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                File file = new File(txtPath);
+                                Uri uri = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", file);
+                                intent.setData(uri);
+                                startActivity(intent);
+                                finish();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "File downloaded", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                            if (Build.VERSION.SDK_INT >= 24) {
+                                intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(txtPath)), "application/vnd.android.package-archive");
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            } else {
+                                intent.setDataAndType(Uri.fromFile(new File(txtPath)), "application/vnd.android.package-archive");
+                            }
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(ANError error) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
     }
 
     public void logout(final Activity activity) {

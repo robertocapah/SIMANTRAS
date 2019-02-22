@@ -40,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.InputFilter.InputFilters;
@@ -79,6 +80,8 @@ import shp.template.Database.Repo.RepoclsToken;
 import shp.template.Database.Repo.RepomMenu;
 import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.Database.Repo.RepomUserRole;
+import shp.template.Network.FastNetworking.FastNetworkingUtils;
+import shp.template.Network.FastNetworking.InterfaceFastNetworking;
 import shp.template.Network.Volley.InterfaceCustomVolleyResponseListener;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
@@ -393,8 +396,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         builder.setPositiveButton("LOGIN", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
-//                login();
-                startActivity(new Intent(ActivityLogin.this,ActivityMainMenu.class));
+                login();
                 dialog.dismiss();
             }
         });
@@ -444,19 +446,13 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         final boolean newAccount = getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false);
 
         final Bundle datum = new Bundle();
-        new VolleyUtils().volleyLoginCustom(ActivityLogin.this, strLinkAPI, mRequestBody, "Please Wait....", new InterfaceCustomVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestPostData(ActivityLogin.this, strLinkAPI, resJson, "Logging in, please wait", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg, ProgressDialog dialog) {
+            public void onResponse(JSONObject response) {
                 Intent res = null;
                 if (response != null) {
                     try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        LoginMobileApps model = gson.fromJson(jsonObject.toString(), LoginMobileApps.class);
+                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
                         boolean txtStatus = model.getResult().isStatus();
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
@@ -499,22 +495,24 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                             res = new Intent();
                             res.putExtras(datum);
                             finishLogin(res, mAccountManager);
-                            dialog.dismiss();
                             Intent intent = new Intent(ActivityLogin.this, ActivityMainMenu.class);
                             finish();
                             startActivity(intent);
                         } else {
                             new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
-                            dialog.dismiss();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 }
             }
+
+            @Override
+            public void onError(ANError error) {
+
+            }
         });
+
     }
 
     public byte[] getByte(String url) {

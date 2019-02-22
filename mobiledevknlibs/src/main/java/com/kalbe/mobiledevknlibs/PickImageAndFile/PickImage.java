@@ -129,9 +129,7 @@ public class PickImage {
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        finally {
             try {
                 if (ims!=null)
                 ims.close();

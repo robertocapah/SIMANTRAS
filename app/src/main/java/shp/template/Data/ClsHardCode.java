@@ -28,6 +28,7 @@ public class ClsHardCode {
     //    public String txtPathApp= Environment.getExternalStorageDirectory()+ File.separator+"data"+File.separator+"data"+File.separator+"KalbeCallPlanAEDP"+File.separator+"app_database"+File.separator;
     /* path root */
     public String txtPathApp = "data" + File.separator + "data" + File.separator + "shp.template" + File.separator + "databases" + File.separator;
+    public String txtPathTemp = Environment.getExternalStorageDirectory()+ File.separator;
 
     //    public String txtFolderData = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"KalbeCallPlanAEDP"+File.separator+"image_Person"+File.separator;
     public String pathApp = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"shp.template"+File.separator;
