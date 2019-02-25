@@ -462,7 +462,8 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
     private void login() {
         txtUsername = editTextUsername.getText().toString();
         txtPassword = editTextPass.getText().toString();
-        int intRoleId = HMRole.get(spnRoleLogin.getSelectedItem());
+        VmSpinner spinner = dataAdapter.getItem(spnRoleLogin.getSelectedItemPosition());
+        int intRoleId = spinner.getIntKey();
         String strLinkAPI = new ClsHardCode().linkLogin;
         JSONObject resJson = new JSONObject();
         JSONObject jData = new JSONObject();
@@ -494,60 +495,67 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         new FastNetworkingUtils().FNRequestPostData(ActivityLogin.this, strLinkAPI, resJson, "Logging in, please wait", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
-                Intent res = null;
+
                 if (response != null) {
-                    try {
-                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
-                        boolean txtStatus = model.getResult().isStatus();
-                        String txtMessage = model.getResult().getMessage();
-                        String txtMethode_name = model.getResult().getMethodName();
+                    final LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
+                    boolean txtStatus = model.getResult().isStatus();
+                    String txtMessage = model.getResult().getMessage();
+                    String txtMethode_name = model.getResult().getMethodName();
 
-                        String accessToken = "dummy_access_token";
 
-                        if (txtStatus == true) {
-                            loginRepo = new RepomUserLogin(getApplicationContext());
-                            ClsmUserLogin data = new ClsmUserLogin();
-                            data.setTxtGuID(model.getData().getTxtGuiID());
-                            data.setIntUserID(model.getData().getIntUserID());
-                            data.setTxtUserName(model.getData().getTxtUserName());
-                            data.setTxtNick(model.getData().getTxtNick());
-                            data.setTxtEmpID(model.getData().getTxtEmpID());
-                            data.setTxtEmail(model.getData().getTxtEmail());
-                            data.setIntDepartmentID(model.getData().getIntDepartmentID());
-                            data.setIntLOBID(model.getData().getIntLOBID());
-                            data.setTxtCompanyCode(model.getData().getTxtCompanyCode());
-                            if (model.getData().getMUserRole() != null) {
-                                data.setIntRoleID(model.getData().getMUserRole().getIntRoleID());
-                                data.setTxtRoleName(model.getData().getMUserRole().getTxtRoleName());
+                    if (txtStatus == true) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent res = null;
+                                String accessToken = "dummy_access_token";
+                                loginRepo = new RepomUserLogin(getApplicationContext());
+                                ClsmUserLogin data = new ClsmUserLogin();
+                                data.setTxtGuID(model.getData().getTxtGuiID());
+                                data.setIntUserID(model.getData().getIntUserID());
+                                data.setTxtUserName(model.getData().getTxtUserName());
+                                data.setTxtNick(model.getData().getTxtNick());
+                                data.setTxtEmpID(model.getData().getTxtEmpID());
+                                data.setTxtEmail(model.getData().getTxtEmail());
+                                data.setIntDepartmentID(model.getData().getIntDepartmentID());
+                                data.setIntLOBID(model.getData().getIntLOBID());
+                                data.setTxtCompanyCode(model.getData().getTxtCompanyCode());
+                                if (model.getData().getMUserRole() != null) {
+                                    data.setIntRoleID(model.getData().getMUserRole().getIntRoleID());
+                                    data.setTxtRoleName(model.getData().getMUserRole().getTxtRoleName());
+                                }
+                                data.setDtLogIn(parseDate(model.getData().getDtDateLogin()));
+
+                                byte[] file = getByte(model.getData().getTxtLinkFotoProfile());
+                                if (file != null) {
+                                    data.setBlobImg(file);
+                                } else {
+                                    data.setBlobImg(null);
+                                }
+                                try {
+                                    loginRepo.createOrUpdate(data);
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.d("Data info", "Login Success");
+
+                                datum.putString(AccountManager.KEY_ACCOUNT_NAME, txtUsername);
+                                datum.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+                                datum.putString(AccountManager.KEY_AUTHTOKEN, accessToken);
+                                datum.putString(PARAM_USER_PASS, txtPassword);
+                                datum.putString(ARG_AUTH_TYPE, mAuthTokenType);
+                                datum.putBoolean(ARG_IS_ADDING_NEW_ACCOUNT, newAccount);
+                                res = new Intent();
+                                res.putExtras(datum);
+                                finishLogin(res, mAccountManager);
+                                Intent intent = new Intent(ActivityLogin.this, ActivityMainMenu.class);
+                                finish();
+                                startActivity(intent);
                             }
-                            data.setDtLogIn(parseDate(model.getData().getDtDateLogin()));
+                        }).start();
 
-                            byte[] file = getByte(model.getData().getTxtLinkFotoProfile());
-                            if (file != null) {
-                                data.setBlobImg(file);
-                            } else {
-                                data.setBlobImg(null);
-                            }
-                            loginRepo.createOrUpdate(data);
-                            Log.d("Data info", "Login Success");
-
-                            datum.putString(AccountManager.KEY_ACCOUNT_NAME, txtUsername);
-                            datum.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
-                            datum.putString(AccountManager.KEY_AUTHTOKEN, accessToken);
-                            datum.putString(PARAM_USER_PASS, txtPassword);
-                            datum.putString(ARG_AUTH_TYPE, mAuthTokenType);
-                            datum.putBoolean(ARG_IS_ADDING_NEW_ACCOUNT, newAccount);
-                            res = new Intent();
-                            res.putExtras(datum);
-                            finishLogin(res, mAccountManager);
-                            Intent intent = new Intent(ActivityLogin.this, ActivityMainMenu.class);
-                            finish();
-                            startActivity(intent);
-                        } else {
-                            new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    } else {
+                        new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
                     }
                 }
             }
