@@ -9,10 +9,10 @@ public class VmSpinner {
     private String txtValue;
     private int intKey;
 
-    public VmSpinner(String txtKey, String txtValue){
-        this.txtKey = txtKey;
-        this.txtValue = txtValue;
-    }
+//    public VmSpinner(String txtKey, String txtValue){
+//        this.txtKey = txtKey;
+//        this.txtValue = txtValue;
+//    }
     public String getTxtKey() {
         return txtKey;
     }

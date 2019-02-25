@@ -69,6 +69,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import shp.template.CustomView.Adapter.AdapterSpinner;
 import shp.template.CustomView.Utils.AuthenticatorUtil;
 import shp.template.CustomView.Utils.DrawableClickListener;
 import shp.template.Data.ClsHardCode;
@@ -85,6 +86,7 @@ import shp.template.Network.FastNetworking.InterfaceFastNetworking;
 import shp.template.Network.Volley.InterfaceCustomVolleyResponseListener;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
+import shp.template.ViewModel.VmSpinner;
 
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.ARG_ACCOUNT_NAME;
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.ARG_AUTH_TYPE;
@@ -140,6 +142,8 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
     ProgressDialog progress;
     ArrayAdapter<String> spinnerArrayAdapter;
     Unbinder unbinder;
+    List<VmSpinner> listRole = new ArrayList<>();
+    AdapterSpinner dataAdapter;
 
     @Override
     public void onBackPressed() {
@@ -226,8 +230,9 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         }
         // Spinner Drop down elements
 
-        roleName.add("Select One");
-        HMRole.put("Select One", 0);
+
+//        roleName.add("Select One");
+//        HMRole.put("Select One", 0);
 
         editTextUsername.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -250,47 +255,85 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         });
 
         // Creating adapter for spinnerTelp
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, roleName);
 
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        VmSpinner dataSpn = new VmSpinner();
+        dataSpn.setIntKey(0);
+        dataSpn.setTxtValue("Select One");
+        listRole.add(dataSpn);
 
-        // Initializing an ArrayAdapter with initial text like select one
-        spinnerArrayAdapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_spinner_dropdown_item, roleName) {
+        dataAdapter = new AdapterSpinner(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, listRole){
             @Override
-            public boolean isEnabled(int position) {
-                if (position == 0) {
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
                     // Disable the first item from Spinner
                     // First item will be use for hint
                     return false;
-                } else {
+                }
+                else
+                {
                     return true;
                 }
             }
-
             @Override
             public View getDropDownView(int position, View convertView,
                                         ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
-                if (position == 0) {
+                if(position == 0){
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
-                } else {
+                }
+                else {
                     tv.setTextColor(getResources().getColor(R.color.green_300));
                 }
                 return view;
             }
         };
 
+//        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, roleName);
+//
+//        // Drop down layout style - list view with radio button
+//        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Initializing an ArrayAdapter with initial text like select one
+//        spinnerArrayAdapter = new ArrayAdapter<String>(
+//                this, android.R.layout.simple_spinner_dropdown_item, roleName) {
+//            @Override
+//            public boolean isEnabled(int position) {
+//                if (position == 0) {
+//                    // Disable the first item from Spinner
+//                    // First item will be use for hint
+//                    return false;
+//                } else {
+//                    return true;
+//                }
+//            }
+//
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view;
+//                if (position == 0) {
+//                    // Set the hint text color gray
+//                    tv.setTextColor(Color.GRAY);
+//                } else {
+//                    tv.setTextColor(getResources().getColor(R.color.green_300));
+//                }
+//                return view;
+//            }
+//        };
+
         // attaching data adapter to spinner
-        spnRoleLogin.setAdapter(spinnerArrayAdapter);
+        spnRoleLogin.setAdapter(dataAdapter);
 
         spnRoleLogin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedRole = spnRoleLogin.getSelectedItem().toString();
+                VmSpinner role = dataAdapter.getItem(i);
+                selectedRole = role.getTxtValue();
+//                selectedRole = spnRoleLogin.getSelectedItem().toString();
             }
 
             @Override
@@ -351,11 +394,14 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                     new ToastCustom().showToasty(ActivityLogin.this, "Please fill Username", 4);
                 } else if (editTextPass.getText().toString().equals("")) {
                     new ToastCustom().showToasty(ActivityLogin.this, "Please fill Password", 4);
-                } else if (roleName.size() == 1) {
+                }
+                else if (listRole.size()==1){
                     getRole();
-                } else if (HMRole.get(spnRoleLogin.getSelectedItem()) == 0) {
-                    new ToastCustom().showToasty(ActivityLogin.this, "Please select role", 4);
-                } else {
+                } else if (dataAdapter.getItem(spnRoleLogin.getSelectedItemPosition()).getIntKey()==0){
+                    new ToastCustom().showToasty(LoginActivity.this,"Please select role",4);
+                }
+                 else
+                {
                     popupSubmit();
                 }*/
             }
@@ -636,11 +682,12 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                         String txtMessage = jsn.getString("message");
                         String txtMethode_name = jsn.getString("method_name");
                         JSONArray arrayData = jsonObject.getJSONArray("data");
-                        roleName.clear();
-                        HMRole.clear();
+                        listRole.clear();
                         if (txtStatus == true) {
-                            roleName.add("Select One");
-                            HMRole.put("Select One", 0);
+                            VmSpinner dataSpn = new VmSpinner();
+                            dataSpn.setIntKey(0);
+                            dataSpn.setTxtValue("Select One");
+                            listRole.add(dataSpn);
                             if (arrayData != null) {
                                 if (arrayData.length() > 0) {
                                     int index = 0;
@@ -658,22 +705,29 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                                         RepomUserRole userRoleRepo = new RepomUserRole(getApplicationContext());
                                         userRoleRepo.createOrUpdate(data);
 
-                                        HMRole.put(txtRoleName, intRoleId);
+                                        VmSpinner dataSpn1 = new VmSpinner();
+                                        dataSpn1.setIntKey(intRoleId);
+                                        dataSpn1.setTxtValue(txtRoleName);
+                                        listRole.add(dataSpn1);
                                         index++;
                                     }
-                                    spinnerArrayAdapter.notifyDataSetChanged();
+                                    dataAdapter.notifyDataSetChanged();
                                     spnRoleLogin.setEnabled(true);
                                 } else {
-                                    roleName.add("-");
-                                    HMRole.put("-", 0);
-                                    spinnerArrayAdapter.notifyDataSetChanged();
+                                    VmSpinner dataSpn2 = new VmSpinner();
+                                    dataSpn2.setIntKey(0);
+                                    dataSpn2.setTxtValue("-");
+                                    listRole.add(dataSpn2);
+                                    dataAdapter.notifyDataSetChanged();
                                     spnRoleLogin.setEnabled(false);
                                 }
                             }
                         } else {
-                            roleName.add("-");
-                            HMRole.put("-", 0);
-                            spinnerArrayAdapter.notifyDataSetChanged();
+                            VmSpinner dataSpn2 = new VmSpinner();
+                            dataSpn2.setIntKey(0);
+                            dataSpn2.setTxtValue("-");
+                            listRole.add(dataSpn2);
+                            dataAdapter.notifyDataSetChanged();
                             spnRoleLogin.setEnabled(false);
                             editTextUsername.requestFocus();
                             new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
