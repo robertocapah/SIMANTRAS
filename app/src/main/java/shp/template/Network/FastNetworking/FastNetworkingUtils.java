@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
@@ -20,6 +21,7 @@ import com.kalbe.mobiledevknlibs.PickImageAndFile.PickFile;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -39,7 +41,10 @@ public class FastNetworkingUtils {
     String TAG = "FastNetworking";
 
     public void FNRequestToken(final Context activity, String txtLink, final String username, final String clientId, String progressBarType, final InterfaceFastNetworking listener) {
-
+        final ProgressDialog Dialog = new ProgressDialog(activity);
+        Dialog.setMessage(progressBarType);
+        Dialog.setCancelable(false);
+        Dialog.show();
         AndroidNetworking.post(txtLink)
                 .addBodyParameter("grant_type", "password")
                 .addBodyParameter("username", username)
@@ -52,24 +57,26 @@ public class FastNetworkingUtils {
                     @Override
                     public void onResponse(JSONObject response) {
                         listener.onResponse(response);
+                        Dialog.dismiss();
                     }
 
                     @Override
                     public void onError(ANError error) {
                         ErrorHandlerFN(activity, error, TAG);
                         listener.onError(error);
+                        Dialog.dismiss();
                     }
                 });
     }
 
-    public void FNRequestPostData(final Context context, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener) {
+    public void FNRequestPostData(final Activity context, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener) {
         String access_token = "";
         List<ClsToken> dataToken = null;
-
         final ProgressDialog Dialog = new ProgressDialog(context);
         Dialog.setMessage(progressBarType);
         Dialog.setCancelable(false);
         Dialog.show();
+
         try {
             dataToken = new RepoclsToken(context).findAll();
         } catch (SQLException e) {
@@ -138,9 +145,11 @@ public class FastNetworkingUtils {
                 });
     }
 
-    public void FNRequestUploadFotoProfile(final Context ctx, String strLinkAPI, final String mRequestBody, final Dialog dialog, final String tag, final ClsmUserLogin dtLogin, final InterfaceFastNetworkingUploadFile listener) {
+    public void FNRequestUploadFotoProfile(final Activity ctx, String strLinkAPI, final String mRequestBody, final Dialog dialog, final String tag, final ClsmUserLogin dtLogin, final InterfaceFastNetworkingUploadFile listener) {
         dialog.show();
         final DonutProgress progressD = (DonutProgress) dialog.findViewById(R.id.progressPercentage);
+        TextView tvProgressDesc = (TextView) dialog.findViewById(R.id.tvProgressDesc);
+        tvProgressDesc.setText("Updating Profile");
         byte[] b = dtLogin.getBlobImg();
         String path = new ClsHardCode().txtPathTemp;
         File fileFoto = new PickFile().decodeByteArraytoFile(b, path, "FotoProfileName.jpg");
@@ -155,6 +164,13 @@ public class FastNetworkingUtils {
                     public void onProgress(final long bytesUploaded, final long totalBytes) {
                         // do anything with progress
                         listener.onProgress(bytesUploaded, totalBytes);
+                        ctx.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                double precentage = ((double) bytesUploaded / (double) totalBytes) * 100;
+                                progressD.setProgress((int) precentage);
+                            }
+                        });
                     }
                 })
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -173,7 +189,7 @@ public class FastNetworkingUtils {
                 });
     }
 
-    public void ErrorHandlerFN(Context context, ANError error, String TAG) {
+    private void ErrorHandlerFN(Context context, ANError error, String TAG) {
         if (error.getErrorCode() != 0) {
             Log.d(TAG, "onError errorCode : " + error.getErrorCode());
             Log.d(TAG, "onError errorBody : " + error.getErrorBody());

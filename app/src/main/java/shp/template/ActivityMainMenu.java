@@ -15,6 +15,7 @@ import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -56,6 +57,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;
@@ -243,49 +245,48 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             }
         }
 
-//        if (getIntent().getStringExtra(i_View)!=null){
-//            if (getIntent().getStringExtra(i_View).equals("FragmentNotification")){
-//                toolbar.setTitle("Notification");
-//                setSupportActionBar(toolbar);
-//
-//                FragmentNotification fragmentNotification = new FragmentNotification();
-//                FragmentTransaction fragmentTransactionNotification = getSupportFragmentManager().beginTransaction();
-//                fragmentTransactionNotification.replace(R.id.frame, fragmentNotification);
-//                fragmentTransactionNotification.commit();
-//                selectedId = 99;
-//            }else if (getIntent().getStringExtra(i_View).equals("FragmentPushData")){
-//                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//                toolbar.setTitle("Push Data");
-//                setSupportActionBar(toolbar);
-//
-////                toolbar.setTitle("Push Data");
-////                toolbar.setSubtitle(null);
-//
-//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//                Bundle bundle = new Bundle();
-//                String myMessage = "notMainMenu";
-//                bundle.putString("message", myMessage );
-//
-//                FragmentPushData fragmentPushData = new FragmentPushData();
-//                fragmentPushData.setArguments(bundle);
-//                FragmentTransaction fragmentTransactionPushData = getSupportFragmentManager().beginTransaction();
-//                fragmentTransactionPushData.replace(R.id.frame, fragmentPushData);
-//                fragmentTransactionPushData.commit();
-//                selectedId = 99;
-//            }
-//        }else {
-//            toolbar.setTitle("Home");
-//            setSupportActionBar(toolbar);
-//
-//
-//            FragmentHome homFragment = new FragmentHome();
-//            FragmentTransaction fragmentTransactionHome = getSupportFragmentManager().beginTransaction();
-//            fragmentTransactionHome.replace(R.id.frame, homFragment);
-//            fragmentTransactionHome.commit();
-//            selectedId = 99;
-//        }
+        if (getIntent().getStringExtra(i_View)!=null){
+            if (getIntent().getStringExtra(i_View).equals("FragmentNotification")){
+                toolbar.setTitle("Notification");
+                setSupportActionBar(toolbar);
 
-//        addProductAndOrder();
+                FragmentNotification fragmentNotification = new FragmentNotification();
+                FragmentTransaction fragmentTransactionNotification = getSupportFragmentManager().beginTransaction();
+                fragmentTransactionNotification.replace(R.id.frame, fragmentNotification);
+                fragmentTransactionNotification.commit();
+                selectedId = 99;
+            }else if (getIntent().getStringExtra(i_View).equals("FragmentPushData")){
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                toolbar.setTitle("Push Data");
+                setSupportActionBar(toolbar);
+
+//                toolbar.setTitle("Push Data");
+//                toolbar.setSubtitle(null);
+
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                Bundle bundle = new Bundle();
+                String myMessage = "notMainMenu";
+                bundle.putString("message", myMessage );
+
+                FragmentPushData fragmentPushData = new FragmentPushData();
+                fragmentPushData.setArguments(bundle);
+                FragmentTransaction fragmentTransactionPushData = getSupportFragmentManager().beginTransaction();
+                fragmentTransactionPushData.replace(R.id.frame, fragmentPushData);
+                fragmentTransactionPushData.commit();
+                selectedId = 99;
+            }
+        }else {
+            toolbar.setTitle("Home");
+            setSupportActionBar(toolbar);
+
+
+            FragmentHome homFragment = new FragmentHome();
+            FragmentTransaction fragmentTransactionHome = getSupportFragmentManager().beginTransaction();
+            fragmentTransactionHome.replace(R.id.frame, homFragment);
+            fragmentTransactionHome.commit();
+            selectedId = 99;
+        }
+
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         View vwHeader = navigationView.getHeaderView(0);
@@ -320,11 +321,11 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             tvEmail.setText("Roberto.capah@kalbenutritionals.com");
         }
 
-        /*if (dataLogin.get(0).getBlobImg()!=null){
+        if (dataLogin.get(0).getBlobImg()!=null){
             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dataLogin.get(0).getBlobImg());
             Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
             ivProfile.setImageBitmap(bitmap1);
-        }*/
+        }
 
         String linkAPI = new RepomConfig(getApplicationContext()).APIToken;
         try {
@@ -382,6 +383,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface dialog, int which) {
+                                    logout(false);
                                 }
                             });
 
@@ -460,9 +462,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             selectedId = 99;
                             break;
 
-                        case R.id.mnCheckOut:
-                            checkNavItem = null;
-                            break;
                         default:
                             checkNavItem = null;
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
@@ -555,7 +554,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new FastNetworkingUtils().FNRequestPostData(ActivityMainMenu.this, strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
+        new FastNetworkingUtils().FNRequestPostData(ActivityMainMenu.this, strLinkAPI, resJson, "Logging out", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 Intent res = null;

@@ -664,23 +664,16 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new VolleyUtils().volleyLogin(ActivityLogin.this, strLinkAPI, mRequestBody, "Getting your role......", false, new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestPostData(ActivityLogin.this, strLinkAPI, resJson, "Getting your role", new InterfaceFastNetworking() {
             @Override
-            public void onError(String message) {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
+            public void onResponse(JSONObject response) {
                 if (response != null) {
-                    JSONObject jsonObject = null;
                     try {
-                        jsonObject = new JSONObject(response);
-                        JSONObject jsn = jsonObject.getJSONObject("result");
+                        JSONObject jsn = response.getJSONObject("result");
                         boolean txtStatus = jsn.getBoolean("status");
                         String txtMessage = jsn.getString("message");
                         String txtMethode_name = jsn.getString("method_name");
-                        JSONArray arrayData = jsonObject.getJSONArray("data");
+                        JSONArray arrayData = response.getJSONArray("data");
                         listRole.clear();
                         if (txtStatus == true) {
                             VmSpinner dataSpn = new VmSpinner();
@@ -738,7 +731,11 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                     }
 
                 }
+            }
 
+            @Override
+            public void onError(ANError error) {
+                Toast.makeText(getApplicationContext(), error.getErrorDetail(), Toast.LENGTH_SHORT).show();
             }
         });
     }

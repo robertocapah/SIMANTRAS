@@ -35,7 +35,7 @@ import shp.template.R;
 public class FragmentHome extends Fragment {
     View v;
     @BindView(R.id.image_profil_home)
-    CircleImageView imageProfilHome;
+    public CircleImageView imageProfilHome;
     @BindView(R.id.tv_user_name_home)
     TextView tvUserNameHome;
     @BindView(R.id.tv_outlet_home)

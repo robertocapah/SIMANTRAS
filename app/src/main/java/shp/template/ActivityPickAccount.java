@@ -431,7 +431,7 @@ public class ActivityPickAccount extends Activity {
         final String accountType = data_token[2];
         final boolean newAccount = false;
         final Bundle datum = new Bundle();
-        new FastNetworkingUtils().FNRequestPostData(activity, strLinkAPI, resJson, "Getting your role", new InterfaceFastNetworking() {
+        new FastNetworkingUtils().FNRequestPostData(activity, strLinkAPI, resJson, "Logging in", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 Intent res = null;

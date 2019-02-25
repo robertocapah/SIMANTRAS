@@ -234,7 +234,7 @@ public class ActivitySplash extends AppCompatActivity {
                 if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.FormLogin.FormLogin) {
                     ClsmUserLogin dtLogin = new RepomUserLogin(getApplicationContext()).getUserLogin(getApplicationContext());
                     if (dtLogin!=null){
-                        logout(this);
+                        logout(ActivitySplash.this);
                     }else {
                         try {
                             tokenRepo = new RepoclsToken(getApplicationContext());
@@ -320,7 +320,7 @@ public class ActivitySplash extends AppCompatActivity {
                     data.setTxtRefreshToken(refreshToken);
 
                     tokenRepo.createOrUpdate(data);
-
+                    checkVersion(activity, mAccountManager);
                     Log.d("Data info", "get access_token & refresh_token, Success");
                 }catch (Exception ex){
 
@@ -370,7 +370,7 @@ public class ActivitySplash extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        new FastNetworkingUtils().FNRequestPostData(context, strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
+        new FastNetworkingUtils().FNRequestPostData(ActivitySplash.this, strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 if (response!=null){
@@ -546,7 +546,7 @@ public class ActivitySplash extends AppCompatActivity {
         }
         final String mRequestBody = resJson.toString();
 
-        new FastNetworkingUtils().FNRequestPostData(activity.getApplicationContext(), strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
+        new FastNetworkingUtils().FNRequestPostData(activity, strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 if (response != null) {

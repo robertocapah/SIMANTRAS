@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.Helper.clsMainActivity;
@@ -64,6 +65,8 @@ import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Database.Repo.RepoclsToken;
 import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.Database.Repo.RepotLogError;
+import shp.template.Network.FastNetworking.FastNetworkingUtils;
+import shp.template.Network.FastNetworking.InterfaceFastNetworkingUploadFile;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
 import shp.template.R;
@@ -78,8 +81,9 @@ import static android.app.Activity.RESULT_OK;
 
 public class FragmentSetting extends Fragment {
     View v;
-    private static final int CAMERA_REQUEST_PROFILE = 100;
-    private static final String IMAGE_DIRECTORY_NAME = "VmImage Personal";
+    private final int CAMERA_REQUEST_PROFILE = 100;
+    private final String IMAGE_DIRECTORY_NAME = "VmImage Personal";
+    private final String TAG_UPLOAD_FOTO_PROFILE = "UPLOAD_FOTO";
     final int SELECT_FILE_PROFILE = 150;
     private static Bitmap photoProfile, mybitmapImageProfile;
     private static byte[] phtProfile;
@@ -443,7 +447,53 @@ public class FragmentSetting extends Fragment {
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
+        new FastNetworkingUtils().FNRequestUploadFotoProfile(getActivity(), strLinkAPI, mRequestBody, pDialog, TAG_UPLOAD_FOTO_PROFILE, dataLogin, new InterfaceFastNetworkingUploadFile() {
+            @Override
+            public void onProgress(long bytesDownloaded, long totalBytes) {
+            }
 
+            @Override
+            public void onResponse(JSONObject response) {
+                Intent res = null;
+                if (response != null) {
+                    try {
+                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
+                        boolean txtStatus = model.getResult().isStatus();
+                        String txtMessage = model.getResult().getMessage();
+                        String txtMethode_name = model.getResult().getMethodName();
+
+                        String accessToken = "dummy_access_token";
+
+                        if (txtStatus == true) {
+                            loginRepo = new RepomUserLogin(getContext());
+                            ClsmUserLogin data = dataLogin;
+                            loginRepo.createOrUpdate(data);
+                            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
+                            Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
+                            new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
+                            new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
+                            pDialog.dismiss();
+                            new ToastCustom().showToasty(getContext(), "Success Change photo profile", 1);
+
+                        } else {
+                            new ToastCustom().showToasty(getContext(), txtMessage, 4);
+                            pDialog.dismiss();
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    new ToastCustom().showToasty(getContext(), "Change password failed", 4);
+                    pDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                new ToastCustom().showToasty(getContext(), error.getErrorBody(), 4);
+                pDialog.dismiss();
+            }
+        });
         new VolleyUtils().changeProfile(getContext(), strLinkAPI, mRequestBody, pDialog, dataLogin, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {

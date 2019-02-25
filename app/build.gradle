@@ -22,10 +22,10 @@ android {
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "shp.template"
-        minSdkVersion 20
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
-        versionName "AND.2019.001"
+        versionName "AND.2019.003"
         multiDexEnabled true
 //        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
