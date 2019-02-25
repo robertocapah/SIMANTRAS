@@ -140,7 +140,6 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
     private Gson gson;
     ThreadPoolExecutor executor;
     ProgressDialog progress;
-    ArrayAdapter<String> spinnerArrayAdapter;
     Unbinder unbinder;
     List<VmSpinner> listRole = new ArrayList<>();
     AdapterSpinner dataAdapter;

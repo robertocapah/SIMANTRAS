@@ -20,7 +20,7 @@ public class AdapterSpinner extends ArrayAdapter<VmSpinner> {
     private List<VmSpinner> objects;
     public AdapterSpinner(@NonNull Context context, int resource, @NonNull List<VmSpinner> objects) {
         super(context, resource, objects);
-        this.mContext = context; 
+        this.mContext = context;
         this.objects = objects;
     }
 
