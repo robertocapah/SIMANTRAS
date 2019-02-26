@@ -153,6 +153,13 @@ public class FragmentSetting extends Fragment {
                 startActivity(intent);
             }
         });
+
+        fabAddImgSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImageProfile();
+            }
+        });
         return v;
     }
 
@@ -447,53 +454,53 @@ public class FragmentSetting extends Fragment {
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new FastNetworkingUtils().FNRequestUploadFotoProfile(getActivity(), strLinkAPI, mRequestBody, pDialog, TAG_UPLOAD_FOTO_PROFILE, dataLogin, new InterfaceFastNetworkingUploadFile() {
-            @Override
-            public void onProgress(long bytesDownloaded, long totalBytes) {
-            }
-
-            @Override
-            public void onResponse(JSONObject response) {
-                Intent res = null;
-                if (response != null) {
-                    try {
-                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
-                        boolean txtStatus = model.getResult().isStatus();
-                        String txtMessage = model.getResult().getMessage();
-                        String txtMethode_name = model.getResult().getMethodName();
-
-                        String accessToken = "dummy_access_token";
-
-                        if (txtStatus == true) {
-                            loginRepo = new RepomUserLogin(getContext());
-                            ClsmUserLogin data = dataLogin;
-                            loginRepo.createOrUpdate(data);
-                            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
-                            Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
-                            new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
-                            new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
-                            pDialog.dismiss();
-                            new ToastCustom().showToasty(getContext(), "Success Change photo profile", 1);
-
-                        } else {
-                            new ToastCustom().showToasty(getContext(), txtMessage, 4);
-                            pDialog.dismiss();
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    new ToastCustom().showToasty(getContext(), "Change password failed", 4);
-                    pDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(ANError error) {
-                new ToastCustom().showToasty(getContext(), error.getErrorBody(), 4);
-                pDialog.dismiss();
-            }
-        });
+//        new FastNetworkingUtils().FNRequestUploadFotoProfile(getActivity(), strLinkAPI, mRequestBody, pDialog, TAG_UPLOAD_FOTO_PROFILE, dataLogin, new InterfaceFastNetworkingUploadFile() {
+//            @Override
+//            public void onProgress(long bytesDownloaded, long totalBytes) {
+//            }
+//
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                Intent res = null;
+//                if (response != null) {
+//                    try {
+//                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
+//                        boolean txtStatus = model.getResult().isStatus();
+//                        String txtMessage = model.getResult().getMessage();
+//                        String txtMethode_name = model.getResult().getMethodName();
+//
+//                        String accessToken = "dummy_access_token";
+//
+//                        if (txtStatus == true) {
+//                            loginRepo = new RepomUserLogin(getContext());
+//                            ClsmUserLogin data = dataLogin;
+//                            loginRepo.createOrUpdate(data);
+//                            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
+//                            Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
+//                            new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
+//                            new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
+//                            pDialog.dismiss();
+//                            new ToastCustom().showToasty(getContext(), "Success Change photo profile", 1);
+//
+//                        } else {
+//                            new ToastCustom().showToasty(getContext(), txtMessage, 4);
+//                            pDialog.dismiss();
+//                        }
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    new ToastCustom().showToasty(getContext(), "Change password failed", 4);
+//                    pDialog.dismiss();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(ANError error) {
+//                new ToastCustom().showToasty(getContext(), error.getErrorBody(), 4);
+//                pDialog.dismiss();
+//            }
+//        });
         new VolleyUtils().changeProfile(getContext(), strLinkAPI, mRequestBody, pDialog, dataLogin, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {

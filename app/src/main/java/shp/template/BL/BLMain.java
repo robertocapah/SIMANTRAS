@@ -67,6 +67,22 @@ public class BLMain {
         }
         return _clsStatusMenuStart;
     }
+
+    public ClsmUserLogin getUserLogin(Context context){
+        List <ClsmUserLogin> dtList = new ArrayList<>();
+        RepomUserLogin dtRepo= new RepomUserLogin(context);
+        try {
+            dtList = (List<ClsmUserLogin>) dtRepo.findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (dtList.size()>0){
+            return dtList.get(0);
+        }else {
+            return null;
+        }
+    }
+
     public byte[] arrayDecryptFile(byte[] blobFile){
         String key = "kalbenutritionals";
         byte[] arrayFileDecrypt = null;

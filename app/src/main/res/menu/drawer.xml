@@ -13,6 +13,14 @@
             android:orderInCategory="0"
             android:title="Home"
             app:actionLayout="@layout/menu_counter"/>
+        <item
+            android:id="@+id/search"
+            android:checked="true"
+            android:icon="@drawable/places_ic_search"
+            android:orderInCategory="0"
+            android:iconTint="@color/black"
+            android:title="Serach"
+            app:actionLayout="@layout/menu_counter"/>
 
     </group>
     <group

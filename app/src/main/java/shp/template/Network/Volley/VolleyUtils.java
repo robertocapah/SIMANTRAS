@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v7.widget.CardView;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -22,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import shp.template.CustomView.Utils.ViewAnimation;
 import shp.template.Database.Common.ClsPushData;
 import shp.template.Database.Common.ClsToken;
 import shp.template.Database.Common.ClsmConfigData;
@@ -1414,6 +1418,153 @@ public class VolleyUtils {
             e.printStackTrace();
         }
         return dtToken;
+    }
+
+    public void volleyGetDataMaster(final Context context, String strLinkAPI, final String mRequestBody, final LinearLayout lnProgressBar, final CardView cvNewDokter, final InterfaceVolleyResponseListener listener) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        final String[] body = new String[1];
+        final String[] message = new String[1];
+
+        lnProgressBar.setVisibility(View.VISIBLE);
+        lnProgressBar.setAlpha(1.0f);
+        cvNewDokter.setVisibility(View.GONE);
+        RepomConfig configRepo = new RepomConfig(context);
+        try {
+            ClsmConfigData configDataClient = (ClsmConfigData) configRepo.findById(4);
+            clientId = configDataClient.getTxtDefaultValue().toString();
+            dataToken = getDataToken(context);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        StringRequest request = new StringRequest(Request.Method.POST, strLinkAPI, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Boolean status = false;
+                String errorMessage = null;
+                listener.onResponse(response, status, errorMessage);
+                ViewAnimation.fadeOut(lnProgressBar);
+                lnProgressBar.setVisibility(View.GONE);
+                cvNewDokter.setVisibility(View.VISIBLE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String strLinkAPI = new ClsHardCode().linkToken;
+                final String refresh_token = dataToken.get(0).txtRefreshToken;
+                NetworkResponse networkResponse = error.networkResponse;
+                String msg = "";
+                if (networkResponse != null && networkResponse.statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                    // HTTP Status Code: 401 Unauthorized
+                    try {
+                        // body for value error response
+                        body[0] = new String(error.networkResponse.data,"UTF-8");
+                        JSONObject jsonObject = new JSONObject(body[0]);
+                        message[0] = jsonObject.getString("Message");
+                        //Toast.makeText(context, "Error 401, " + message[0], Toast.LENGTH_SHORT).show();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    new VolleyUtils().requestTokenWithRefresh(context, strLinkAPI, refresh_token, clientId, new InterfaceVolleyResponseListener() {
+                        @Override
+                        public void onError(String message) {
+                            new ToastCustom().showToasty(context,message,4);
+//                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onResponse(String response, Boolean status, String strErrorMsg) {
+                            if (response != null) {
+                                try {
+                                    String accessToken = "";
+                                    String newRefreshToken = "";
+                                    String refreshToken = "";
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    accessToken = jsonObject.getString("access_token");
+                                    refreshToken = jsonObject.getString("refresh_token");
+                                    String dtIssued = jsonObject.getString(".issued");
+
+                                    ClsToken data = new ClsToken();
+                                    data.setIntId("1");
+                                    data.setDtIssuedToken(dtIssued);
+                                    data.setTxtUserToken(accessToken);
+                                    data.setTxtRefreshToken(refreshToken);
+
+                                    RepoclsToken tokenRepo = new RepoclsToken(context);
+                                    tokenRepo.createOrUpdate(data);
+                                    Toast.makeText(context, "Success get new Access Token", Toast.LENGTH_SHORT).show();
+                                    newRefreshToken = refreshToken;
+                                    if (refreshToken == newRefreshToken && !newRefreshToken.equals("")) {
+                                        Toast.makeText(context, "Please press the button again", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                    ViewAnimation.fadeOut(lnProgressBar);
+                    lnProgressBar.setVisibility(View.GONE);
+                    cvNewDokter.setVisibility(View.VISIBLE);
+
+                } else  if (error instanceof NetworkError) {
+                    msg = "Cannot connect to Internet...Please check your connection!";
+                } else if (error instanceof ServerError) {
+                    msg = "The server could not be found. Please try again after some time!!";
+                } else if (error instanceof AuthFailureError) {
+                    msg = "Cannot connect to Internet...Please check your connection!";
+                } else if (error instanceof ParseError) {
+                    msg = "Parsing error! Please try again after some time!!";
+                } else if (error instanceof NoConnectionError) {
+                    msg = "Cannot connect to Internet...Please check your connection!";
+                } else if (error instanceof TimeoutError) {
+                    msg = "Connection TimeOut! Please check your internet connection.";
+                } else {
+                    msg = "Error 500, Server Error";
+                }
+
+                if (msg!=null||!msg.equals("")){
+                    new ToastCustom().showToasty(context,msg,4);
+                    ViewAnimation.fadeOut(lnProgressBar);
+                    lnProgressBar.setVisibility(View.GONE);
+                    cvNewDokter.setVisibility(View.VISIBLE);
+                }
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    return null;
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                dataToken = getDataToken(context);
+                access_token = dataToken.get(0).getTxtUserToken();
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + access_token);
+
+                return headers;
+            }
+        };
+        request.setRetryPolicy(new
+                DefaultRetryPolicy(60000,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request.setShouldCache(false);
+        queue.add(request);
     }
 
 }

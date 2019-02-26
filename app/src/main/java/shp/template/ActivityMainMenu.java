@@ -94,6 +94,7 @@ import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.Fragment.FragmentHome;
 import shp.template.Fragment.FragmentNotification;
 import shp.template.Fragment.FragmentPushData;
+import shp.template.Fragment.FragmentSearch;
 import shp.template.Fragment.FragmentSetting;
 import shp.template.Network.FastNetworking.FastNetworkingUtils;
 import shp.template.Network.FastNetworking.InterfaceFastNetworking;
@@ -409,6 +410,19 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             FragmentTransaction fragmentTransactionHome = getSupportFragmentManager().beginTransaction();
                             fragmentTransactionHome.replace(R.id.frame, homFragment);
                             fragmentTransactionHome.commit();
+                            selectedId = 99;
+                            break;
+                        case R.id.search:
+                            checkNavItem = null;
+                            toolbar.setTitle("Search");
+
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                            // fragment yang dituju
+                            FragmentSearch searchFragment = new FragmentSearch();
+                            FragmentTransaction fragmentTransactionSearch = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionSearch.replace(R.id.frame, searchFragment);
+                            fragmentTransactionSearch.commit();
                             selectedId = 99;
                             break;
                         case R.id.mnpushData:

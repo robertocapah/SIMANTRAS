@@ -68,6 +68,7 @@ public class ClsHardCode {
     public String linkChangePassword = new RepomConfig(context).API +"gantiPassword";
     public String linkDokterAedp = new RepomConfig(context).API +"Dokter";
     public String linkApotekAedp = new RepomConfig(context).API +"Apotek";
+    public String linkGetDataMasterNew = new RepomConfig(context).API +"getDataMasterNew";
 
     /*Link klik apotek*/
     public String linkApotek = new RepomConfig(context).APIKLB +"mae/apotek";
