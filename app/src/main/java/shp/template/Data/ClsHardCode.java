@@ -31,7 +31,7 @@ public class ClsHardCode {
     public String txtPathTemp = Environment.getExternalStorageDirectory()+ File.separator;
 
     //    public String txtFolderData = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"KalbeCallPlanAEDP"+File.separator+"image_Person"+File.separator;
-    public String pathApp = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"shp.template"+File.separator;
+    public String pathApp = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+ File.separator+"Android"+File.separator+"data"+File.separator+"shp.template"+File.separator;
     public String txtPathUserData = pathApp + "user_data"+File.separator;
     public String txtPathTempData = pathApp + "tempdata" + File.separator;
     public String txtApkName = "KN2019_Template_Mobile.apk";

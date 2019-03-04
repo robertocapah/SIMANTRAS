@@ -27,10 +27,13 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
+import shp.template.ActivitySplash;
 import shp.template.Data.ClsHardCode;
 import shp.template.Database.Common.ClsToken;
+import shp.template.Database.Common.ClsmConfigData;
 import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Database.Repo.RepoclsToken;
+import shp.template.Database.Repo.RepomConfig;
 import shp.template.R;
 
 /**
@@ -39,13 +42,26 @@ import shp.template.R;
 
 public class FastNetworkingUtils {
     String TAG = "FastNetworking";
-
-    public void FNRequestToken(final Context activity, String txtLink, final String username, final String clientId, String progressBarType, final InterfaceFastNetworking listener) {
+    RepoclsToken tokenRepo;
+    String clientId = "";
+    public void FNRequestToken(final Context activity,String progressBarType, final InterfaceFastNetworking listener) {
+        String username = "";
+        RepomConfig configRepo = new RepomConfig(activity.getApplicationContext());
+        tokenRepo = new RepoclsToken(activity.getApplicationContext());
+        try {
+            ClsmConfigData configDataClient = (ClsmConfigData) configRepo.findById(4);
+            ClsmConfigData configDataUser = (ClsmConfigData) configRepo.findById(5);
+            username = configDataUser.getTxtDefaultValue().toString();
+            clientId = configDataClient.getTxtDefaultValue().toString();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         final ProgressDialog Dialog = new ProgressDialog(activity);
         Dialog.setMessage(progressBarType);
         Dialog.setCancelable(false);
         Dialog.show();
-        AndroidNetworking.post(txtLink)
+        String strLinkAPI = new ClsHardCode().linkToken;
+        AndroidNetworking.post(strLinkAPI)
                 .addBodyParameter("grant_type", "password")
                 .addBodyParameter("username", username)
                 .addBodyParameter("password", "")
@@ -105,7 +121,7 @@ public class FastNetworkingUtils {
                 });
     }
 
-    public void FNRequestDownloadAPKFile(final Activity ctx, String strLinkAPI, final String txtPathUserData, final String apkName, String tag, final Dialog dialog, final InterfaceFastNetworkingDownloadFile listener) {
+    public void FNRequestDownloadAPKFile(final Activity ctx, String strLinkAPI, final String txtPathUserData, final String apkName, final String tag, final Dialog dialog, final InterfaceFastNetworkingDownloadFile listener) {
         dialog.show();
         final DonutProgress progressD = (DonutProgress) dialog.findViewById(R.id.progressPercentage);
         AndroidNetworking.download(strLinkAPI, txtPathUserData, apkName)
@@ -141,11 +157,12 @@ public class FastNetworkingUtils {
                     public void onError(ANError error) {
                         // handle error
                         listener.onError(error);
+                        ErrorHandlerFN(ctx,error,tag);
                     }
                 });
     }
 
-    public void FNRequestUploadFotoProfile(final Activity ctx, String strLinkAPI, final String mRequestBody, final Dialog dialog, final String tag, final ClsmUserLogin dtLogin, final InterfaceFastNetworkingUploadFile listener) {
+    public void FNRequestUploadFotoProfile(final Activity ctx, String strLinkAPI, final String mRequestBody, final Dialog dialog, final String tag, final ClsmUserLogin dtLogin, String access_token, final InterfaceFastNetworkingUploadFile listener) {
         dialog.show();
         final DonutProgress progressD = (DonutProgress) dialog.findViewById(R.id.progressPercentage);
         TextView tvProgressDesc = (TextView) dialog.findViewById(R.id.tvProgressDesc);
@@ -156,6 +173,7 @@ public class FastNetworkingUtils {
         AndroidNetworking.upload(strLinkAPI)
                 .addMultipartFile("image", fileFoto)
                 .addMultipartParameter("txtParam", mRequestBody)
+                .addHeaders("Authorization", "Bearer " + access_token)
                 .setTag("uploadTest")
                 .setPriority(Priority.HIGH)
                 .build()
@@ -198,5 +216,8 @@ public class FastNetworkingUtils {
             Log.d(TAG, "onError errorDetail : " + error.getErrorDetail());
         }
         new ToastCustom().showToasty(context, error.getErrorBody() + " " + error.getErrorDetail(), 4);
+        if (error.getErrorCode() == 401){
+            new ActivitySplash().requestToken(context);
+        }
     }
 }

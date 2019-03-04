@@ -120,9 +120,9 @@ public class CropImage extends MonitoredActivity {
 
             if (extras.getString(CIRCLE_CROP) != null) {
 
-        	if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            		mImageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        	}
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+                    mImageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                }
 
                 mCircleCrop = true;
                 mAspectX = 1;
@@ -347,7 +347,7 @@ public class CropImage extends MonitoredActivity {
             c.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
         }
 
-		/* If the output is required to a specific size then scale or fill */
+        /* If the output is required to a specific size then scale or fill */
         if (mOutputX != 0 && mOutputY != 0) {
 
             if (mScale) {
@@ -362,10 +362,10 @@ public class CropImage extends MonitoredActivity {
                 }
             } else {
 
-				/* Don't scale the image crop it to the size requested.
+                /* Don't scale the image crop it to the size requested.
                  * Create an new image with the cropped image in the center and
-				 * the extra space filled.
-				 */
+                 * the extra space filled.
+                 */
 
                 // Don't scale the image but instead fill it so it's the
                 // required dimension
@@ -379,16 +379,16 @@ public class CropImage extends MonitoredActivity {
                 int dx = (srcRect.width() - dstRect.width()) / 2;
                 int dy = (srcRect.height() - dstRect.height()) / 2;
 
-				/* If the srcRect is too big, use the center part of it. */
+                /* If the srcRect is too big, use the center part of it. */
                 srcRect.inset(Math.max(0, dx), Math.max(0, dy));
 
-				/* If the dstRect is too big, use the center part of it. */
+                /* If the dstRect is too big, use the center part of it. */
                 dstRect.inset(Math.max(0, -dx), Math.max(0, -dy));
 
-				/* Draw the cropped bitmap in the center */
+                /* Draw the cropped bitmap in the center */
                 canvas.drawBitmap(mBitmap, srcRect, dstRect, null);
 
-				/* Set the cropped bitmap as the new bitmap */
+                /* Set the cropped bitmap as the new bitmap */
                 croppedImage.recycle();
                 croppedImage = b;
             }
@@ -659,14 +659,14 @@ public class CropImage extends MonitoredActivity {
             /*if (!ImageManager.hasStorage()) {
                 return NO_STORAGE_ERROR;
             } else {*/
-        	String storageDirectory = "";
-        	String state = Environment.getExternalStorageState();
-        	if (Environment.MEDIA_MOUNTED.equals(state)) {
-        		storageDirectory = Environment.getExternalStorageDirectory().toString();
-        	}
-        	else {
-        		storageDirectory = activity.getFilesDir().toString();
-        	}
+            String storageDirectory = "";
+            String state = Environment.getExternalStorageState();
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+                storageDirectory = Environment.getExternalStorageDirectory().toString();
+            }
+            else {
+                storageDirectory = activity.getFilesDir().toString();
+            }
             StatFs stat = new StatFs(storageDirectory);
             float remaining = ((float) stat.getAvailableBlocks()
                     * (float) stat.getBlockSize()) / 400000F;

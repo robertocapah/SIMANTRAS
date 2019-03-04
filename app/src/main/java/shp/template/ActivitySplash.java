@@ -53,6 +53,7 @@ import shp.template.Database.Repo.RepomUserLogin;
 import shp.template.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
 import shp.template.Service.ServiceNative;
 import shp.template.CustomView.Utils.AuthenticatorUtil;
+
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONException;
@@ -82,7 +83,7 @@ public class ActivitySplash extends AppCompatActivity {
     ProgressDialog mProgressDialog;
     Dialog dialog;
     private Gson gson;
-    private String i_View ="Fragment";
+    private String i_View = "Fragment";
     private final String TAG_DOWNlOAD_APK = "Download_apk";
 
     @Override
@@ -133,14 +134,13 @@ public class ActivitySplash extends AppCompatActivity {
                     || hasReadExternalStoragePermission != PackageManager.PERMISSION_GRANTED
                     || hasAccessFineLocationPermission != PackageManager.PERMISSION_GRANTED
                     || hasCameraPermission != PackageManager.PERMISSION_GRANTED
-                    || hasReadPhoneState != PackageManager.PERMISSION_GRANTED){
+                    || hasReadPhoneState != PackageManager.PERMISSION_GRANTED) {
                 boolean checkPermission = checkPermission();
-            }else {
+            } else {
                 StartAnimations();
                 checkStatusMenu();
             }
-        }
-        else {
+        } else {
             StartAnimations();
             checkStatusMenu();
         }
@@ -159,19 +159,19 @@ public class ActivitySplash extends AppCompatActivity {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         && !ActivityCompat.shouldShowRequestPermissionRationale(ActivitySplash.this,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
-                        &&!ActivityCompat.shouldShowRequestPermissionRationale(ActivitySplash.this,
+                        && !ActivityCompat.shouldShowRequestPermissionRationale(ActivitySplash.this,
                         Manifest.permission.ACCESS_FINE_LOCATION)
-                        &&!ActivityCompat.shouldShowRequestPermissionRationale(ActivitySplash.this,
+                        && !ActivityCompat.shouldShowRequestPermissionRationale(ActivitySplash.this,
                         Manifest.permission.CAMERA)
-                        ){
+                        ) {
                     ActivityCompat.requestPermissions(ActivitySplash.this,
-                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE},
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE},
                             REQUEST_CODE_ASK_PERMISSIONS);
                     dialog.dismiss();
 
-                }else{
+                } else {
                     ActivityCompat.requestPermissions(ActivitySplash.this,
-                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                             REQUEST_CODE_ASK_PERMISSIONS);
                     dialog.dismiss();
                 }
@@ -211,6 +211,7 @@ public class ActivitySplash extends AppCompatActivity {
         iv2.clearAnimation();
         iv2.startAnimation(anim);
     }
+
     Intent myIntent = null;
     ClsStatusMenuStart _clsStatusMenuStart = null;
 
@@ -230,18 +231,18 @@ public class ActivitySplash extends AppCompatActivity {
 
         try {
             _clsStatusMenuStart = new BLMain().checkUserActive(this);
-            if (_clsStatusMenuStart.get_intStatus() != null){
+            if (_clsStatusMenuStart.get_intStatus() != null) {
                 if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.FormLogin.FormLogin) {
                     ClsmUserLogin dtLogin = new RepomUserLogin(getApplicationContext()).getUserLogin(getApplicationContext());
-                    if (dtLogin!=null){
+                    if (dtLogin != null) {
                         logout(ActivitySplash.this);
-                    }else {
+                    } else {
                         try {
                             tokenRepo = new RepoclsToken(getApplicationContext());
                             dataToken = (List<ClsToken>) tokenRepo.findAll();
                             if (dataToken.size() == 0) {
                                 requestToken(this);
-                            }else {
+                            } else {
                                 checkVersion(this, mAccountManager);
                             }
                         } catch (SQLException e) {
@@ -250,7 +251,7 @@ public class ActivitySplash extends AppCompatActivity {
                     }
 
                 } else if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.UserActiveLogin) {
-                    if (new AuthenticatorUtil().countingAccount(mAccountManager).length==0){
+                    if (new AuthenticatorUtil().countingAccount(mAccountManager).length == 0) {
 //                        myIntent = new Intent(getApplicationContext(), MainMenu.class);
 //                        finish();
 //                        startActivity(myIntent);
@@ -263,7 +264,7 @@ public class ActivitySplash extends AppCompatActivity {
                         finish();
                         startActivity(myIntent);
                     }
-                }else if (_clsStatusMenuStart.get_intStatus()== EnumStatusMenuStart.PushDataMobile){
+                } else if (_clsStatusMenuStart.get_intStatus() == EnumStatusMenuStart.PushDataMobile) {
                     myIntent = new Intent(getApplicationContext(), ActivityMainMenu.class);
                     myIntent.putExtra(i_View, "FragmentPushData");
                     finish();
@@ -275,7 +276,7 @@ public class ActivitySplash extends AppCompatActivity {
                     dataToken = (List<ClsToken>) tokenRepo.findAll();
                     if (dataToken.size() == 0) {
                         requestToken(this);
-                    }else {
+                    } else {
                         checkVersion(this, mAccountManager);
                     }
                 } catch (SQLException e) {
@@ -289,24 +290,12 @@ public class ActivitySplash extends AppCompatActivity {
         }
     }
 
-    public void requestToken(final Context activity){
-        String username = "";
-        String strLinkAPI = new ClsHardCode().linkToken;
+    public void requestToken(final Context activity) {
 
-        RepomConfig configRepo = new RepomConfig(activity.getApplicationContext());
-        tokenRepo = new RepoclsToken(activity.getApplicationContext());
-        try {
-            ClsmConfigData configDataClient = (ClsmConfigData) configRepo.findById(4);
-            ClsmConfigData configDataUser = (ClsmConfigData) configRepo.findById(5);
-            username = configDataUser.getTxtDefaultValue().toString();
-            clientId = configDataClient.getTxtDefaultValue().toString();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        new FastNetworkingUtils().FNRequestToken(activity, strLinkAPI, username, clientId, "Request Token, Please Wait", new InterfaceFastNetworking() {
+        new FastNetworkingUtils().FNRequestToken(activity, "Request Token, Please Wait", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
-                try{
+                try {
                     String accessToken = "";
                     String refreshToken = "";
                     accessToken = response.getString("access_token");
@@ -318,12 +307,12 @@ public class ActivitySplash extends AppCompatActivity {
                     data.setDtIssuedToken(dtIssued);
                     data.setTxtUserToken(accessToken);
                     data.setTxtRefreshToken(refreshToken);
-
-                    tokenRepo.createOrUpdate(data);
+//                    RepoclsToken tokenRepo = new RepoclsToken(getApplicationContext());
+                    new RepoclsToken(activity.getApplicationContext()).createOrUpdate(data);
                     checkVersion(activity, mAccountManager);
                     Log.d("Data info", "get access_token & refresh_token, Success");
-                }catch (Exception ex){
-
+                } catch (Exception ex) {
+                    String a = "";
                 }
 
 
@@ -335,8 +324,10 @@ public class ActivitySplash extends AppCompatActivity {
             }
         });
     }
+
     String txtVersionName = null;
-    public void checkVersion(final Context context, final AccountManager accountManager){
+
+    public void checkVersion(final Context context, final AccountManager accountManager) {
 
         try {
             txtVersionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
@@ -353,7 +344,7 @@ public class ActivitySplash extends AppCompatActivity {
         JSONObject resJson = new JSONObject();
         JSONObject jData = new JSONObject();
         try {
-            jData.put("version_name",txtVersionName );
+            jData.put("version_name", txtVersionName);
             jData.put("application_name", dtClsmConfigData.getTxtValue());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -373,27 +364,27 @@ public class ActivitySplash extends AppCompatActivity {
         new FastNetworkingUtils().FNRequestPostData(ActivitySplash.this, strLinkAPI, resJson, "Checking Version", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
-                if (response!=null){
+                if (response != null) {
                     try {
                         JSONObject jsn = response.getJSONObject("result");
                         boolean txtStatus = jsn.getBoolean("status");
                         String txtMessage = jsn.getString("message");
                         String txtMethode_name = jsn.getString("method_name");
 
-                        if (txtStatus == true){
+                        if (txtStatus == true) {
                             Boolean resUpdate = false;
                             String txtLink = "";
                             JSONObject objData = response.getJSONObject("data");
                             if (txtVersionName.equals(objData.getString("version_name"))) {
                                 resUpdate = false;
-                            }else {
+                            } else {
                                 resUpdate = true;
-                                txtLink =  objData.getString("link_app");
+                                txtLink = objData.getString("link_app");
                             }
-                            if (resUpdate){
+                            if (resUpdate) {
                                 // execute this when the downloader must be fired
-                                getDownloadAPK (txtLink);
-                            }else {
+                                getDownloadAPK(txtLink);
+                            } else {
                                 new AuthenticatorUtil().showAccountPicker((Activity) context, accountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
                             }
                         } else {
@@ -402,12 +393,12 @@ public class ActivitySplash extends AppCompatActivity {
                             JSONObject objData = response.getJSONObject("data");
                             if (txtVersionName.equals(objData.getString("version_name"))) {
                                 resUpdate = false;
-                            }else {
+                            } else {
                                 resUpdate = true;
-                                txtLink =  objData.getString("link_app");
+                                txtLink = objData.getString("link_app");
                             }
 
-                            if (resUpdate){
+                            if (resUpdate) {
 
                                 DonutProgress donutProgress = new DonutProgress(context);
                                 donutProgress.setFinishedStrokeColor(R.color.success_stroke_color);
@@ -415,8 +406,8 @@ public class ActivitySplash extends AppCompatActivity {
                                 donutProgress.setUnfinishedStrokeColor(R.color.red_800);
 
                                 // execute this when the downloader must be fired
-                                getDownloadAPK ( txtLink);
-                            }else {
+                                getDownloadAPK(txtLink);
+                            } else {
                                 new AuthenticatorUtil().showAccountPicker((Activity) context, accountManager, AUTHTOKEN_TYPE_FULL_ACCESS);
                             }
                         }
@@ -429,18 +420,20 @@ public class ActivitySplash extends AppCompatActivity {
 
             @Override
             public void onError(ANError error) {
+                int a = 1;
 
             }
         });
     }
-    private void getDownloadAPK(String txtLink){
+
+    private void getDownloadAPK(String txtLink) {
         final String txtPathUserData = Environment.getExternalStorageDirectory() + File.separator;
         final String apkName = new ClsHardCode().txtApkName;
         dialog = new Dialog(ActivitySplash.this);
         dialog.setContentView(R.layout.layout_progress_download_apk);
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        final DonutProgress progressD =(DonutProgress) dialog.findViewById(R.id.progressPercentage);
+        final DonutProgress progressD = (DonutProgress) dialog.findViewById(R.id.progressPercentage);
 
         try {
             File yourFile = new File(txtPathUserData);
@@ -476,7 +469,7 @@ public class ActivitySplash extends AppCompatActivity {
                         dialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Download Complete", Toast.LENGTH_SHORT).show();
                         String txtPath = txtPathUserData + apkName;
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             Toast.makeText(getApplicationContext(), "File downloaded", Toast.LENGTH_LONG).show();
                             try {
                                 Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
@@ -533,7 +526,7 @@ public class ActivitySplash extends AppCompatActivity {
 
 
         try {
-            dataJson.put("GuiId", dtLogin.getTxtGuID() );
+            dataJson.put("GuiId", dtLogin.getTxtGuID());
             tokenRepo = new RepoclsToken(activity.getApplicationContext());
             dataToken = (List<ClsToken>) tokenRepo.findAll();
             resJson.put("data", dataJson);
@@ -558,9 +551,9 @@ public class ActivitySplash extends AppCompatActivity {
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
                         mAccountManager = AccountManager.get(activity);
-                        if (txtStatus == true){
+                        if (txtStatus == true) {
 
-                            Intent intent =new Intent(activity, ServiceNative.class);
+                            Intent intent = new Intent(activity, ServiceNative.class);
                             activity.stopService(intent);
                             NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
@@ -576,7 +569,7 @@ public class ActivitySplash extends AppCompatActivity {
                             DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
                             helper.clearDataAfterLogout();
                             checkVersion(activity, mAccountManager);
-                            new ToastCustom().showToasty(ActivitySplash.this,txtMessage,4);
+                            new ToastCustom().showToasty(ActivitySplash.this, txtMessage, 4);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

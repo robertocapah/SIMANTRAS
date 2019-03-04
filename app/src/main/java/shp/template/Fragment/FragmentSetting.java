@@ -1,5 +1,6 @@
 package shp.template.Fragment;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -88,6 +89,7 @@ public class FragmentSetting extends Fragment {
     private static Bitmap photoProfile, mybitmapImageProfile;
     private static byte[] phtProfile;
     private static ByteArrayOutputStream output = new ByteArrayOutputStream();
+    Dialog dialog;
     final int PIC_CROP_PROFILE = 130;
     @BindView(R.id.image_setting)
     CircleImageView imageSetting;
@@ -424,15 +426,12 @@ public class FragmentSetting extends Fragment {
 //    }
 
     private void changeProfile(final ClsmUserLogin dataLogin) {
-        pDialog.setMessage("Please wait....");
-        pDialog.setCancelable(false);
-        pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
 
-            }
-        });
-        pDialog.show();
+        dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.layout_progress_download_apk);
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
         String strLinkAPI = new ClsHardCode().linkChangeProfil;
         JSONObject resJson = new JSONObject();
 
@@ -454,67 +453,17 @@ public class FragmentSetting extends Fragment {
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-//        new FastNetworkingUtils().FNRequestUploadFotoProfile(getActivity(), strLinkAPI, mRequestBody, pDialog, TAG_UPLOAD_FOTO_PROFILE, dataLogin, new InterfaceFastNetworkingUploadFile() {
-//            @Override
-//            public void onProgress(long bytesDownloaded, long totalBytes) {
-//            }
-//
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                Intent res = null;
-//                if (response != null) {
-//                    try {
-//                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
-//                        boolean txtStatus = model.getResult().isStatus();
-//                        String txtMessage = model.getResult().getMessage();
-//                        String txtMethode_name = model.getResult().getMethodName();
-//
-//                        String accessToken = "dummy_access_token";
-//
-//                        if (txtStatus == true) {
-//                            loginRepo = new RepomUserLogin(getContext());
-//                            ClsmUserLogin data = dataLogin;
-//                            loginRepo.createOrUpdate(data);
-//                            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
-//                            Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
-//                            new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
-//                            new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
-//                            pDialog.dismiss();
-//                            new ToastCustom().showToasty(getContext(), "Success Change photo profile", 1);
-//
-//                        } else {
-//                            new ToastCustom().showToasty(getContext(), txtMessage, 4);
-//                            pDialog.dismiss();
-//                        }
-//                    } catch (SQLException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    new ToastCustom().showToasty(getContext(), "Change password failed", 4);
-//                    pDialog.dismiss();
-//                }
-//            }
-//
-//            @Override
-//            public void onError(ANError error) {
-//                new ToastCustom().showToasty(getContext(), error.getErrorBody(), 4);
-//                pDialog.dismiss();
-//            }
-//        });
-        new VolleyUtils().changeProfile(getContext(), strLinkAPI, mRequestBody, pDialog, dataLogin, new InterfaceVolleyResponseListener() {
+        new FastNetworkingUtils().FNRequestUploadFotoProfile(getActivity(), strLinkAPI, mRequestBody, dialog, TAG_UPLOAD_FOTO_PROFILE, dataLogin, dataToken.get(0).getTxtUserToken(), new InterfaceFastNetworkingUploadFile() {
             @Override
-            public void onError(String message) {
-                new ToastCustom().showToasty(getContext(), message, 4);
-                pDialog.dismiss();
+            public void onProgress(long bytesDownloaded, long totalBytes) {
             }
 
             @Override
-            public void onResponse(String response, Boolean status, String strErrorMsg) {
+            public void onResponse(JSONObject response) {
                 Intent res = null;
                 if (response != null) {
                     try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        LoginMobileApps model = gson.fromJson(jsonObject.toString(), LoginMobileApps.class);
+                        LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
                         boolean txtStatus = model.getResult().isStatus();
                         String txtMessage = model.getResult().getMessage();
                         String txtMethode_name = model.getResult().getMethodName();
@@ -529,22 +478,26 @@ public class FragmentSetting extends Fragment {
                             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
                             new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
                             new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
-                            pDialog.dismiss();
+                            dialog.dismiss();
                             new ToastCustom().showToasty(getContext(), "Success Change photo profile", 1);
 
                         } else {
                             new ToastCustom().showToasty(getContext(), txtMessage, 4);
-                            pDialog.dismiss();
+                            dialog.dismiss();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    new ToastCustom().showToasty(getContext(), strErrorMsg, 4);
-                    pDialog.dismiss();
+                    new ToastCustom().showToasty(getContext(), "Change password failed", 4);
+                    dialog.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                new ToastCustom().showToasty(getContext(), error.getErrorBody(), 4);
+                dialog.dismiss();
             }
         });
     }

@@ -13,7 +13,7 @@ android {
         config {
             keyAlias 'sign key am'
             keyPassword 's4nghi4ng'
-            storeFile file('D:/Real Project/signedkeyandroidam.jks')
+            storeFile file('D:/PROJECTKERJAAN/signedkeyandroidam.jks')
             storePassword 's4nghi4ng'
         }
     }
