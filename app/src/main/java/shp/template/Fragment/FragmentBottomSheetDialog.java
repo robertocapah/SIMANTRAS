@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.androidnetworking.error.ANError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
@@ -43,6 +44,8 @@ import shp.template.Data.ResponseDataJson.getMasterDokter.GetDataMasterNew;
 import shp.template.Database.Common.ClsToken;
 import shp.template.Database.Common.ClsmUserLogin;
 import shp.template.Database.Repo.RepoclsToken;
+import shp.template.Network.FastNetworking.FastNetworkingUtils;
+import shp.template.Network.FastNetworking.InterfaceFastNetworking;
 import shp.template.Network.Volley.InterfaceVolleyResponseListener;
 import shp.template.Network.Volley.VolleyUtils;
 import shp.template.R;
@@ -264,7 +267,60 @@ public class FragmentBottomSheetDialog extends BottomSheetDialogFragment impleme
             e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new VolleyUtils().volleyGetDataMaster(getActivity(), strLinkAPI, mRequestBody, linearLayout, cvNewDokter, new InterfaceVolleyResponseListener() {
+
+        new FastNetworkingUtils().FNRequestPostDataSearch(getActivity(), strLinkAPI, resJson, linearLayout, cvNewDokter, new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Intent res = null;
+                if (response != null) {
+                    GetDataMasterNew model = gson.fromJson(response.toString(), GetDataMasterNew.class);
+                    boolean txtStatus = model.getResult().isStatus();
+                    String txtMessage = model.getResult().getMessage();
+
+                    if (txtStatus == true){
+//                            dokterRepo = new mDokterRepo(getContext());
+                        if (model.getIntTypeVisit()==1){
+                            itemAdapterList.clear();
+                            if (model.getDataDokter()!=null){
+                                if (model.getDataDokter().size()>0){
+                                    for (int i = 0; i < model.getDataDokter().size(); i++){
+                                        VmSearch itemAdapter = new VmSearch();
+                                        itemAdapter.setTxtId(model.getDataDokter().get(i).getId());
+                                        if (model.getDataDokter().get(i).getLastname()!=null){
+                                            itemAdapter.setTxtTittle(model.getDataDokter().get(i).getFirstname() + " " + model.getDataDokter().get(i).getLastname());
+                                        }else {
+                                            itemAdapter.setTxtTittle(model.getDataDokter().get(i).getFirstname());
+                                        }
+                                        itemAdapter.setTxtImgName(model.getDataDokter().get(i).getFirstname().toUpperCase().substring(0,1));
+                                        itemAdapter.setTxtSubTittle(model.getDataDokter().get(i).getFirstname());
+                                        itemAdapter.setTxtStatus(model.getDataDokter().get(i).getGender());
+                                        itemAdapter.setInColorStatus(R.color.red_400);
+                                        itemAdapter.setIntColor(R.color.green_300);
+                                        itemAdapterList.add(itemAdapter);
+                                    }
+                                }
+                            }
+                            adapter.notifyDataSetChanged();
+//                                autoCompleteTextView.setAdapter(adapter);
+                            listView.setAdapter(adapter);
+                            lnEmpty.setVisibility(View.GONE);
+                        }
+                        Log.d("Data info", "Success Download");
+
+                    } else {
+                        lnEmpty.setVisibility(View.VISIBLE);
+//                            new ToastCustom().showToasty(getContext(),txtMessage,4);
+                    }
+                }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                new ToastCustom().showToasty(getContext(),error.getErrorDetail(),4);
+            }
+        });
+
+        /*new VolleyUtils().volleyGetDataMaster(getActivity(), strLinkAPI, mRequestBody, linearLayout, cvNewDokter, new InterfaceVolleyResponseListener() {
             @Override
             public void onError(String message) {
                 new ToastCustom().showToasty(getContext(),message,4);
@@ -319,6 +375,6 @@ public class FragmentBottomSheetDialog extends BottomSheetDialogFragment impleme
                     }
                 }
             }
-        });
+        });*/
     }
 }

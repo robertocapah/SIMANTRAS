@@ -68,7 +68,18 @@ public class RepoclsToken implements CRUD {
         }
         return item;
     }
-
+    public List<ClsToken> getDataToken(Context context){
+        List<ClsToken> dtToken = null;
+        try {
+            RepoclsToken tokenRepo = new RepoclsToken(context);
+            dtToken = (List<ClsToken>) tokenRepo.findAll();
+            if (dtToken.size() == 0) {
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dtToken;
+    }
     @Override
     public List<ClsToken> findAll() throws SQLException {
         List<ClsToken> items = null;

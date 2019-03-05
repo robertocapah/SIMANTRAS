@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import shp.template.ActivitySplash;
+import shp.template.CustomView.Utils.ViewAnimation;
 import shp.template.Data.ClsHardCode;
 import shp.template.Database.Common.ClsToken;
 import shp.template.Database.Common.ClsmConfigData;
@@ -116,6 +120,52 @@ public class FastNetworkingUtils {
                     public void onError(ANError error) {
                         listener.onError(error);
                         Dialog.dismiss();
+                        ErrorHandlerFN(context, error, TAG);
+                    }
+                });
+    }
+    public void FNRequestPostDataSearch(final Activity context, String txtLink, JSONObject JObject, final LinearLayout lnProgressBar, final CardView cvNewDokter, final InterfaceFastNetworking listener) {
+        String access_token = "";
+        List<ClsToken> dataToken = null;
+        lnProgressBar.setVisibility(View.VISIBLE);
+        lnProgressBar.setAlpha(1.0f);
+        cvNewDokter.setVisibility(View.GONE);
+        RepomConfig configRepo = new RepomConfig(context);
+        try {
+            ClsmConfigData configDataClient = (ClsmConfigData) configRepo.findById(4);
+            clientId = configDataClient.getTxtDefaultValue().toString();
+            dataToken = new RepoclsToken(context).getDataToken(context);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            dataToken = new RepoclsToken(context).findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        access_token = dataToken.get(0).txtUserToken.toString();
+        AndroidNetworking.post(txtLink)
+                .addJSONObjectBody(JObject)
+                .addHeaders("Authorization", "Bearer " + access_token)
+                .setTag("test")
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        listener.onResponse(response);
+                        ViewAnimation.fadeOut(lnProgressBar);
+                        lnProgressBar.setVisibility(View.GONE);
+                        cvNewDokter.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        listener.onError(error);
+                        ViewAnimation.fadeOut(lnProgressBar);
+                        lnProgressBar.setVisibility(View.GONE);
+                        cvNewDokter.setVisibility(View.VISIBLE);
                         ErrorHandlerFN(context, error, TAG);
                     }
                 });
