@@ -156,7 +156,7 @@
                             android:layout_margin="@dimen/spacing_medium"
                             android:orientation="vertical">
 
-                            <shp.template.CustomView.Widget.ViewLoadingDotsFade
+                            <com.kalbenutritionals.simantra.CustomView.Widget.ViewLoadingDotsFade
                                 android:layout_width="50dp"
                                 android:layout_height="40dp"
                                 android:background="@color/teal_300" />

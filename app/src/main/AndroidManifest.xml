@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="shp.template"
+    package="com.kalbenutritionals.simantra"
     android:installLocation="internalOnly"
     android:versionCode="1"
     android:sharedUserId="com.kalbenutritionals"
@@ -85,7 +85,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name="shp.template.ActivitySplash">
+        <activity android:name="com.kalbenutritionals.simantra.ActivitySplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -93,7 +93,7 @@
             </intent-filter >
         </activity>
         <activity
-            android:name="shp.template.ActivityMainMenu"
+            android:name="com.kalbenutritionals.simantra.ActivityMainMenu"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 
@@ -105,12 +105,12 @@
             android:value="AIzaSyDY5hiO3G32n4Tbkwan549NgM0zjFdhfUM" />
 
         <activity
-            android:name="shp.template.ActivityPickAccount"
+            android:name="com.kalbenutritionals.simantra.ActivityPickAccount"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="shp.template.ActivityLogin"
+            android:name="com.kalbenutritionals.simantra.ActivityLogin"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
@@ -125,20 +125,20 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name="shp.template.ActivityImageViewer"
+        <activity android:name="com.kalbenutritionals.simantra.ActivityImageViewer"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="shp.template.ActivityMainMenu" />
+                android:value="com.kalbenutritionals.simantra.ActivityMainMenu" />
         </activity>
-        <activity android:name="shp.template.ActivityPDFViewer"
+        <activity android:name="com.kalbenutritionals.simantra.ActivityPDFViewer"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="shp.template.ActivityMainMenu" />
+                android:value="com.kalbenutritionals.simantra.ActivityMainMenu" />
         </activity>
 
-        <service android:name="shp.template.Service.ServiceNative">
+        <service android:name="com.kalbenutritionals.simantra.Service.ServiceNative">
             <intent-filter>
                 <action android:name=".Service.MyServiceNative" />
             </intent-filter>
@@ -159,11 +159,11 @@
                 <action android:name="com.kalbe.kalbecallplanaedp.RestartSensor" />
             </intent-filter>
         </receiver>
-        <activity android:name="shp.template.ActivityChangePasswordActivity"
+        <activity android:name="com.kalbenutritionals.simantra.ActivityChangePasswordActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="shp.template.ActivityMainMenu" />
+                android:value="com.kalbenutritionals.simantra.ActivityMainMenu" />
         </activity>
         <activity android:name="eu.janmuller.android.simplecropimage.CropImage" />
     </application>
