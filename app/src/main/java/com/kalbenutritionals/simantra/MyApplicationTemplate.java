@@ -67,9 +67,9 @@ public class MyApplicationTemplate extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        List<ClstLogError> dataError = new RepotLogError(mContext).getAllPushData();
+//        List<ClstLogError> dataError = new RepotLogError(mContext).getAllPushData();
         ClstLogError logError = new ClstLogError();
-        if (dataError!=null){
+        /*if (dataError!=null){
             if (dataError.size()>0){
                 boolean exist = false;
                 String txtGuiId = "";
@@ -91,7 +91,7 @@ public class MyApplicationTemplate extends Application {
             }
         }else {
             logError.setTxtGuiId(GenerateGuid());
-        }
+        }*/
         new UriData().getOutputFolder(new ClsHardCode().txtFolderTemp);
         String txtPath = new ClsHardCode().txtFolderTemp;
 //        ACRA.getErrorReporter().handleSilentException(new RuntimeException("whatever I want"));

@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="true"
         android:groupIndicator="@null"
-        android:id="@+id/exp_lv_call_plan"></ExpandableListView>
+        android:id="@+id/exp_notify"></ExpandableListView>
 
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->

@@ -39,7 +39,8 @@ public class ClsHardCode {
     //    public String dbName = "DP.db";
     public String txtFolderCheckIn = txtPathUserData + "Absen" + File.separator;
     public String txtFolderAkuisisi = txtPathUserData + "Akuisisi" + File.separator;
-    public String txtFolderData = txtPathUserData + "Image_Person" + File.separator;
+    public String txtFolderData = txtPathUserData + "image_person" + File.separator;
+    public String txtFolderDataQuest = txtPathUserData + "image_question" + File.separator;
     public String txtFolderDownload = txtPathTempData + "Download" + File.separator;
     public String txtFolderTemp = txtPathTempData + "Acra" + File.separator;
     public String linkMaster = new RepomConfig(context).API + "mProduct";
@@ -50,16 +51,6 @@ public class ClsHardCode {
     //    public String LinkUser = new RepomConfig(context).API + "loginMobileApps";
     public  String LinkMobileVersion = new RepomConfig(context).API + "getLatestAndroidVersion";
     public  String LinkUserRole = new RepomConfig(context).API + "getListRoleByUsername";
-    public String linkDownloadAll = new RepomConfig(context).API + "downloadAllData";
-    public String linkmActivity = new RepomConfig(context).API + "downloadmActivity";
-    public String linkSubActivity = new RepomConfig(context).API + "downloadSubActivity";
-    public String linkSubSubActivity = new RepomConfig(context).API + "downloadSubActivityDetail";
-    public String linkDownloadArea = new RepomConfig(context).API + "downloadtMappingArea";
-    public String linkProgramVisit = new RepomConfig(context).API + "downloadtProgramVisit";
-    public String linkAkuisisi = new RepomConfig(context).API + "downloadtAkuisisi";
-    public String linkMaintenance = new RepomConfig(context).API + "downloadtMaintenance";
-    public String linkInfoProgram = new RepomConfig(context).API + "downloadtInfoProgram";
-    public String linkCreateUnplan = new RepomConfig(context).API + "CreateUnplan";
     //    public String linkRealisasiVisit = new RepomConfig(context).API + "downloadTRealisasi";
     public String linkPushData = new RepomConfig(context).API +"PushAllData";
     public String linkPushDataError = new RepomConfig(context).API +"PushLogError";
@@ -67,46 +58,8 @@ public class ClsHardCode {
     public String linkDokterAedp = new RepomConfig(context).API +"Dokter";
     public String linkApotekAedp = new RepomConfig(context).API +"Apotek";
     public String linkGetDataMasterNew = new RepomConfig(context).API +"getDataMasterNew";
+    public String txtBundleKeyBarcode = "BarcodeScanner";
 
-    /*Link klik apotek*/
-    public String linkApotek = new RepomConfig(context).APIKLB +"mae/apotek";
-    public String linkDokter = new RepomConfig(context).APIKLB + "mae/dokter";
-
-    public int Draft = 0;
-    public int Save = 1;
-    public int Sync = 2;
-
-    public int TypeFoto = 1;
-    public int TypeText = 2;
-
-    public int VisitDokter = 1;
-    public int VisitApotek = 2;
-
-    public int VisitPlan = 0;
-    public int Realisasi = 1;
-
-    public int Plan = 1;
-    public int UnPlan = 2;
-
-    //yang di tampilin di info program
-    public int AllInfo = 1;
-    public int OnlyDesc = 2;
-    public int OnlyFile = 3;
-
-
-    public int int_akuisisi_dokter = 1;
-    public int int_maintenance_dokter = 2;
-    public int int_infoprogram_dokter = 3;
-    public int int_akuisisi_apotek = 4;
-    public int int_maintenance_apotek = 5;
-    public int int_infoprogram_apotek = 6;
-
-    //untuk download file
-    public String AKUISISI = "akuisisi";
-    public String INFO_PROGRAM = "info program";
-    public String REALISASI_SATU = "realisasi pertama";
-    public String REALISASI_DUA = "realisasi kedua";
-    public String LOGIN =   "login";
 
     public String copydb(Context context) throws IOException {
         String CURRENT_DATABASE_PATH = "data/data/" + context.getPackageName() + "/databases/"+ new ClsHardCode().dbName;

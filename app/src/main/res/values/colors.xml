@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="actionbar_opacity">#33000000</color>
+
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#4CAF50</color>
@@ -336,5 +338,8 @@
     <color name="grey_95">#1a1a1a</color>
     <color name="grey_100_">#0d0d0d</color>
 
-
+    <color name="list_selected">#FFDDDD</color>
+    <color name="list_unselected">#FFFFFF</color>
+    <color name="list_long_pressed">#DDDDFF</color>
+    <color name="list_divider_color">#ccc</color>
 </resources>

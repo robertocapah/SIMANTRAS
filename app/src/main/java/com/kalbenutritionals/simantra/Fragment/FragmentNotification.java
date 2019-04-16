@@ -45,14 +45,14 @@ public class FragmentNotification extends Fragment {
     TextView brief;
     @BindView(R.id.ln_empty)
     LinearLayout lnEmpty;
-    @BindView(R.id.exp_lv_call_plan)
+    @BindView(R.id.exp_notify)
     ExpandableListView expLvCallPlan;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_n_order, container, false);
-        mExpandableListView = (ExpandableListView) v.findViewById(R.id.exp_lv_call_plan);
+        v = inflater.inflate(R.layout.fragment_notification, container, false);
+        mExpandableListView = (ExpandableListView) v.findViewById(R.id.exp_notify);
         unbinder = ButterKnife.bind(this, v);
         listDataHeader.clear();
         listDataChild.clear();

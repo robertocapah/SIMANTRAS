@@ -185,7 +185,7 @@ public class LocalReportSenderAcra implements ReportSender {
             logError.setTxtFileName(fileName);
             logError.setDtDateLog(dateFormats.format(new Date()));
             logError.setBlobImg(file);
-            logError.setIntFlagPush(new ClsHardCode().Save);
+//            logError.setIntFlagPush(new ClsHardCode().Save);
             new RepotLogError(mContext).createOrUpdate(logError);
         } catch (IOException e) {
             Log.e("TAG", "IO ERROR", e);

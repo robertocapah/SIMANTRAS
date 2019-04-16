@@ -58,5 +58,5 @@
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="true"
         android:groupIndicator="@null"
-        android:id="@+id/exp_lv_call_plan"></ExpandableListView>
+        android:id="@+id/exp_notify"></ExpandableListView>
 </android.support.design.widget.CoordinatorLayout>

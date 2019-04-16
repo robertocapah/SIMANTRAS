@@ -33,6 +33,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -58,6 +59,7 @@ public class ClsTools {
         } catch (Exception e) {
         }
     }
+
     public void intentFragment(Class<?> fragmentClass, String title, Context context){
         try {
 
@@ -162,9 +164,33 @@ public class ClsTools {
         }
     }
 
+    public static void displayImageOriginalUrl(Context ctx, ImageView img, @DrawableRes int drawable,String url) {
+        try {
+            Glide.with(ctx).load(url)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_cloud_download_black_24dp)
+                    .into(img);
+        } catch (Exception e) {
+        }
+    }
+
     public static void displayImageRound(final Context ctx, final ImageView img, @DrawableRes int drawable) {
         try {
             Glide.with(ctx).load(drawable).asBitmap().centerCrop().into(new BitmapImageViewTarget(img) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    img.setImageDrawable(circularBitmapDrawable);
+                }
+            });
+        } catch (Exception e) {
+        }
+    }
+    public static void displayImageRoundUrl(final Context ctx, final ImageView img, String url) {
+        try {
+            Glide.with(ctx).load(url).asBitmap().centerCrop().into(new BitmapImageViewTarget(img) {
                 @Override
                 protected void setResource(Bitmap resource) {
                     RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
@@ -252,6 +278,13 @@ public class ClsTools {
                 nested.scrollTo(500, targetView.getBottom());
             }
         });
+    }
+    public static void setMargins (View v, int l, int t, int r, int b) {
+        if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            p.setMargins(l, t, r, b);
+            v.requestLayout();
+        }
     }
 
     public static int dip2px(Context context, float dpValue) {

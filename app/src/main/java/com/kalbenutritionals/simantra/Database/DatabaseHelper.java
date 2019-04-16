@@ -6,14 +6,18 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.kalbenutritionals.simantra.Database.Common.ClsPhotoProfile;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
+import com.kalbenutritionals.simantra.Database.Common.ClsmChecklist;
 import com.kalbenutritionals.simantra.Database.Common.ClsmConfigData;
 import com.kalbenutritionals.simantra.Database.Common.ClsmCounterData;
+import com.kalbenutritionals.simantra.Database.Common.ClsmJenisPertanyaan;
+import com.kalbenutritionals.simantra.Database.Common.ClsmKendaraan;
+import com.kalbenutritionals.simantra.Database.Common.ClsmLocationPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmMenuData;
+import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserMappingArea;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserRole;
@@ -35,25 +39,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     // the DAO object we use to access the SimpleData table
     protected Dao<ClsmConfigData, Integer> mConfigDao;
-
     protected Dao<ClsmMenuData, Integer> menuDao;
-    protected RuntimeExceptionDao<ClsmMenuData, Integer> menuRuntimeDao;
-
     protected Dao<ClsPhotoProfile, Integer> profileDao;
-    protected RuntimeExceptionDao<ClsPhotoProfile, Integer> profileRuntimeDao;
-
     protected Dao<ClsToken, Integer> tokenDao;
-    protected RuntimeExceptionDao<ClsToken, Integer> tokenRuntimeDao;
-
     protected Dao<ClsmUserRole, Integer> mUserRolesDao;
-    protected RuntimeExceptionDao<ClsToken, Integer> mUserRolesRuntimeDao;
-
     protected Dao<ClsmUserLogin, Integer> mUserLoginsDao;
-    protected RuntimeExceptionDao<ClsToken, Integer> mUserLoginsRuntimeDao;
-
     protected Dao<ClsmUserMappingArea, Integer> mUserMappingAreaDao;
     protected Dao<ClsmCounterData, Integer> mCounterDataDao;
     protected Dao<ClstLogError, Integer> tLogErrorDao;
+    protected Dao<ClsmChecklist, Integer> mChecklistDao;
+    protected Dao<ClsmKendaraan, Integer> mKendaraabDao;
+    protected Dao<ClsmJenisPertanyaan, Integer> mJenisPertanyaanDao;
+    protected Dao<ClsmLocationPertanyaan, Integer> mLocationDao;
+    protected Dao<ClsmPertanyaan, Integer> mPertanyaanDao;
+
+
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -71,6 +71,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, ClsmUserMappingArea.class);
             TableUtils.createTableIfNotExists(connectionSource, ClsmCounterData.class);
             TableUtils.createTableIfNotExists(connectionSource, ClstLogError.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsmChecklist.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsmKendaraan.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsmPertanyaan.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsmJenisPertanyaan.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsmLocationPertanyaan.class);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,6 +99,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, ClsmUserLogin.class, true);
             TableUtils.dropTable(connectionSource, ClsmUserMappingArea.class, true);
             TableUtils.dropTable(connectionSource, ClsmCounterData.class, true);
+            TableUtils.dropTable(connectionSource, ClsmChecklist.class,true);
+            TableUtils.dropTable(connectionSource, ClsmKendaraan.class,true);
+            TableUtils.dropTable(connectionSource, ClsmPertanyaan.class,true);
+            TableUtils.dropTable(connectionSource, ClsmJenisPertanyaan.class,true);
+            TableUtils.dropTable(connectionSource, ClsmLocationPertanyaan.class,true);
 
             onCreate(database, connectionSource);
         } catch (SQLException e) {
@@ -109,10 +119,47 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, ClsmUserLogin.class);
             TableUtils.clearTable(connectionSource, ClsmUserMappingArea.class);
             TableUtils.clearTable(connectionSource, ClsmCounterData.class);
+            TableUtils.clearTable(connectionSource, ClsmChecklist.class);
+            TableUtils.clearTable(connectionSource, ClsmKendaraan.class);
+            TableUtils.clearTable(connectionSource, ClsmPertanyaan.class);
+            TableUtils.clearTable(connectionSource, ClsmJenisPertanyaan.class);
+            TableUtils.clearTable(connectionSource, ClsmLocationPertanyaan.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public Dao<ClsmPertanyaan, Integer> getmPertanyaanDao() throws SQLException{
+        if (mPertanyaanDao == null){
+            mPertanyaanDao = getDao(ClsmPertanyaan.class);
+        }
+        return mPertanyaanDao;
+    }
+    public Dao<ClsmJenisPertanyaan, Integer> getmJenisPertanyaanDao() throws SQLException{
+        if (mJenisPertanyaanDao == null){
+            mJenisPertanyaanDao = getDao(ClsmJenisPertanyaan.class);
+        }
+        return mJenisPertanyaanDao;
+    }
+    public Dao<ClsmLocationPertanyaan, Integer> getmLocationDao() throws SQLException{
+        if (mLocationDao == null){
+            mLocationDao = getDao(ClsmLocationPertanyaan.class);
+        }
+        return mLocationDao;
+    }
+    public Dao<ClsmKendaraan, Integer> getmKendaraabDao() throws SQLException{
+        if (mKendaraabDao == null){
+            mKendaraabDao = getDao(ClsmKendaraan.class);
+        }
+        return mKendaraabDao;
+    }
+
+    public Dao<ClsmChecklist, Integer> getmChecklistDao() throws SQLException {
+        if (mChecklistDao == null){
+            mChecklistDao = getDao(ClsmChecklist.class);
+        }
+        return mChecklistDao;
     }
 
     public Dao<ClsmConfigData, Integer> getmConfigDao() throws SQLException {
@@ -191,5 +238,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         mUserMappingAreaDao = null;
         mCounterDataDao = null;
         tLogErrorDao = null;
+        mChecklistDao = null;
     }
 }

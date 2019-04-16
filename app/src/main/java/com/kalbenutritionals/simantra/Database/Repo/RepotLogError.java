@@ -103,7 +103,7 @@ public class RepotLogError implements CRUD {
         return item;
     }
 
-    public List<ClstLogError> getAllPushData () {
+    /*public List<ClstLogError> getAllPushData () {
         ClstLogError item = new ClstLogError();
         List<ClstLogError> listData = new ArrayList<>();
         QueryBuilder<ClstLogError, Integer> queryBuilder = null;
@@ -115,5 +115,5 @@ public class RepotLogError implements CRUD {
             e.printStackTrace();
         }
         return listData;
-    }
+    }*/
 }

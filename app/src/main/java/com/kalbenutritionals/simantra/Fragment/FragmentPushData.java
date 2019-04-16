@@ -79,7 +79,7 @@ public class FragmentPushData extends Fragment {
     TextView brief;
     @BindView(R.id.ln_empty)
     LinearLayout lnEmpty;
-    @BindView(R.id.exp_lv_call_plan)
+    @BindView(R.id.exp_notify)
     ExpandableListView expLvCallPlan;
     @BindView(R.id.button_push_data)
     FloatingActionButton buttonPushData;
@@ -96,7 +96,7 @@ public class FragmentPushData extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_push_data, container, false);
         unbinder = ButterKnife.bind(this, v);
-        mExpandableListView = (ExpandableListView) v.findViewById(R.id.exp_lv_call_plan);
+        mExpandableListView = (ExpandableListView) v.findViewById(R.id.exp_notify);
         button_push_data = (FloatingActionButton) v.findViewById(R.id.button_push_data);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -180,8 +180,8 @@ public class FragmentPushData extends Fragment {
         swipeListMaintenance.clear();
 
 
-        mAdapterExpandableList = new AdapterExpandableList(getActivity(), listDataHeader, listDataChild);
-        mExpandableListView.setAdapter(mAdapterExpandableList);
+//        mAdapterExpandableList = new AdapterExpandableList(getActivity(), listDataHeader);
+//        mExpandableListView.setAdapter(mAdapterExpandableList);
         mExpandableListView.setEmptyView(v.findViewById(R.id.ln_empty));
 //    mExpandableListView.addFooterView(btn_push_error);
     }

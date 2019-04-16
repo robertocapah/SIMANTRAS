@@ -74,8 +74,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import me.leolin.shortcutbadger.ShortcutBadgeException;
 import me.leolin.shortcutbadger.ShortcutBadger;
+
 import com.kalbenutritionals.simantra.BL.BLMain;
 import com.kalbenutritionals.simantra.CustomView.Utils.AuthenticatorUtil;
 import com.kalbenutritionals.simantra.CustomView.Utils.IOBackPressed;
@@ -90,11 +92,18 @@ import com.kalbenutritionals.simantra.Database.Repo.EnumStatusMenuStart;
 import com.kalbenutritionals.simantra.Database.Repo.RepoclsToken;
 import com.kalbenutritionals.simantra.Database.Repo.RepomConfig;
 import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
+import com.kalbenutritionals.simantra.Fragment.FragmentApprover;
+import com.kalbenutritionals.simantra.Fragment.FragmentChecklist;
+import com.kalbenutritionals.simantra.Fragment.FragmentDetailInfoChecker;
 import com.kalbenutritionals.simantra.Fragment.FragmentHome;
 import com.kalbenutritionals.simantra.Fragment.FragmentNotification;
 import com.kalbenutritionals.simantra.Fragment.FragmentPushData;
+import com.kalbenutritionals.simantra.Fragment.FragmentSPMSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSetting;
+import com.kalbenutritionals.simantra.Fragment.FragmentTab;
+import com.kalbenutritionals.simantra.Fragment.FragmentTestUI;
+import com.kalbenutritionals.simantra.Fragment.FragmentTransactions;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.Service.ServiceNative;
@@ -242,9 +251,13 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                 selectedId = 99;
             }
         }
-
-        if (getIntent().getStringExtra(i_View)!=null){
-            if (getIntent().getStringExtra(i_View).equals("FragmentNotification")){
+        if (getIntent().getStringExtra(new ClsHardCode().txtBundleKeyBarcode) != null) {
+            FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
+            FragmentTransaction fragmentTransactionInfoChecker = getSupportFragmentManager().beginTransaction();
+            fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
+            fragmentTransactionInfoChecker.commit();
+        } else if (getIntent().getStringExtra(i_View) != null) {
+            if (getIntent().getStringExtra(i_View).equals("FragmentNotification")) {
                 toolbar.setTitle("Notification");
                 setSupportActionBar(toolbar);
 
@@ -253,7 +266,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                 fragmentTransactionNotification.replace(R.id.frame, fragmentNotification);
                 fragmentTransactionNotification.commit();
                 selectedId = 99;
-            }else if (getIntent().getStringExtra(i_View).equals("FragmentPushData")){
+            } else if (getIntent().getStringExtra(i_View).equals("FragmentPushData")) {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 toolbar.setTitle("Push Data");
                 setSupportActionBar(toolbar);
@@ -264,7 +277,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 Bundle bundle = new Bundle();
                 String myMessage = "notMainMenu";
-                bundle.putString("message", myMessage );
+                bundle.putString("message", myMessage);
 
                 FragmentPushData fragmentPushData = new FragmentPushData();
                 fragmentPushData.setArguments(bundle);
@@ -273,7 +286,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                 fragmentTransactionPushData.commit();
                 selectedId = 99;
             }
-        }else {
+        } else {
             toolbar.setTitle("Home");
             setSupportActionBar(toolbar);
 
@@ -311,15 +324,15 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (dataLogin.size()>0){
+        if (dataLogin.size() > 0) {
             tvUsername.setText(dataLogin.get(0).getTxtUserName());
             tvEmail.setText(dataLogin.get(0).getTxtEmail());
-        }else{
+        } else {
             tvUsername.setText("Roberto Oloan Capah");
             tvEmail.setText("Roberto.capah@kalbenutritionals.com");
         }
 
-        if (dataLogin.get(0).getBlobImg()!=null){
+        if (dataLogin.get(0).getBlobImg() != null) {
             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dataLogin.get(0).getBlobImg());
             Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
             ivProfile.setImageBitmap(bitmap1);
@@ -422,6 +435,55 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             fragmentTransactionSearch.commit();
                             selectedId = 99;
                             break;
+                        case R.id.approver:
+                            checkNavItem = null;
+                            toolbar.setTitle("APPROVER LIST");
+
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                            // fragment yang dituju
+                            FragmentApprover fragmentApprover = new FragmentApprover();
+                            FragmentTransaction fragmentTransactionApprover = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionApprover.replace(R.id.frame, fragmentApprover);
+                            fragmentTransactionApprover.commit();
+                            selectedId = 99;
+                            break;
+                        case R.id.transporter:
+                            checkNavItem = null;
+                            toolbar.setTitle("SIMANTRA");
+
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                            // fragment yang dituju
+                            /*FragmentTab fragmentTab = new FragmentTab();
+                            FragmentTransactions fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                            fragmentTransactionTab.commit();*/
+
+                            FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
+                            FragmentTransaction fragmentTransactionSPMSearch = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
+                            fragmentTransactionSPMSearch.commit();
+
+                            /*FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
+                            FragmentTransactions fragmentTransactionInfoChecker = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
+                            fragmentTransactionInfoChecker.commit();*/
+
+                            /*FragmentChecklist checklistFragment = new FragmentChecklist();
+                            FragmentTransactions fragmentTransactionChecklist = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionChecklist.replace(R.id.frame, checklistFragment);
+                            fragmentTransactionChecklist.commit();*/
+                            selectedId = 99;
+                            break;
+
+                        case R.id.transaction:
+                            FragmentTransactions fragmentTransactions = new FragmentTransactions();
+                            FragmentTransaction fragmentTransactionsTrans = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionsTrans.replace(R.id.frame,fragmentTransactions);
+                            fragmentTransactionsTrans.commit();
+                            selectedId = 99;
+                            break;
                         case R.id.mnpushData:
                             checkNavItem = null;
                             toolbar.setTitle("Push Data");
@@ -472,18 +534,31 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             fragmentTransactionSetting.commit();
                             selectedId = 99;
                             break;
+                        case R.id.mntestMenu:
+                            checkNavItem = null;
+                            toolbar.setTitle("Setting");
+                            toolbar.setSubtitle(null);
+
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                            /*FragmentTestUI fragmentTestUI = new FragmentTestUI();
+                            FragmentTransactions fragmentTransactionTestUI = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionTestUI.replace(R.id.frame, fragmentTestUI);
+                            fragmentTransactionTestUI.commit();*/
+                            selectedId = 99;
+                            break;
 
                         default:
                             checkNavItem = null;
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-                            try {
+                            /*try {
                                 Class<?> fragmentClass = Class.forName(linkMenu[checkNavItem.getItemId()]);
                                 try {
                                     toolbar.setTitle(checkNavItem.getTitle().toString());
                                     toolbar.setSubtitle(null);
 
                                     fragment = (Fragment) fragmentClass.newInstance();
-                                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    FragmentTransactions fragmentTransaction = getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.replace(R.id.frame, fragment);
                                     fragmentTransaction.addToBackStack(fragment.getClass().getName());
                                     fragmentTransaction.commit();
@@ -497,7 +572,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                                 }
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
-                            }
+                            }*/
                     }
                 }
 
@@ -524,10 +599,12 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 || requestCode == 130 || requestCode == 150) {
+        if (requestCode == 100 || requestCode == 130 || requestCode == 150 ) {
             for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                 fragment.onActivityResult(requestCode, resultCode, data);
             }
+        }else if(requestCode == FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION){
+            new FragmentDetailInfoChecker().onActivityResult(requestCode, resultCode, data);
         }
     }
 

@@ -477,7 +477,7 @@ public class FragmentSetting extends Fragment {
                             dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
                             Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dtLogin.getBlobImg());
                             new PickImage().previewCapturedImage(imageSetting, bitmap, 200, 200);
-                            new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
+//                            new PickImage().previewCapturedImage(mm.ivProfile, bitmap, 200, 200);
                             dialog.dismiss();
                             new ToastCustom().showToasty(getContext(), "Success Change photo profile", 1);
 

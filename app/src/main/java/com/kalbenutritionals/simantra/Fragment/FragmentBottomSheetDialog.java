@@ -117,7 +117,7 @@ public class FragmentBottomSheetDialog extends BottomSheetDialogFragment impleme
                     if (isFirstTime){
                         ViewAnimation.fadeOut(lyt_progress);
                     }
-                    receivedData.onDataReceived(false, "Select One", false);
+//                    receivedData.onDataReceived(false, "Select One", false);
                     dialog.dismiss();
                     return true; // Capture onKey
                 }
@@ -199,14 +199,14 @@ public class FragmentBottomSheetDialog extends BottomSheetDialogFragment impleme
         adapter.setOnItemClickListener(new AdapterListSearch.onItemClickListener() {
             @Override
             public void onItemClick(View view, VmSearch obj, int position) {
-                receivedData.onDataReceived(true, obj.getTxtTittle(), false);
+//                receivedData.onDataReceived(true, obj.getTxtTittle(), false);
                 dialog.dismiss();
             }
         });
         cv_new_dokter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                receivedData.onDataReceived(true, "", true);
+//                receivedData.onDataReceived(true, "", true);
                 dialog.dismiss();
             }
         });

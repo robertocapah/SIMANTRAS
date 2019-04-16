@@ -16,7 +16,7 @@ import com.kalbenutritionals.simantra.R;
  * Created by dewi.oktaviani on 25/02/2019.
  */
 
-public class FragmentSearch extends Fragment implements OnReceivedData{
+public class FragmentSearch extends Fragment{
     View v;
 
     @Nullable
@@ -26,14 +26,14 @@ public class FragmentSearch extends Fragment implements OnReceivedData{
 
         FragmentBottomSheetDialog fragment = new FragmentBottomSheetDialog();
         fragment.setCancelable(false);
-        fragment.sendData(FragmentSearch.this);
+//        fragment.sendData(FragmentSearch.this);
         fragment.show(getActivity().getSupportFragmentManager(), fragment.getTag());
 
         return v;
     }
 
-    @Override
-    public void onDataReceived(boolean isChecked, String Name, boolean isNew) {
-        Toast.makeText(getContext(), Name, Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void onDataReceived(boolean isChecked, String Name, boolean isNew) {
+//        Toast.makeText(getContext(), Name, Toast.LENGTH_SHORT).show();
+//    }
 }

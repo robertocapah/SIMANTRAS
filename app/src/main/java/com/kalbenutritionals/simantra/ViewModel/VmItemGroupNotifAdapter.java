@@ -1,5 +1,7 @@
 package com.kalbenutritionals.simantra.ViewModel;
 
+import java.util.List;
+
 /**
  * Created by Dewi Oktaviani on 11/8/2018.
  */
@@ -8,10 +10,10 @@ public class VmItemGroupNotifAdapter {
     private String txtTittle;
     private String txtSubTittle;
     private String txtImgName;
-    private int intActivityId;
-    private String intDokterId;
-    private String intApotekId;
-    private Integer intImgView;
+    private int intTransaksiId;
+    private String txtTitleTransaksi;
+    private String txtDescTransaksi;
+    private List<String> txtLinkImage;
     private int intColor;
 
     public String getTxtTittle() {
@@ -38,36 +40,36 @@ public class VmItemGroupNotifAdapter {
         this.txtImgName = txtImgName;
     }
 
-    public int getIntActivityId() {
-        return intActivityId;
+    public int getIntTransaksiId() {
+        return intTransaksiId;
     }
 
-    public void setIntActivityId(int intActivityId) {
-        this.intActivityId = intActivityId;
+    public void setIntTransaksiId(int intTransaksiId) {
+        this.intTransaksiId = intTransaksiId;
     }
 
-    public String getIntDokterId() {
-        return intDokterId;
+    public String getTxtTitleTransaksi() {
+        return txtTitleTransaksi;
     }
 
-    public void setIntDokterId(String intDokterId) {
-        this.intDokterId = intDokterId;
+    public void setTxtTitleTransaksi(String txtTitleTransaksi) {
+        this.txtTitleTransaksi = txtTitleTransaksi;
     }
 
-    public String getIntApotekId() {
-        return intApotekId;
+    public String getTxtDescTransaksi() {
+        return txtDescTransaksi;
     }
 
-    public void setIntApotekId(String intApotekId) {
-        this.intApotekId = intApotekId;
+    public void setTxtDescTransaksi(String txtDescTransaksi) {
+        this.txtDescTransaksi = txtDescTransaksi;
     }
 
-    public Integer getIntImgView() {
-        return intImgView;
+    public List<String> getTxtLinkImage() {
+        return txtLinkImage;
     }
 
-    public void setIntImgView(Integer intImgView) {
-        this.intImgView = intImgView;
+    public void setTxtLinkImage(List<String> txtLinkImage) {
+        this.txtLinkImage = txtLinkImage;
     }
 
     public int getIntColor() {
