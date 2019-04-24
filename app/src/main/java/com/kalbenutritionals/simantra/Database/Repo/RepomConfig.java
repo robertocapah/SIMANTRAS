@@ -87,8 +87,8 @@ public class RepomConfig {
         data = new ClsmConfigData();
         data.setIntId(5);
         data.setTxtName("UserId");
-        data.setTxtValue("6zHEhSQ93ik+yzSDoXlhnbKCfNljoITN0W0ApaORt33mhSHHLDhUMX5SdsG7IAHo");
-        data.setTxtDefaultValue("6zHEhSQ93ik+yzSDoXlhnbKCfNljoITN0W0ApaORt33mhSHHLDhUMX5SdsG7IAHo");
+        data.setTxtValue("rian.andrivani");
+        data.setTxtDefaultValue("rian.andrivani");
         data.setIntEditAdmin("1");
         helper.getmConfigDao().createOrUpdate(data);
 
