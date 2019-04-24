@@ -284,7 +284,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                         jawabans) {
                     CheckBox checkBox = new CheckBox(ctx);
                     checkBox.setText(j.jawaban);
-                    checkBox.setId(pa.id*11);
+                    checkBox.setId(j.idJawaban*11);
                     if (j.bitChoosen){
                         checkBox.setChecked(true);
                     }else{
@@ -295,9 +295,9 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             String msg = "You have " + (isChecked ? "checked" : "unchecked") + " this Check it Checkbox.";
-                            if (position==items.size()-1){
-                                receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView);
-                            }
+//                            if (position==items.size()-1){
+//                                receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView);
+//                            }
                             Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
                         }
                     });

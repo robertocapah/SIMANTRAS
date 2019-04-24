@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterExpandableList;
@@ -312,6 +313,22 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     @OnClick(R.id.btnValidate)
     public void onViewClicked() {
         boolean bolValid = false;
+        LinearLayout ln = (LinearLayout)rvOptional.getChildAt(0).findViewById(ListAnswerView.get(0).getIntPertanyaanId()*24);
+        int size = ln.getChildCount();
+        for (int i = 0; i < size; i++){
+            View nextChild = ln.getChildAt(i);
+            if (nextChild instanceof EditText) {
+                EditText editText = (EditText) nextChild;
+                String text = editText.getText().toString();
+                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+//                if (editText.getText().toString().trim().equals("")) {
+//                    ltDataPertanyaan.get(position).bitValid = false;
+//                    ltDataPertanyaan.get(position).message = "Please fill this text ...";
+//                } else {
+//                    ltDataPertanyaan.get(position).bitValid = true;
+//                }
+            }
+        }
         for (int i = 0; i < ListAnswerView.size(); i++) {
             int intPertanyaanId = ListAnswerView.get(i).getIntPertanyaanId();
             int position = ListAnswerView.get(i).getIntPosition();
@@ -507,7 +524,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public void onDataTransportReceived(List<View> listAnswer, HashMap<Integer, View> HMPertanyaan1, List<VmListAnswerView> ListAnswerView) {
         this.listAnswer = listAnswer;
         this.HMPertanyaan1 = HMPertanyaan1;
-        this.ListAnswerView = new ArrayList<>();
+//        this.ListAnswerView = new ArrayList<>();
         this.ListAnswerView = ListAnswerView;
 
     }
