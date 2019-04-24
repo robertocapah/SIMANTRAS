@@ -331,7 +331,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 //        }
 
         for (int i = 0; i < ListAnswerView.size(); i++) {
-
+            List<Jawaban> jawabans = new ArrayList<>();
             int intPertanyaanId = ListAnswerView.get(i).getIntPertanyaanId();
             int position = ListAnswerView.get(i).getIntPosition();
             if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
@@ -356,51 +356,72 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         ltDataPertanyaan.get(position).jawabans.get(x).bitChoosen = false;
                     }
                 }
-                if (count == 0){
+                if (count == 0&&ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
                     ltDataPertanyaan.get(position).bitValid = false;
-                    ltDataPertanyaan.get(position).message = "Checkbox at least 1 option ...";
+                    ltDataPertanyaan.get(position).message = "Checkbox at least 1 option";
+                }else if (count > 0&&ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+                    ltDataPertanyaan.get(position).bitValid = true;
+                    ltDataPertanyaan.get(position).message = "";
                 }
                 if (nextChild instanceof RadioGroup) {
                     RadioGroup radioGroup = (RadioGroup) nextChild;
                     if ((radioGroup.getCheckedRadioButtonId() == -1)) {
                         ltDataPertanyaan.get(position).bitValid = false;
-                        ltDataPertanyaan.get(position).message = "Choose 1 option ...";
+                        ltDataPertanyaan.get(position).message = "Choose 1 option";
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaan.get(position).jawabans){
+                            ltDataPertanyaan.get(position).jawabans.get(index).bitChoosen = false;
+                            index++;
+                        }
                     } else {
                         ltDataPertanyaan.get(position).bitValid = true;
+                        ltDataPertanyaan.get(position).message = "";
+                        int posisi = radioGroup.getCheckedRadioButtonId();
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaan.get(position).jawabans){
+                            if (jwb.idJawaban==posisi){
+                                ltDataPertanyaan.get(position).jawabans.get(index).bitChoosen = true;
+                            }else {
+                                ltDataPertanyaan.get(position).jawabans.get(index).bitChoosen = false;
+                            }
+                            index++;
+                        }
+//                        ltDataPertanyaan.get(position).jawabans.get(x).idJawaban = radioGroup.getCheckedRadioButtonId();
                     }
                 }
                 if (nextChild instanceof EditText) {
                     EditText editText = (EditText) nextChild;
                     if (editText.getText().toString().trim().equals("")) {
                         ltDataPertanyaan.get(position).bitValid = false;
-                        ltDataPertanyaan.get(position).message = "Please fill this text ...";
+                        ltDataPertanyaan.get(position).message = "Please fill this text";
+
                     } else {
                         ltDataPertanyaan.get(position).bitValid = true;
-                        Toast.makeText(getContext(), editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                        ltDataPertanyaan.get(position).message = "";
                     }
+                    Jawaban jwbn = new Jawaban();
+                    jwbn.idPertanyaan = ltDataPertanyaan.get(position).id;
+                    jwbn.idJawaban = 0;
+                    jwbn.jawaban = editText.getText().toString();
+                    jwbn.bitChoosen = false;
+                    jawabans.add(jwbn);
+                    ltDataPertanyaan.get(position).jawabans = jawabans;
                 }
                 if (nextChild instanceof ImageView) {
                     ImageView imageView = (ImageView) nextChild;
-                    String jenisPertanyaan = "";
-                    if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
-                        jenisPertanyaan = "Please fill text ";
-                    }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
-                        jenisPertanyaan = "Choose 1 option ";
-                    }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
-                        jenisPertanyaan = "Checkbox at least 1 option ";
-                    }
 
                     if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == false) {
                         ltDataPertanyaan.get(position).bitValid = false;
-                        ltDataPertanyaan.get(position).message = jenisPertanyaan +" and take a picture...";
+                        ltDataPertanyaan.get(position).message = ltDataPertanyaan.get(position).message +" and take a picture...";
                     } else if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == true) {
                         ltDataPertanyaan.get(position).bitValid = false;
                         ltDataPertanyaan.get(position).message = "Please take a picture...";
                     } else if (ltDataPertanyaan.get(position).path != null && ltDataPertanyaan.get(position).bitValid == false) {
                         ltDataPertanyaan.get(position).bitValid = false;
-                        ltDataPertanyaan.get(position).message = jenisPertanyaan;
+                        ltDataPertanyaan.get(position).message = ltDataPertanyaan.get(position).message + "...";
                     } else {
                         ltDataPertanyaan.get(position).bitValid = true;
+                        ltDataPertanyaan.get(position).message = "";
                     }
                 }
             }
@@ -478,58 +499,37 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         mAdapter.notifyDataSetChanged();
         rvOptional.setAdapter(mAdapter);
     }
-        /*if (listAnswer.size() > 0) {
-            for (int i = 0; i < listAnswer.size(); i++) {
-                VmListItemAdapterPertanyaan pertanyaan = HMPertanyaan1.get()
-
-                if (listAnswer.get(i) instanceof ImageView) {
-
-                }
-            }
-        }*/
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST_QUESTION) {
             if (resultCode == -1) {
-                LinearLayout ln = (LinearLayout)rvOptional.getChildAt(0).findViewById(ListAnswerView.get(0).getIntPertanyaanId()*24);
-                int size = ln.getChildCount();
-                for (int i = 0; i < size; i++){
-                    View nextChild = ln.getChildAt(i);
-                    if (nextChild instanceof EditText) {
-                        EditText editText = (EditText) nextChild;
-                        String text = editText.getText().toString();
-                        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-//                if (editText.getText().toString().trim().equals("")) {
-//                    ltDataPertanyaan.get(position).bitValid = false;
-//                    ltDataPertanyaan.get(position).message = "Please fill this text ...";
-//                } else {
-//                    ltDataPertanyaan.get(position).bitValid = true;
-//                }
-                    }
-                }
                 for (int i = 0; i < rvOptional.getChildCount(); i++) {
+                    int position = ListAnswerView.get(i).getIntPosition();
+                    if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
+                        ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*24);
+                    }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
+                        ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*22);
+                    }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+                        ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*21);
+                    }
 
-                    View view = rvOptional.getChildAt(i);
-                    if (view instanceof LinearLayout) {
-                        LinearLayout lyt = (LinearLayout) view;
-                        for (int x = 0; x < lyt.getChildCount(); x++) {
-                            View nextChild = lyt.getChildAt(x);
-                            if (nextChild instanceof ImageView) {
-                                ImageView imageView = (ImageView) nextChild;
-                                if (imageView.getId() == GLOBAL_PICK_PICTURE_ID) {
-                                    try {
+                    for (int x = 0; x < ln.getChildCount(); x++) {
+                        View nextChild = ln.getChildAt(x);
+                        if (nextChild instanceof ImageView) {
+                            ImageView imageView = (ImageView) nextChild;
+                            if (imageView.getId() == GLOBAL_PICK_PICTURE_ID) {
+                                try {
 //                                Bitmap thePic = BitmapFactory.decodeFile(uriImage.getPath());
-                                        Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
-                                        new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
-                                        ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
-                                        ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
-                                    } catch (Exception ex) {
-                                        String a = ex.getMessage();
-                                    }
-
+                                    Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
+                                    new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
+                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
+                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
+                                } catch (Exception ex) {
+                                    String a = ex.getMessage();
                                 }
+
                             }
                         }
                     }

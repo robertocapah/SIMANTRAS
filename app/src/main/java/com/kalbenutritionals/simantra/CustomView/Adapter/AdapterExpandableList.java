@@ -136,28 +136,29 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION = id;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_ID = id;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_QUEST_ID = position;
-        final CharSequence[] items = {"Ambil Foto", "Pilih dari Galeri",
-                "Batal"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setTitle("Add Photo");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                boolean result = PermissionChecker.Utility.checkPermission(ctx);
-                if (items[item].equals("Ambil Foto")) {
-//                    FragmentDetailInfoChecker.uriImage = getOutputMediaImageUri(ctx, new ClsHardCode().txtFolderDataQuest, "tmp_act");
-                    String filename = "tmp_act"+id;
-                    FragmentDetailInfoChecker.uriImage = new UriData().getOutputMediaImageUri(ctx, new ClsHardCode().txtFolderDataQuest, filename);
-                    new PickImage().CaptureImage(ctx, new ClsHardCode().txtFolderDataQuest, filename, FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION);
-                } else if (items[item].equals("Pilih dari Galeri")) {
-                    if (result)
-                        galleryIntentProfile();
-                } else if (items[item].equals("Batal")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();
+        String filename = "tmp_act"+id;
+        FragmentDetailInfoChecker.uriImage = new UriData().getOutputMediaImageUri(ctx, new ClsHardCode().txtFolderDataQuest, filename);
+        new PickImage().CaptureImage(ctx, new ClsHardCode().txtFolderDataQuest, filename, FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION);
+//        final CharSequence[] items = {"Ambil Foto", "Pilih dari Galeri",
+//                "Batal"};
+//        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+//        builder.setTitle("Add Photo");
+//        builder.setItems(items, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int item) {
+//                boolean result = PermissionChecker.Utility.checkPermission(ctx);
+//                if (items[item].equals("Ambil Foto")) {
+////                    FragmentDetailInfoChecker.uriImage = getOutputMediaImageUri(ctx, new ClsHardCode().txtFolderDataQuest, "tmp_act");
+//
+//                } else if (items[item].equals("Pilih dari Galeri")) {
+//                    if (result)
+//                        galleryIntentProfile();
+//                } else if (items[item].equals("Batal")) {
+//                    dialog.dismiss();
+//                }
+//            }
+//        });
+//        builder.show();
     }
     private void galleryIntentProfile() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
@@ -278,7 +279,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             linearLayout.setId(pa.id*21);
 
             if (pa.bolHaveAnswer){
-                List<Jawaban> jawabans = jawabans = pa.jawabans;
+                List<Jawaban> jawabans = pa.jawabans;
 
                 for (Jawaban j :
                         jawabans) {
@@ -345,29 +346,27 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             linearLayout.setLayoutParams(layoutParams);
             linearLayout.setId(pa.id*22);
 
-            try {
-                if (pa.bolHaveAnswer){
-                    List<ClsmJawaban> jawabans = new RepomJawaban(ctx).findByHeader(pa.id);
-                    RadioGroup rg = new RadioGroup(ctx); //create the RadioGroup
-                    rg.setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
-                    rg.setId(pa.id*12);
+            if (pa.bolHaveAnswer){
+                List<Jawaban> jawabans  = pa.jawabans;
+//                    List<ClsmJawaban> jawabans = new RepomJawaban(ctx).findByHeader(pa.id);
+                RadioGroup rg = new RadioGroup(ctx); //create the RadioGroup
+                rg.setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
+                rg.setId(pa.id*12);
+                rg.clearCheck();
 
-                    for (ClsmJawaban j :
-                            jawabans) {
-                        RadioButton rb = new RadioButton(ctx);
-                        rb = new RadioButton(ctx);
-                        rb.setText(j.getTxtJawaban());
-                        rb.setId(j.getIdJawaban());
-                        rg.addView(rb);
-                        ClsTools.setMargins(rg,5,10,5,10);
-                    }
-                    linearLayout.addView(rg);
+                for (Jawaban j :
+                        jawabans) {
+                    RadioButton rb = new RadioButton(ctx);
+                    rb = new RadioButton(ctx);
+                    rb.setText(j.jawaban);
+                    rb.setId(j.idJawaban);
+                    rb.setChecked(j.bitChoosen);
+                    rg.addView(rb);
+                    ClsTools.setMargins(rg,5,10,5,10);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+
+                linearLayout.addView(rg);
             }
-
-
 
             if (pa.bitImage){
                 TextView tvPicture = new TextView(ctx);
@@ -441,7 +440,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
 
-
+            List<Jawaban> jawabans  = pa.jawabans;
             LinearLayout linearLayout = new LinearLayout(ctx);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -466,6 +465,10 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             etTest.setGravity(Gravity.TOP);
             etTest.setBackgroundResource(R.drawable.bg_edtext);
             etTest.setLayoutParams(layoutParams2);
+            if (jawabans.size()>0){
+                etTest.setText(jawabans.get(0).jawaban);
+            }
+
             linearLayout.addView(etTest);
             if (pa.bitImage){
                 TextView tvPicture = new TextView(ctx);

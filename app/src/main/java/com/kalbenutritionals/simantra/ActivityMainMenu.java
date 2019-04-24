@@ -625,42 +625,42 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         }catch (Exception e){
 
         }
-//        pertanyaan = new ClsmPertanyaan();
-//        pertanyaan.setIntPertanyaanId(3);
-//        pertanyaan.setBolHaveAnswer(true);
-//        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanRadioButton);
-//        pertanyaan.setIntLocationDocsId(1);
-//        pertanyaan.setBolHavePhoto(true);
-//        pertanyaan.setTxtPertanyaan("pilih satu dari beberapa di radioButton di bawah ya pak");
-//        try{
-//            new RepomPertanyaan(getApplicationContext()).createOrUpdate(pertanyaan);
-//        }catch (Exception e){
-//
-//        }
-//        pertanyaan = new ClsmPertanyaan();
-//        pertanyaan.setIntPertanyaanId(4);
-//        pertanyaan.setBolHaveAnswer(true);
-//        pertanyaan.setBolHavePhoto(true);
-//        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-//        pertanyaan.setIntLocationDocsId(1);
-//        pertanyaan.setTxtPertanyaan("isi textbox dan ambil sebuah gambar ya pak");
-//        try{
-//            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-//        }catch (Exception e){
-//
-//        }
-//        pertanyaan = new ClsmPertanyaan();
-//        pertanyaan.setIntPertanyaanId(7);
-//        pertanyaan.setBolHaveAnswer(false);
-//        pertanyaan.setBolHavePhoto(true);
-//        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-//        pertanyaan.setIntLocationDocsId(1);
-//        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak (2)");
-//        try{
-//            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-//        }catch (Exception e){
-//
-//        }
+        pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setIntPertanyaanId(3);
+        pertanyaan.setBolHaveAnswer(true);
+        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanRadioButton);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setTxtPertanyaan("pilih satu dari beberapa di radioButton di bawah ya pak");
+        try{
+            new RepomPertanyaan(getApplicationContext()).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
+        pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setIntPertanyaanId(4);
+        pertanyaan.setBolHaveAnswer(true);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setTxtPertanyaan("isi textbox dan ambil sebuah gambar ya pak");
+        try{
+            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
+        pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setIntPertanyaanId(7);
+        pertanyaan.setBolHaveAnswer(false);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak (2)");
+        try{
+            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
 
         ClsmJawaban clsmJawaban = new ClsmJawaban();
         clsmJawaban.setBitActive(true);
@@ -694,39 +694,39 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         }catch (Exception ex){
 
         }
-//        clsmJawaban = new ClsmJawaban();
-//        clsmJawaban.setBitActive(true);
-//        clsmJawaban.setIdJawaban(4);
-//        clsmJawaban.setIdPertanyaan(3);
-//        clsmJawaban.setBitChoosen(false);
-//        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja 1");
-//        try{
-//            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-//        }catch (Exception ex){
-//
-//        }
-//        clsmJawaban = new ClsmJawaban();
-//        clsmJawaban.setBitActive(true);
-//        clsmJawaban.setIdJawaban(5);
-//        clsmJawaban.setIdPertanyaan(3);
-//        clsmJawaban.setBitChoosen(false);
-//        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
-//        try{
-//            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-//        }catch (Exception ex){
-//
-//        }
-//        clsmJawaban = new ClsmJawaban();
-//        clsmJawaban.setBitActive(true);
-//        clsmJawaban.setIdJawaban(6);
-//        clsmJawaban.setIdPertanyaan(3);
-//        clsmJawaban.setBitChoosen(false);
-//        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
-//        try{
-//            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-//        }catch (Exception ex){
-//
-//        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(4);
+        clsmJawaban.setIdPertanyaan(3);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja 1");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(5);
+        clsmJawaban.setIdPertanyaan(3);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(6);
+        clsmJawaban.setIdPertanyaan(3);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
 
     }
 
@@ -734,12 +734,13 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 || requestCode == 130 || requestCode == 150 ) {
-            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            }
-        }else if(requestCode == FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION){
-            new FragmentDetailInfoChecker().onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == 100 || requestCode == 130 || requestCode == 150 ) {
+//
+//        }else if(requestCode == FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION){
+//            new FragmentDetailInfoChecker().onActivityResult(requestCode, resultCode, data);
+//        }
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
 
