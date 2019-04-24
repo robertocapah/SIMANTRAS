@@ -89,7 +89,7 @@ public class RepomConfig {
         data.setTxtName("UserId");
         data.setTxtValue("rian.andrivani");
         data.setTxtDefaultValue("rian.andrivani");
-        data.setIntEditAdmin("1");
+        data.setIntEditAdmin("1"); 
         helper.getmConfigDao().createOrUpdate(data);
 
         data = new ClsmConfigData();
