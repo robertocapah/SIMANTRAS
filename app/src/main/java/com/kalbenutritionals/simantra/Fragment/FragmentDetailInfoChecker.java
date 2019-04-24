@@ -309,99 +309,113 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         super.onDestroyView();
         unbinder.unbind();
     }
-
+    LinearLayout ln;
     @OnClick(R.id.btnValidate)
     public void onViewClicked() {
         boolean bolValid = false;
-        LinearLayout ln = (LinearLayout)rvOptional.getChildAt(0).findViewById(ListAnswerView.get(0).getIntPertanyaanId()*24);
-        int size = ln.getChildCount();
-        for (int i = 0; i < size; i++){
-            View nextChild = ln.getChildAt(i);
-            if (nextChild instanceof EditText) {
-                EditText editText = (EditText) nextChild;
-                String text = editText.getText().toString();
-                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-//                if (editText.getText().toString().trim().equals("")) {
-//                    ltDataPertanyaan.get(position).bitValid = false;
-//                    ltDataPertanyaan.get(position).message = "Please fill this text ...";
-//                } else {
-//                    ltDataPertanyaan.get(position).bitValid = true;
-//                }
-            }
-        }
+//        LinearLayout ln = (LinearLayout)rvOptional.getChildAt(0).findViewById(ListAnswerView.get(0).getIntPertanyaanId()*24);
+//        int size = ln.getChildCount();
+//        for (int i = 0; i < size; i++){
+//            View nextChild = ln.getChildAt(i);
+//            if (nextChild instanceof EditText) {
+//                EditText editText = (EditText) nextChild;
+//                String text = editText.getText().toString();
+//                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+////                if (editText.getText().toString().trim().equals("")) {
+////                    ltDataPertanyaan.get(position).bitValid = false;
+////                    ltDataPertanyaan.get(position).message = "Please fill this text ...";
+////                } else {
+////                    ltDataPertanyaan.get(position).bitValid = true;
+////                }
+//            }
+//        }
+
         for (int i = 0; i < ListAnswerView.size(); i++) {
+
             int intPertanyaanId = ListAnswerView.get(i).getIntPertanyaanId();
             int position = ListAnswerView.get(i).getIntPosition();
-            View viewAnswer = ListAnswerView.get(i).getVwJawaban();
-            /*for (VmListItemAdapterPertanyaan pertanyaan :
-                    ltDataPertanyaan) {*/
-            if (viewAnswer instanceof LinearLayout) {
-                LinearLayout layout = (LinearLayout) viewAnswer;
-                if (layout == (linearLayout = (LinearLayout) viewAnswer)) {
-                    int count = 0;
-                    for (int x = 0; x < linearLayout.getChildCount(); x++) {
-                        View nextChild = linearLayout.getChildAt(x);
-                        int intNextChildId = nextChild.getId();
-                        if (nextChild instanceof CheckBox) {
-                            CheckBox checkBox = (CheckBox) nextChild;
-                            if (checkBox.isChecked()) {
-                                ltDataPertanyaan.get(position).jawabans.get(x).bitChoosen = true;
-                                count++;
-                            }else{
-                                ltDataPertanyaan.get(position).jawabans.get(x).bitChoosen = false;
-                            }
-                        }
-                        if (count == 0){
-                            ltDataPertanyaan.get(position).bitValid = false;
-                            ltDataPertanyaan.get(position).message = "Checkbox at least 1 option ...";
-                        }
-                        if (nextChild instanceof RadioGroup) {
-                            RadioGroup radioGroup = (RadioGroup) nextChild;
-                            if ((radioGroup.getCheckedRadioButtonId() == -1)) {
-                                ltDataPertanyaan.get(position).bitValid = false;
-                                ltDataPertanyaan.get(position).message = "Choose 1 option ...";
-                            } else {
-                                ltDataPertanyaan.get(position).bitValid = true;
-                            }
-                        }
-                        if (nextChild instanceof EditText) {
-                            EditText editText = (EditText) nextChild;
-                            if (editText.getText().toString().trim().equals("")) {
-                                ltDataPertanyaan.get(position).bitValid = false;
-                                ltDataPertanyaan.get(position).message = "Please fill this text ...";
-                            } else {
-                                ltDataPertanyaan.get(position).bitValid = true;
-                            }
-                        }
-                        if (nextChild instanceof ImageView) {
-                            ImageView imageView = (ImageView) nextChild;
-                            String jenisPertanyaan = "";
-                            if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
-                                jenisPertanyaan = "Please fill text ";
-                            }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
-                                jenisPertanyaan = "Choose 1 option ";
-                            }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
-                                jenisPertanyaan = "Checkbox at least 1 option ";
-                            }
+            if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
+                ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*24);
+            }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
+              ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*22);
+            }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+             ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*21);
+            }
+            int size = ln.getChildCount();
 
-                            if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == false) {
-                                ltDataPertanyaan.get(position).bitValid = false;
-                                ltDataPertanyaan.get(position).message = jenisPertanyaan +" and take a picture...";
-                            } else if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == true) {
-                                ltDataPertanyaan.get(position).bitValid = false;
-                                ltDataPertanyaan.get(position).message = "Please take a picture...";
-                            } else if (ltDataPertanyaan.get(position).path != null && ltDataPertanyaan.get(position).bitValid == false) {
-                                ltDataPertanyaan.get(position).bitValid = false;
-                                ltDataPertanyaan.get(position).message = jenisPertanyaan;
-                            } else {
-                                ltDataPertanyaan.get(position).bitValid = true;
-                            }
-                        }
+            int count = 0;
+            for (int x = 0; x < ln.getChildCount(); x++) {
+                View nextChild = ln.getChildAt(x);
+                int intNextChildId = nextChild.getId();
+                if (nextChild instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) nextChild;
+                    if (checkBox.isChecked()) {
+                        ltDataPertanyaan.get(position).jawabans.get(x).bitChoosen = true;
+                        count++;
+                    }else{
+                        ltDataPertanyaan.get(position).jawabans.get(x).bitChoosen = false;
+                    }
+                }
+                if (count == 0){
+                    ltDataPertanyaan.get(position).bitValid = false;
+                    ltDataPertanyaan.get(position).message = "Checkbox at least 1 option ...";
+                }
+                if (nextChild instanceof RadioGroup) {
+                    RadioGroup radioGroup = (RadioGroup) nextChild;
+                    if ((radioGroup.getCheckedRadioButtonId() == -1)) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = "Choose 1 option ...";
+                    } else {
+                        ltDataPertanyaan.get(position).bitValid = true;
+                    }
+                }
+                if (nextChild instanceof EditText) {
+                    EditText editText = (EditText) nextChild;
+                    if (editText.getText().toString().trim().equals("")) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = "Please fill this text ...";
+                    } else {
+                        ltDataPertanyaan.get(position).bitValid = true;
+                        Toast.makeText(getContext(), editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (nextChild instanceof ImageView) {
+                    ImageView imageView = (ImageView) nextChild;
+                    String jenisPertanyaan = "";
+                    if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
+                        jenisPertanyaan = "Please fill text ";
+                    }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
+                        jenisPertanyaan = "Choose 1 option ";
+                    }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+                        jenisPertanyaan = "Checkbox at least 1 option ";
                     }
 
+                    if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == false) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = jenisPertanyaan +" and take a picture...";
+                    } else if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == true) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = "Please take a picture...";
+                    } else if (ltDataPertanyaan.get(position).path != null && ltDataPertanyaan.get(position).bitValid == false) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = jenisPertanyaan;
+                    } else {
+                        ltDataPertanyaan.get(position).bitValid = true;
+                    }
                 }
-
             }
+
+//            View viewAnswer = ListAnswerView.get(i).getVwJawaban();
+//            /*for (VmListItemAdapterPertanyaan pertanyaan :
+//                    ltDataPertanyaan) {*/
+//            if (viewAnswer instanceof LinearLayout) {
+////                LinearLayout layout = (LinearLayout) viewAnswer;
+//                if (ln == (linearLayout = (LinearLayout) viewAnswer)) {
+//
+//
+//                }
+//
+//            }
             /*if (viewAnswer instanceof LinearLayout) {
                 LinearLayout layout = (LinearLayout) viewAnswer;
                 if (layout == (linearLayout = (LinearLayout) viewAnswer)) {
@@ -479,8 +493,25 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST_QUESTION) {
             if (resultCode == -1) {
-                for (int i = 0; i < ListAnswerView.size(); i++) {
-                    View view = ListAnswerView.get(i).getVwJawaban();
+                LinearLayout ln = (LinearLayout)rvOptional.getChildAt(0).findViewById(ListAnswerView.get(0).getIntPertanyaanId()*24);
+                int size = ln.getChildCount();
+                for (int i = 0; i < size; i++){
+                    View nextChild = ln.getChildAt(i);
+                    if (nextChild instanceof EditText) {
+                        EditText editText = (EditText) nextChild;
+                        String text = editText.getText().toString();
+                        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+//                if (editText.getText().toString().trim().equals("")) {
+//                    ltDataPertanyaan.get(position).bitValid = false;
+//                    ltDataPertanyaan.get(position).message = "Please fill this text ...";
+//                } else {
+//                    ltDataPertanyaan.get(position).bitValid = true;
+//                }
+                    }
+                }
+                for (int i = 0; i < rvOptional.getChildCount(); i++) {
+
+                    View view = rvOptional.getChildAt(i);
                     if (view instanceof LinearLayout) {
                         LinearLayout lyt = (LinearLayout) view;
                         for (int x = 0; x < lyt.getChildCount(); x++) {
@@ -502,6 +533,29 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             }
                         }
                     }
+//                for (int i = 0; i < ListAnswerView.size(); i++) {
+//                    View view = ListAnswerView.get(i).getVwJawaban();
+//                    if (view instanceof LinearLayout) {
+//                        LinearLayout lyt = (LinearLayout) view;
+//                        for (int x = 0; x < lyt.getChildCount(); x++) {
+//                            View nextChild = lyt.getChildAt(x);
+//                            if (nextChild instanceof ImageView) {
+//                                ImageView imageView = (ImageView) nextChild;
+//                                if (imageView.getId() == GLOBAL_PICK_PICTURE_ID) {
+//                                    try {
+////                                Bitmap thePic = BitmapFactory.decodeFile(uriImage.getPath());
+//                                        Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
+//                                        new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
+//                                        ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
+//                                        ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
+//                                    } catch (Exception ex) {
+//                                        String a = ex.getMessage();
+//                                    }
+//
+//                                }
+//                            }
+//                        }
+//                    }
                     /*if (listAnswer.get(i) instanceof ImageView) {
                         ImageView imageView = (ImageView) listAnswer.get(i);
                         if (imageView.getId() == GLOBAL_PICK_PICTURE_ID) {
