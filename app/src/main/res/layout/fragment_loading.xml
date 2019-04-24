@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bcgdv.asia.lib.ticktock.TickTockView
+        android:id="@+id/view_ticktock_countup"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
+        app:tickMiddleColor="#333333"
+        app:tickMoveCounterClockwise="true"
+        app:tickTextColor="#CCCCCC"
+        app:tickText="00h:00m:00s"
+        app:tickDotRadius="6dp"
+        app:tickEmptyRingColor="@android:color/white"
+        app:tickFillRingColor="@color/colorPrimary"
+        app:tickRingThickness="3dp" />
+
+</android.support.design.widget.CoordinatorLayout>
