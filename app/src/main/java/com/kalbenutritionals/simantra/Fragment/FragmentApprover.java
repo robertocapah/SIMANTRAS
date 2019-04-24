@@ -185,6 +185,12 @@ public class FragmentApprover extends Fragment {
                 Toast.makeText(context, "Button Decline Clicked", Toast.LENGTH_SHORT).show();
             }
         });
+        ((Button) dialogMain.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogMain.dismiss();
+            }
+        });
 
 
         dialogMain.show();

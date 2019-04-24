@@ -68,6 +68,21 @@ public class BLHelper {
             mScannerView.setFormats(formats);
         }
     }
+    public String getGreetings(String name){
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+        String greetings = "";
+        if(timeOfDay >= 0 && timeOfDay < 12){
+            greetings = "Good Morning ";
+        }else if(timeOfDay >= 12 && timeOfDay < 16){
+            greetings = "Good Afternoon ";
+        }else if(timeOfDay >= 16 && timeOfDay < 21){
+            greetings = "Good Evening ";
+        }else if(timeOfDay >= 21 && timeOfDay < 24){
+            greetings = "Good Night ";
+        }
+        return greetings;
+    }
     public ClsPushData pushData(String versionName, Context context){
         ClsPushData dtclsPushData = new ClsPushData();
         ClsDataJson dtPush = new ClsDataJson();

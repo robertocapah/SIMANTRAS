@@ -14,6 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
+import com.kalbenutritionals.simantra.BL.BLHelper;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
+import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
+import com.kalbenutritionals.simantra.R;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,10 +27,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
-import com.kalbenutritionals.simantra.Data.ClsHardCode;
-import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
-import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
-import com.kalbenutritionals.simantra.R;
 
 /**
  * Created by Dewi Oktaviani on 9/26/2018.
@@ -39,14 +40,6 @@ public class FragmentHome extends Fragment {
     TextView tvUserNameHome;
     @BindView(R.id.tv_outlet_home)
     TextView tvOutletHome;
-    @BindView(R.id.tv_plan_home)
-    TextView tvPlanHome;
-    @BindView(R.id.ln_plan_home)
-    LinearLayout lnPlanHome;
-    @BindView(R.id.tv_Realisasi_home)
-    TextView tvRealisasiHome;
-    @BindView(R.id.ln_realisasi_home)
-    LinearLayout lnRealisasiHome;
     @BindView(R.id.tv_email_home)
     TextView tvEmailHome;
     @BindView(R.id.tv_emp_id)
@@ -57,6 +50,20 @@ public class FragmentHome extends Fragment {
     TextView tvRole;
     @BindView(R.id.nested_content)
     NestedScrollView nestedContent;
+    @BindView(R.id.tv_greetings)
+    TextView tvGreetings;
+    @BindView(R.id.data_checked)
+    TextView dataChecked;
+    @BindView(R.id.ln_checked)
+    LinearLayout lnChecked;
+    @BindView(R.id.tv_excalation)
+    TextView tvExcalation;
+    @BindView(R.id.ln_excalation)
+    LinearLayout lnExcalation;
+    @BindView(R.id.tv_rejected)
+    TextView tvRejected;
+    @BindView(R.id.ln_rejected)
+    LinearLayout lnRejected;
     private Toolbar toolbar;
     Unbinder unbinder;
     private String FRAG_VIEW = "Fragment view";
@@ -79,8 +86,13 @@ public class FragmentHome extends Fragment {
             imageProfilHome.setImageBitmap(bitmap);
 //            PickImage.previewCapturedImage(ivProfile, bitmap, 200, 200);
         }
-
-
+        String greeting = new BLHelper().getGreetings(dtLogin.getTxtUserName());
+        tvGreetings.setText(greeting);
+        tvUserNameHome.setText(dtLogin.getTxtUserName());
+        tvFullName.setText(dtLogin.getTxtUserName());
+        tvEmpId.setText(dtLogin.getTxtEmpID());
+        tvEmailHome.setText(dtLogin.getTxtEmail());
+        tvRole.setText(dtLogin.getTxtRoleName());
         tvUserNameHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +117,7 @@ public class FragmentHome extends Fragment {
         });
         return v;
     }
+
 
     @Override
     public void onDestroyView() {
