@@ -15,6 +15,16 @@ public class ClsmPertanyaan {
     private int intJenisPertanyaanId;
     @DatabaseField
     private boolean bolHaveAnswer;
+    @DatabaseField
+    private boolean bolHavePhoto;
+
+    public boolean isBolHavePhoto() {
+        return bolHavePhoto;
+    }
+
+    public void setBolHavePhoto(boolean bolHavePhoto) {
+        this.bolHavePhoto = bolHavePhoto;
+    }
 
     public int getIntPertanyaanId() {
         return intPertanyaanId;

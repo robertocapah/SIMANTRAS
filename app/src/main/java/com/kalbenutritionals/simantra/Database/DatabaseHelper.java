@@ -13,6 +13,7 @@ import com.kalbenutritionals.simantra.Database.Common.ClsToken;
 import com.kalbenutritionals.simantra.Database.Common.ClsmChecklist;
 import com.kalbenutritionals.simantra.Database.Common.ClsmConfigData;
 import com.kalbenutritionals.simantra.Database.Common.ClsmCounterData;
+import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJenisPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmKendaraan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmLocationPertanyaan;
@@ -27,15 +28,15 @@ import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import java.sql.SQLException;
 
 /**
- * Created by Rian Andrivani on 11/21/2017.
+ * Created by roberto 16 April 19.
  */
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static ClsHardCode _path = new ClsHardCode();
-    // name of the database file for your application -- change to something appropriate for your app
+    // txtPertanyaan of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = _path.dbName;
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // the DAO object we use to access the SimpleData table
     protected Dao<ClsmConfigData, Integer> mConfigDao;
@@ -52,6 +53,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     protected Dao<ClsmJenisPertanyaan, Integer> mJenisPertanyaanDao;
     protected Dao<ClsmLocationPertanyaan, Integer> mLocationDao;
     protected Dao<ClsmPertanyaan, Integer> mPertanyaanDao;
+    protected Dao<ClsmJawaban, Integer> mJawabanDao;
 
 
 
@@ -76,6 +78,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, ClsmPertanyaan.class);
             TableUtils.createTableIfNotExists(connectionSource, ClsmJenisPertanyaan.class);
             TableUtils.createTableIfNotExists(connectionSource, ClsmLocationPertanyaan.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsmJawaban.class);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,6 +107,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, ClsmPertanyaan.class,true);
             TableUtils.dropTable(connectionSource, ClsmJenisPertanyaan.class,true);
             TableUtils.dropTable(connectionSource, ClsmLocationPertanyaan.class,true);
+            TableUtils.dropTable(connectionSource, ClsmJawaban.class,true);
 
             onCreate(database, connectionSource);
         } catch (SQLException e) {
@@ -124,10 +128,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, ClsmPertanyaan.class);
             TableUtils.clearTable(connectionSource, ClsmJenisPertanyaan.class);
             TableUtils.clearTable(connectionSource, ClsmLocationPertanyaan.class);
+            TableUtils.clearTable(connectionSource, ClsmJawaban.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public Dao<ClsmJawaban, Integer> getmJawabanDao() throws SQLException {
+        if(mJawabanDao == null){
+            mJawabanDao = getDao(ClsmJawaban.class);
+        }
+        return mJawabanDao;
     }
 
     public Dao<ClsmPertanyaan, Integer> getmPertanyaanDao() throws SQLException{
@@ -239,5 +251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         mCounterDataDao = null;
         tLogErrorDao = null;
         mChecklistDao = null;
+        mPertanyaanDao = null;
+        mJawabanDao = null;
     }
 }

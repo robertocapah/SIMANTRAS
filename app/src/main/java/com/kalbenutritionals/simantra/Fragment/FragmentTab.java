@@ -72,6 +72,7 @@ public class FragmentTab extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         viewPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         viewPagerAdapter.addFragment(FragmentDetailInfoChecker.newInstance(), "Questioner Checker");    // index 0
+//        viewPagerAdapter.addFragment(FragmentTestUI.newInstance(), "Questioner Checker");    // index 0
         viewPagerAdapter.addFragment(FragmentDestinationDetail.newInstance(), "General Information");   // index 1
         viewPager.setAdapter(viewPagerAdapter);
     }

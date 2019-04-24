@@ -472,7 +472,7 @@ public class VolleyUtils {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                // file name could found file base or direct access category real path
+                // file txtPertanyaan could found file base or direct access category real path
                 // for now just get bitmap data category ImageView
                 if (mRequestBody.getFileName()!=null){
                     if (mRequestBody.getFileName().size()>0){
@@ -550,7 +550,7 @@ public class VolleyUtils {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                // file name could found file base or direct access category real path
+                // file txtPertanyaan could found file base or direct access category real path
                 // for now just get bitmap data category ImageView
                 if (mRequestBody.getFileName()!=null){
                     if (mRequestBody.getFileName().size()>0){
@@ -741,7 +741,7 @@ public class VolleyUtils {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                // file name could found file base or direct access category real path
+                // file txtPertanyaan could found file base or direct access category real path
                 // for now just get bitmap data category ImageView
                 if (dtLogin.getBlobImg()!=null){
                     params.put(String.valueOf(dtLogin.getIntUserID()), new DataPart(String.valueOf(dtLogin.getIntUserID()) + ".jpg", dtLogin.getBlobImg(), "image/jpeg"));
@@ -901,7 +901,7 @@ public class VolleyUtils {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                // file name could found file base or direct access category real path
+                // file txtPertanyaan could found file base or direct access category real path
                 // for now just get bitmap data category ImageView
                 if (mRequestBody.getFileName()!=null){
                     if (mRequestBody.getFileName().size()>0){

@@ -102,9 +102,9 @@ public class LocalReportSenderAcra implements ReportSender {
 
 //            if (dtLogin!=null){
 //                buf.append("\n").append("User id :"+ dtLogin.getIntUserID() );
-//                buf.append("\n").append("User name :"+ dtLogin.getTxtUserName() );
+//                buf.append("\n").append("User txtPertanyaan :"+ dtLogin.getTxtUserName() );
 //                buf.append("\n").append("Role id :"+ dtLogin.getIntRoleID() );
-//                buf.append("\n").append("Role name :"+ dtLogin.getTxtRoleName() );
+//                buf.append("\n").append("Role txtPertanyaan :"+ dtLogin.getTxtRoleName() );
 //            }
 //            buf.append("\n").append("----------------*****----------------");
 //            buf.append("\n").append("\n");
@@ -168,9 +168,9 @@ public class LocalReportSenderAcra implements ReportSender {
 
             if (dtLogin!=null){
                 buf.append("\n").append("User id :"+ dtLogin.getIntUserID() );
-                buf.append("\n").append("User name :"+ dtLogin.getTxtUserName() );
+                buf.append("\n").append("User txtPertanyaan :"+ dtLogin.getTxtUserName() );
                 buf.append("\n").append("Role id :"+ dtLogin.getIntRoleID() );
-                buf.append("\n").append("Role name :"+ dtLogin.getTxtRoleName() );
+                buf.append("\n").append("Role txtPertanyaan :"+ dtLogin.getTxtRoleName() );
             }
             buf.append("\n").append("----------------*****----------------");
             buf.append("\n").append("\n");

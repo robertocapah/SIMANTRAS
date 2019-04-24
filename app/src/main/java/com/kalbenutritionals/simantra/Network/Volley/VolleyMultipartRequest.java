@@ -158,13 +158,13 @@ public class VolleyMultipartRequest extends Request<String> {
      * Write string data into header and data output stream.
      *
      * @param dataOutputStream data output stream handle string parsing
-     * @param parameterName    name of input
+     * @param parameterName    txtPertanyaan of input
      * @param parameterValue   value of input
      * @throws IOException
      */
     private void buildTextPart(DataOutputStream dataOutputStream, String parameterName, String parameterValue) throws IOException {
         dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + parameterName + "\"" + lineEnd);
+        dataOutputStream.writeBytes("Content-Disposition: form-data; txtPertanyaan=\"" + parameterName + "\"" + lineEnd);
         //dataOutputStream.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
         dataOutputStream.writeBytes(lineEnd);
         dataOutputStream.writeBytes(parameterValue + lineEnd);
@@ -175,12 +175,12 @@ public class VolleyMultipartRequest extends Request<String> {
      *
      * @param dataOutputStream data output stream handle data parsing
      * @param dataFile         data byte as DataPart from collection
-     * @param inputName        name of data input
+     * @param inputName        txtPertanyaan of data input
      * @throws IOException
      */
     private void buildDataPart(DataOutputStream dataOutputStream, DataPart dataFile, String inputName) throws IOException {
         dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" +
+        dataOutputStream.writeBytes("Content-Disposition: form-data; txtPertanyaan=\"" +
                 inputName + "\"; filename=\"" + dataFile.getFileName() + "\"" + lineEnd);
         if (dataFile.getType() != null && !dataFile.getType().trim().isEmpty()) {
             dataOutputStream.writeBytes("Content-Type: " + dataFile.getType() + lineEnd);
@@ -245,18 +245,18 @@ public class VolleyMultipartRequest extends Request<String> {
         }
 
         /**
-         * Getter file name.
+         * Getter file txtPertanyaan.
          *
-         * @return file name
+         * @return file txtPertanyaan
          */
         public String getFileName() {
             return fileName;
         }
 
         /**
-         * Setter file name.
+         * Setter file txtPertanyaan.
          *
-         * @param fileName string file name
+         * @param fileName string file txtPertanyaan
          */
         public void setFileName(String fileName) {
             this.fileName = fileName;

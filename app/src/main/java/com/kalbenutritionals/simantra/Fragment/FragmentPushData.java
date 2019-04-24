@@ -234,7 +234,7 @@ public class FragmentPushData extends Fragment {
                             getActivity().stopService(new Intent(getContext(), ServiceNative.class));
                             NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
-                            new BLMain().deleteMediaStorage();
+//                            new BLMain().deleteMediaStorage();
                             clearData();
 
                             Log.d("Data info", "logout Success");

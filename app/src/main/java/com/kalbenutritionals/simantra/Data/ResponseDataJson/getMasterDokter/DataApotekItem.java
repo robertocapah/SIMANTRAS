@@ -12,7 +12,7 @@ public class DataApotekItem{
 	@SerializedName("kecId")
 	private String kecId;
 
-	@SerializedName("name")
+	@SerializedName("txtPertanyaan")
 	private String name;
 
 	@SerializedName("kecName")
@@ -56,7 +56,7 @@ public class DataApotekItem{
 			"DataApotekItem{" + 
 			"code = '" + code + '\'' + 
 			",kecId = '" + kecId + '\'' + 
-			",name = '" + name + '\'' + 
+			",txtPertanyaan = '" + name + '\'' +
 			",kecName = '" + kecName + '\'' + 
 			"}";
 		}

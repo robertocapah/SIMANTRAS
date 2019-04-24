@@ -35,13 +35,17 @@ import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
 import com.kalbenutritionals.simantra.CustomView.Utils.setDataChecklist;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
+import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Fragment.FragmentDetailInfoChecker;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.CustomView.Utils.ClsTools;
+import com.kalbenutritionals.simantra.ViewModel.Jawaban;
 import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,7 +107,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         //        public ImageView image;
-//        public TextView name;
+//        public TextView txtPertanyaan;
         public ImageButton bt_expand;
         public View lyt_expand;
         public LinearLayout lyt_parent, ln_error_msg;
@@ -113,7 +117,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         public OriginalViewHolder(View v) {
             super(v);
 //            image = (ImageView) v.findViewById(R.id.image);
-//            name = (TextView) v.findViewById(R.id.name);
+//            txtPertanyaan = (TextView) v.findViewById(R.id.txtPertanyaan);
             bt_expand = (ImageButton) v.findViewById(R.id.bt_expand);
             lyt_expand = (View) v.findViewById(R.id.lyt_expand);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
@@ -175,7 +179,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 return null;
             }
         }
-        // Create a media file name
+        // Create a media file txtPertanyaan
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "tmp_act" + ".png");
@@ -185,7 +189,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
     private void findViewId(VmListItemAdapterPertanyaan pa, OriginalViewHolder holder, int postition){
 
 
-        if(pa!=null && pa.jenisPertanyaan==1){
+        if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanCheckBox){
             int size = holder.ll_jawaban1.getChildCount();
             for (int x = 0; x < holder.ll_jawaban1.getChildCount(); x++) {
                 View nextChild = holder.ll_jawaban1.getChildAt(x);
@@ -200,7 +204,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
             ListAnswerView.add(vmListAnswerView);
-        }else if(pa!=null && pa.jenisPertanyaan==2){
+        }else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanRadioButton){
             int size = holder.ll_jawaban1.getChildCount();
             for (int x = 0; x < holder.ll_jawaban1.getChildCount(); x++) {
                 View nextChild = holder.ll_jawaban1.getChildAt(x);
@@ -215,7 +219,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
             ListAnswerView.add(vmListAnswerView);
-        }else if(pa!=null && pa.jenisPertanyaan==3){
+        }/*else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanTextBox){
             int size = holder.ll_jawaban1.getChildCount();
             for (int x = 0; x < holder.ll_jawaban1.getChildCount(); x++) {
                 View nextChild = holder.ll_jawaban1.getChildAt(x);
@@ -231,7 +235,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
             ListAnswerView.add(vmListAnswerView);
-        }else if(pa!=null && pa.jenisPertanyaan==4){
+        }*/else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanTextBox){
             int size = holder.ll_jawaban1.getChildCount();
             for (int x = 0; x < holder.ll_jawaban1.getChildCount(); x++) {
                 View nextChild = holder.ll_jawaban1.getChildAt(x);
@@ -261,66 +265,145 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             holder.ln_error_msg.setVisibility(View.VISIBLE);
             holder.tvErrorMesage.setText(pa.message);
         }
-        if(pa!=null && pa.jenisPertanyaan==1){
+        if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanCheckBox){
             TextView tvPertanyaan = new TextView(ctx);
-            tvPertanyaan.setText("Pilih beberapa?!");
+            tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
 
             LinearLayout linearLayout = new LinearLayout(ctx);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+            layoutParams.gravity =  Gravity.CENTER_VERTICAL;
             linearLayout.setLayoutParams(layoutParams);
             linearLayout.setId(pa.id*21);
 
-            CheckBox checkBox = new CheckBox(ctx);
-            checkBox.setText("Checkbox 1");
-            checkBox.setId(pa.id*11);
-            checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    String msg = "You have " + (isChecked ? "checked" : "unchecked") + " this Check it Checkbox.";
-                    Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
+            if (pa.bolHaveAnswer){
+                List<Jawaban> jawabans = jawabans = pa.jawabans;
+
+                for (Jawaban j :
+                        jawabans) {
+                    CheckBox checkBox = new CheckBox(ctx);
+                    checkBox.setText(j.jawaban);
+                    checkBox.setId(pa.id*11);
+                    if (j.bitChoosen){
+                        checkBox.setChecked(true);
+                    }else{
+                        checkBox.setChecked(false);
+                    }
+                    checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            String msg = "You have " + (isChecked ? "checked" : "unchecked") + " this Check it Checkbox.";
+                            if (position==items.size()-1){
+                                receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView);
+                            }
+                            Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    linearLayout.addView(checkBox);
                 }
-            });
+            }
 
-            linearLayout.addView(checkBox);
 
+            if (pa.bitImage){
+                TextView tvPicture = new TextView(ctx);
+                tvPicture.setText("Upload foto");
+                tvPicture.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                tvPicture.setGravity(Gravity.CENTER);
+                linearLayout.addView(tvPicture);
+                ImageView image;
+                image = new ImageView(v.getContext());
+                image.setId(pa.id*15);
+                image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+
+                if(pa.bitmap!=null){
+                    Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
+                    image.setImageBitmap(mybitmap);
+                }
+                linearLayout.addView(image);
+                final int paId2 = pa.id;
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectImageProfile(paId2*15,position);
+                    }
+                });
+
+            }
             holder.ll_jawaban1.addView(linearLayout);
-            pa = new VmListItemAdapterPertanyaan();
-
-        }else if(pa!=null && pa.jenisPertanyaan == 2){
+        }else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
             TextView tvPertanyaan = new TextView(ctx);
-            tvPertanyaan.setText("Pilih salah satu ?!");
+            tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
 
             LinearLayout linearLayout = new LinearLayout(ctx);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+            layoutParams.gravity =  Gravity.CENTER_VERTICAL;
             linearLayout.setLayoutParams(layoutParams);
             linearLayout.setId(pa.id*22);
 
-            final RadioButton[] rb = new RadioButton[5];
-            RadioGroup rg = new RadioGroup(ctx); //create the RadioGroup
-            rg.setOrientation(RadioGroup.HORIZONTAL);//or RadioGroup.VERTICAL
-            rg.setId(pa.id*12);
-            for(int i=0; i<3; i++){
-                rb[i]  = new RadioButton(ctx);
-                rb[i].setText("Radio "+i);
-                rb[i].setId(i + 100);
-                rg.addView(rb[i]);
+            try {
+                if (pa.bolHaveAnswer){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(ctx).findByHeader(pa.id);
+                    RadioGroup rg = new RadioGroup(ctx); //create the RadioGroup
+                    rg.setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
+                    rg.setId(pa.id*12);
+
+                    for (ClsmJawaban j :
+                            jawabans) {
+                        RadioButton rb = new RadioButton(ctx);
+                        rb = new RadioButton(ctx);
+                        rb.setText(j.getTxtJawaban());
+                        rb.setId(j.getIdJawaban());
+                        rg.addView(rb);
+                        ClsTools.setMargins(rg,5,10,5,10);
+                    }
+                    linearLayout.addView(rg);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            ClsTools.setMargins(rg,5,10,5,10);
 
-            linearLayout.addView(rg);
+
+
+            if (pa.bitImage){
+                TextView tvPicture = new TextView(ctx);
+                tvPicture.setText("Upload foto");
+                tvPicture.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                tvPicture.setGravity(Gravity.CENTER);
+                linearLayout.addView(tvPicture);
+                ImageView image;
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                params.weight = 1.0f;
+                params.gravity = Gravity.CENTER;
+
+                image = new ImageView(v.getContext());
+                image.setId(pa.id*15);
+                image.setLayoutParams(params);
+                image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+
+                if(pa.bitmap!=null){
+                    Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
+                    image.setImageBitmap(mybitmap);
+                }
+                linearLayout.addView(image);
+                final int paId2 = pa.id;
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectImageProfile(paId2*15,position);
+                    }
+                });
+
+            }
             holder.ll_jawaban1.addView(linearLayout);
-            pa = new VmListItemAdapterPertanyaan();
 
-        }else if(pa!=null && pa.jenisPertanyaan == 3){
+        }/*else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
             TextView tvPertanyaan = new TextView(ctx);
-            tvPertanyaan.setText("Isian Text ?!");
+            tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
 
             LinearLayout linearLayout = new LinearLayout(ctx);
@@ -353,9 +436,9 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             holder.ll_jawaban1.addView(linearLayout);
             pa = new VmListItemAdapterPertanyaan();
 
-        }else if(pa!=null && pa.jenisPertanyaan == 4){
+        }*/else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
             TextView tvPertanyaan = new TextView(ctx);
-            tvPertanyaan.setText("Isian Text ?!");
+            tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
 
 
@@ -384,31 +467,32 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             etTest.setBackgroundResource(R.drawable.bg_edtext);
             etTest.setLayoutParams(layoutParams2);
             linearLayout.addView(etTest);
+            if (pa.bitImage){
+                TextView tvPicture = new TextView(ctx);
+                tvPicture.setText("Upload foto");
+                tvPicture.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                tvPicture.setGravity(Gravity.CENTER);
+                linearLayout.addView(tvPicture);
+                View v = new ImageView(ctx);
+                ImageView image;
+                image = new ImageView(v.getContext());
+                image.setId(pa.id*15);
+                image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
 
-            TextView tvPicture = new TextView(ctx);
-            tvPicture.setText("Upload foto");
-            tvPicture.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-            tvPicture.setGravity(Gravity.CENTER);
-            linearLayout.addView(tvPicture);
-            View v = new ImageView(ctx);
-
-            ImageView image;
-            image = new ImageView(v.getContext());
-            image.setId(pa.id*15);
-            image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-
-            if(pa.bitmap!=null){
-                Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
-                image.setImageBitmap(mybitmap);
-            }
-            linearLayout.addView(image);
-            final int paId2 = pa.id;
-            image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectImageProfile(paId2*15,position);
+                if(pa.bitmap!=null){
+                    Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
+                    image.setImageBitmap(mybitmap);
                 }
-            });
+                linearLayout.addView(image);
+                final int paId2 = pa.id;
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectImageProfile(paId2*15,position);
+                    }
+                });
+
+            }
             holder.ll_jawaban1.addView(linearLayout);
 
         }
@@ -442,6 +526,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
              findViewId(p, view,position);
              if (position==items.size()-1){
                  receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView);
+                 ListAnswerView = new ArrayList<>();
              }
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

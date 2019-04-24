@@ -124,32 +124,32 @@ public class BLActivity extends Activity {
                     SwipeMenuItem menuItem = new SwipeMenuItem(_ctx);
                     menuItem.setWidth(dp2px(_ctx, 90));
 
-                    if (map2.get("name") == "View") {
+                    if (map2.get("txtPertanyaan") == "View") {
                         int icon = R.drawable.ic_view;
                         menuItem.setIcon(icon);
                         menuItem.setBackground(new ColorDrawable(Color.parseColor("#16a085")));
-                    } else if (map2.get("name") == "Edit") {
+                    } else if (map2.get("txtPertanyaan") == "Edit") {
                         int icon = R.drawable.ic_edit_white;
                         menuItem.setIcon(icon);
                         menuItem.setBackground(new ColorDrawable(Color.parseColor("#2980b9")));
-                    } else if (map2.get("name") == "Delete") {
+                    } else if (map2.get("txtPertanyaan") == "Delete") {
                         int icon = R.drawable.ic_delete_white;
                         menuItem.setIcon(icon);
                         menuItem.setBackground(new ColorDrawable(Color.parseColor("#c0392b")));
-                    } else if (map2.get("name") == "Add") {
+                    } else if (map2.get("txtPertanyaan") == "Add") {
                         int icon = R.drawable.ic_add_white;
                         menuItem.setIcon(icon);
                         menuItem.setBackground(new ColorDrawable(Color.parseColor("#27ae60")));
                     }
-//                    else if (map2.get("name") == "AddProduct") {
+//                    else if (map2.get("txtPertanyaan") == "AddProduct") {
 //                        int icon = R.drawable.ic_shopping_cart;
 //                        menuItem.setIcon(icon);
 //                        menuItem.setBackground(new ColorDrawable(Color.parseColor("#27ae60")));
-//                    } else if (map2.get("name") == "ViewData") {
+//                    } else if (map2.get("txtPertanyaan") == "ViewData") {
 //                        int icon = R.drawable.ic_view_data;
 //                        menuItem.setIcon(icon);
 //                        menuItem.setBackground(new ColorDrawable(Color.parseColor("#16a085")));
-//                    } else if (map2.get("name") == "ViewImage") {
+//                    } else if (map2.get("txtPertanyaan") == "ViewImage") {
 //                        int icon = R.drawable.ic_view_image;
 //                        menuItem.setIcon(icon);
 //                        menuItem.setBackground(new ColorDrawable(Color.parseColor("#ffa200")));

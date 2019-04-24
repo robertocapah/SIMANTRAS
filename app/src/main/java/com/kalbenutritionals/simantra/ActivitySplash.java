@@ -558,7 +558,7 @@ public class ActivitySplash extends AppCompatActivity {
                             NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
                             DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
-                            new BLMain().deleteMediaStorage();
+//                            new BLMain().deleteMediaStorage();
                             helper.clearDataAfterLogout();
                             checkVersion(activity, mAccountManager);
 

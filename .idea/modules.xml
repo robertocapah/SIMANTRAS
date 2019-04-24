@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AEDPV2.iml" filepath="$PROJECT_DIR$/AEDPV2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SIMANTRA.iml" filepath="$PROJECT_DIR$/.idea/SIMANTRA.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/mobiledevknlibs/mobiledevknlibs.iml" filepath="$PROJECT_DIR$/mobiledevknlibs/mobiledevknlibs.iml" />
       <module fileurl="file://$PROJECT_DIR$/mylibrary/mylibrary.iml" filepath="$PROJECT_DIR$/mylibrary/mylibrary.iml" />

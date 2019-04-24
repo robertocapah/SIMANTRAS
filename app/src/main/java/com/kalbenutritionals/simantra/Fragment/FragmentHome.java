@@ -92,6 +92,17 @@ public class FragmentHome extends Fragment {
                 Toast.makeText(getContext(), "Haiii", Toast.LENGTH_SHORT).show();
             }
         });
+        imageProfilHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    new ClsHardCode().copydb(getContext());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getContext(), "Haiii", Toast.LENGTH_SHORT).show();
+            }
+        });
         return v;
     }
 

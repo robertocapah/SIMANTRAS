@@ -297,7 +297,7 @@ public class FragmentSetting extends Fragment {
                 return null;
             }
         }
-        // Create a media file name
+        // Create a media file txtPertanyaan
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "tmp_act" + ".png");

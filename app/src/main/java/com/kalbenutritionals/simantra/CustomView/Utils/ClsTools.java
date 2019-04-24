@@ -486,7 +486,7 @@ public class ClsTools {
 
         String packageName = CustomTabsHelper.getPackageNameToUse(activity);
 
-        //If we cant find a package name, it means theres no browser that supports
+        //If we cant find a package txtPertanyaan, it means theres no browser that supports
         //Chrome Custom Tabs installed. So, we fallback to the webview
         if (packageName == null) {
             ActivityWebView.navigate(activity, url, from_notif);

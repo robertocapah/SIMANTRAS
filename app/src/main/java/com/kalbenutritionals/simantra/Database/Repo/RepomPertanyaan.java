@@ -78,7 +78,7 @@ public class RepomPertanyaan implements CRUD {
     }
 
     @Override
-    public List<?> findAll() throws SQLException {
+    public List<ClsmPertanyaan> findAll() throws SQLException {
         List<ClsmPertanyaan> items = null;
         try {
             items = helper.getmPertanyaanDao().queryForAll();

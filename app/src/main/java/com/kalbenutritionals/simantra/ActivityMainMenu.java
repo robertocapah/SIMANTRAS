@@ -85,12 +85,17 @@ import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
 import com.kalbenutritionals.simantra.Database.Common.ClsStatusMenuStart;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
+import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
+import com.kalbenutritionals.simantra.Database.Common.ClsmJenisPertanyaan;
+import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
 import com.kalbenutritionals.simantra.Database.DatabaseHelper;
 import com.kalbenutritionals.simantra.Database.DatabaseManager;
 import com.kalbenutritionals.simantra.Database.Repo.EnumStatusMenuStart;
 import com.kalbenutritionals.simantra.Database.Repo.RepoclsToken;
 import com.kalbenutritionals.simantra.Database.Repo.RepomConfig;
+import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
+import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 import com.kalbenutritionals.simantra.Fragment.FragmentApprover;
 import com.kalbenutritionals.simantra.Fragment.FragmentChecklist;
@@ -212,6 +217,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                     .penaltyDeath()
                     .build());
         }
+        GenerateDataHardCode(getApplicationContext());
         super.onCreate(savedInstanceState);
         selectedId = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -541,10 +547,10 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            /*FragmentTestUI fragmentTestUI = new FragmentTestUI();
-                            FragmentTransactions fragmentTransactionTestUI = getSupportFragmentManager().beginTransaction();
+                            FragmentTestUI fragmentTestUI = new FragmentTestUI();
+                            FragmentTransaction fragmentTransactionTestUI = getSupportFragmentManager().beginTransaction();
                             fragmentTransactionTestUI.replace(R.id.frame, fragmentTestUI);
-                            fragmentTransactionTestUI.commit();*/
+                            fragmentTransactionTestUI.commit();
                             selectedId = 99;
                             break;
 
@@ -592,6 +598,135 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         return super.onPrepareOptionsMenu(menu);
+
+    }
+    public void GenerateDataHardCode(Context context){
+        ClsmPertanyaan pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setIntPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
+        pertanyaan.setBolHaveAnswer(false);
+        pertanyaan.setIntJenisPertanyaanId(1);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak");
+        try{
+            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
+        pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setBolHaveAnswer(true);
+        pertanyaan.setIntPertanyaanId(2);
+        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanCheckBox);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setTxtPertanyaan("pilih beberapa dari pertanyaan di checkbox di bawah ya pak");
+        try{
+            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
+        pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setIntPertanyaanId(3);
+        pertanyaan.setBolHaveAnswer(true);
+        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanRadioButton);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setTxtPertanyaan("pilih satu dari beberapa di radioButton di bawah ya pak");
+        try{
+            new RepomPertanyaan(getApplicationContext()).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
+        pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setIntPertanyaanId(4);
+        pertanyaan.setBolHaveAnswer(true);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setTxtPertanyaan("isi textbox dan ambil sebuah gambar ya pak");
+        try{
+            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
+        pertanyaan = new ClsmPertanyaan();
+        pertanyaan.setIntPertanyaanId(7);
+        pertanyaan.setBolHaveAnswer(false);
+        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
+        pertanyaan.setIntLocationDocsId(1);
+        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak (2)");
+        try{
+            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
+        }catch (Exception e){
+
+        }
+
+        ClsmJawaban clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(1);
+        clsmJawaban.setIdPertanyaan(2);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja   1");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(2);
+        clsmJawaban.setIdPertanyaan(2);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(3);
+        clsmJawaban.setIdPertanyaan(2);
+        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(4);
+        clsmJawaban.setIdPertanyaan(3);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja 1");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(5);
+        clsmJawaban.setIdPertanyaan(3);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
+        clsmJawaban = new ClsmJawaban();
+        clsmJawaban.setBitActive(true);
+        clsmJawaban.setIdJawaban(6);
+        clsmJawaban.setIdPertanyaan(3);
+        clsmJawaban.setBitChoosen(false);
+        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
+        try{
+            new RepomJawaban(context).createOrUpdate(clsmJawaban);
+        }catch (Exception ex){
+
+        }
 
     }
 
@@ -658,7 +793,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             stopService(new Intent(getApplicationContext(), ServiceNative.class));
                             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                             notificationManager.cancelAll();
-                            deleteMediaStorage();
+//                            deleteMediaStorage();
                             clearData();
                             ShortcutBadger.removeCountOrThrow(getApplicationContext());
 
@@ -687,7 +822,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         });
     }
 
-    public static void deleteMediaStorage() {
+    /*public static void deleteMediaStorage() {
         File mediaStorageDir = new File(new ClsHardCode().txtFolderData + File.separator);
         if (mediaStorageDir.exists()) {
             if (mediaStorageDir.isDirectory()) {
@@ -717,7 +852,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             }
             checkin.delete();
         }
-    }
+    }*/
 
 
     @Override

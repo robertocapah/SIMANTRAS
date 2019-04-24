@@ -109,7 +109,7 @@ public class BLMain {
         return arrayFileDecrypt;
     }
 
-    public byte[] getFile() throws FileNotFoundException {
+   /* public byte[] getFile() throws FileNotFoundException {
         byte[] data = null;
         byte[] inarry = null;
         String path = new ClsHardCode().txtFolderAkuisisi + "dewi";
@@ -129,7 +129,7 @@ public class BLMain {
         }
         return inarry;
 
-    }
+    }*/
 
     public byte[] getKeyBytes(String key) throws UnsupportedEncodingException {
         byte[] keyBytes= new byte[16];
@@ -172,7 +172,7 @@ public class BLMain {
         }
     }
 
-    public static void deleteMediaStorage(){
+    /*public static void deleteMediaStorage(){
         File mediaStorageDirAbsen = new File(new ClsHardCode().txtFolderCheckIn + File.separator);
         if (mediaStorageDirAbsen.exists()){
             if (mediaStorageDirAbsen.isDirectory()){
@@ -202,7 +202,7 @@ public class BLMain {
             }
             mediaStorageDir.delete();
         }
-    }
+    }*/
 
     public static void deleteMediaStorageDir (){
         File mediaStorageDir = new File(new ClsHardCode().txtFolderTemp + File.separator);
