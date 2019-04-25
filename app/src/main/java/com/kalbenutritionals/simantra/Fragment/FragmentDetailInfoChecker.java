@@ -21,15 +21,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
+import com.kalbenutritionals.simantra.BL.BLActivity;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterExpandableList;
 import com.kalbenutritionals.simantra.CustomView.Adapter.LineItemDecoration;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Database.Common.ClsTJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
@@ -312,24 +315,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     LinearLayout ln;
     @OnClick(R.id.btnValidate)
     public void onViewClicked() {
-        boolean bolValid = false;
-//        LinearLayout ln = (LinearLayout)rvOptional.getChildAt(0).findViewById(ListAnswerView.get(0).getIntPertanyaanId()*24);
-//        int size = ln.getChildCount();
-//        for (int i = 0; i < size; i++){
-//            View nextChild = ln.getChildAt(i);
-//            if (nextChild instanceof EditText) {
-//                EditText editText = (EditText) nextChild;
-//                String text = editText.getText().toString();
-//                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-////                if (editText.getText().toString().trim().equals("")) {
-////                    ltDataPertanyaan.get(position).bitValid = false;
-////                    ltDataPertanyaan.get(position).message = "Please fill this text ...";
-////                } else {
-////                    ltDataPertanyaan.get(position).bitValid = true;
-////                }
-//            }
-//        }
-
+        boolean bolValid = true;
         for (int i = 0; i < ListAnswerView.size(); i++) {
             List<Jawaban> jawabans = new ArrayList<>();
             int intPertanyaanId = ListAnswerView.get(i).getIntPertanyaanId();
@@ -342,7 +328,6 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
              ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*21);
             }
             int size = ln.getChildCount();
-
             int count = 0;
             for (int x = 0; x < ln.getChildCount(); x++) {
                 View nextChild = ln.getChildAt(x);
@@ -357,6 +342,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     }
                 }
                 if (count == 0&&ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+                    bolValid = false;
                     ltDataPertanyaan.get(position).bitValid = false;
                     ltDataPertanyaan.get(position).message = "Checkbox at least 1 option";
                 }else if (count > 0&&ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
@@ -366,6 +352,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 if (nextChild instanceof RadioGroup) {
                     RadioGroup radioGroup = (RadioGroup) nextChild;
                     if ((radioGroup.getCheckedRadioButtonId() == -1)) {
+                        bolValid = false;
                         ltDataPertanyaan.get(position).bitValid = false;
                         ltDataPertanyaan.get(position).message = "Choose 1 option";
                         int index = 0;
@@ -392,6 +379,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 if (nextChild instanceof EditText) {
                     EditText editText = (EditText) nextChild;
                     if (editText.getText().toString().trim().equals("")) {
+                        bolValid = false;
                         ltDataPertanyaan.get(position).bitValid = false;
                         ltDataPertanyaan.get(position).message = "Please fill this text";
 
@@ -409,7 +397,9 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 }
                 if (nextChild instanceof ImageView) {
                     ImageView imageView = (ImageView) nextChild;
-
+                    if (ltDataPertanyaan.get(position).path == null){
+                        bolValid = false;
+                    }
                     if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == false) {
                         ltDataPertanyaan.get(position).bitValid = false;
                         ltDataPertanyaan.get(position).message = ltDataPertanyaan.get(position).message +" and take a picture...";
@@ -425,82 +415,81 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     }
                 }
             }
-
-//            View viewAnswer = ListAnswerView.get(i).getVwJawaban();
-//            /*for (VmListItemAdapterPertanyaan pertanyaan :
-//                    ltDataPertanyaan) {*/
-//            if (viewAnswer instanceof LinearLayout) {
-////                LinearLayout layout = (LinearLayout) viewAnswer;
-//                if (ln == (linearLayout = (LinearLayout) viewAnswer)) {
-//
-//
-//                }
-//
-//            }
-            /*if (viewAnswer instanceof LinearLayout) {
-                LinearLayout layout = (LinearLayout) viewAnswer;
-                if (layout == (linearLayout = (LinearLayout) viewAnswer)) {
-                    for (int x = 0; x < linearLayout.getChildCount(); x++) {
-                        View nextChild = linearLayout.getChildAt(x);
-                        if (nextChild instanceof RadioGroup) {
-                            RadioGroup radioGroup = (RadioGroup) nextChild;
-                            if ((radioGroup.getCheckedRadioButtonId() == -1)) {
-                                String msg = "Please select one...";
-                                bolValid = false;
-                            }
-                        }
-                    }
-                }
-
-            }
-            if (viewAnswer instanceof LinearLayout) {
-                LinearLayout layout = (LinearLayout) viewAnswer;
-                if (layout == (linearLayout = (LinearLayout) viewAnswer)) {
-                    for (int x = 0; x < linearLayout.getChildCount(); x++) {
-                        View nextChild = linearLayout.getChildAt(x);
-                        if (nextChild instanceof EditText) {
-                            EditText editText = (EditText) nextChild;
-                            if (editText.getText().toString().trim().equals("")) {
-                                String msg = "Please fill thid field...";
-                                bolValid = false;
-                            }
-                        }
-                    }
-                }
-
-            }
-            if (viewAnswer instanceof LinearLayout) {
-                LinearLayout layout = (LinearLayout) viewAnswer;
-                if (layout == (linearLayout = (LinearLayout) viewAnswer)) {
-                    for (int x = 0; x < linearLayout.getChildCount(); x++) {
-                        View nextChild = linearLayout.getChildAt(x);
-                        if (nextChild instanceof EditText) {
-                            EditText editText = (EditText) nextChild;
-                            if (editText.getText().toString().trim().equals("")) {
-                                String msg = "Please fill thid field...";
-                                bolValid = false;
-
-                            }
-                        }
-                        if (nextChild instanceof ImageView) {
-                            ImageView imageView = (ImageView) nextChild;
-                            if (nextChild.getResources() == null) {
-                                String msg = "Please take a picture...";
-                                bolValid = false;
-                            }
-                        }
-                    }
-                }
-
-
-            }*/
-//            }
         }
+        if (bolValid){
+            List<ClsTJawaban> tJawabanList =  save();
+            Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        }
+
         mAdapter.notifyDataSetChanged();
         rvOptional.setAdapter(mAdapter);
+
     }
 
 
+    private List<ClsTJawaban> save(){
+        List<ClsTJawaban> tJawabanList = new ArrayList<>();
+        for (int i = 0; i < ListAnswerView.size(); i++) {
+            try {
+                int intPertanyaanId = ListAnswerView.get(i).getIntPertanyaanId();
+                int position = ListAnswerView.get(i).getIntPosition();
+                ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
+                ClsTJawaban tJawaban = new ClsTJawaban();
+                tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
+                tJawaban.setIntPertanyaanId(intPertanyaanId);
+                tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
+                tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
+                tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
+                if (pertanyaans.isBolHavePhoto()){
+                    tJawaban.setTxtPathImage(ltDataPertanyaan.get(position).path.getPath());
+                }else {
+                    tJawaban.setTxtPathImage("");
+                }
+
+
+                List<Jawaban> jawabans = new ArrayList<>();
+
+                if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
+                    ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*24);
+                }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
+                    ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*22);
+                }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+                    ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*21);
+                }
+                int count = 0;
+                for (int x = 0; x < ln.getChildCount(); x++) {
+                    View nextChild = ln.getChildAt(x);
+                    if (nextChild instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) nextChild;
+                        if (checkBox.isChecked()) {
+                            tJawaban.setIntmJawabanId(checkBox.getId());
+                            tJawaban.setTxtJawaban(checkBox.getText().toString());
+                        }
+                    }
+
+                    if (nextChild instanceof RadioGroup) {
+                        RadioGroup radioGroup = (RadioGroup) nextChild;
+                        int posisi = radioGroup.getCheckedRadioButtonId();
+                        RadioButton rb = (RadioButton)rvOptional.getChildAt(i).findViewById(posisi);
+                        String txtJawaban = rb.getText().toString();
+                        tJawaban.setIntmJawabanId(posisi);
+                        tJawaban.setTxtJawaban(txtJawaban);
+                    }
+                    if (nextChild instanceof EditText) {
+                        EditText editText = (EditText) nextChild;
+                        tJawaban.setIntmJawabanId(0);
+                        tJawaban.setTxtJawaban(editText.getText().toString());
+                    }
+                }
+
+                tJawabanList.add(tJawaban);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return tJawabanList;
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST_QUESTION) {

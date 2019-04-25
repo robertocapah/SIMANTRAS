@@ -285,7 +285,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                         jawabans) {
                     CheckBox checkBox = new CheckBox(ctx);
                     checkBox.setText(j.jawaban);
-                    checkBox.setId(j.idJawaban*11);
+                    checkBox.setId(j.idJawaban);
                     if (j.bitChoosen){
                         checkBox.setChecked(true);
                     }else{
