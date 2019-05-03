@@ -43,17 +43,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.androidnetworking.error.ANError;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
@@ -117,7 +112,7 @@ import com.kalbenutritionals.simantra.Service.ServiceNative;
  * Created by Rian Andrivani on 11/22/2017.
  */
 
-public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<LocationSettingsResult> {
+public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     List<ClsmUserLogin> dataLogin = null;
     RepomUserLogin loginRepo;
@@ -128,7 +123,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     MenuItem checkNavItem = null;
 
     protected GoogleApiClient mGoogleApiClient;
-    protected LocationRequest locationRequest;
+//    protected LocationRequest locationRequest;
     int REQUEST_CHECK_SETTINGS = 100;
     @BindView(R.id.frame)
     FrameLayout frame;
@@ -151,7 +146,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     Toolbar toolbar;
     public CircleImageView ivProfile;
     TextView tvUsername, tvEmail;
-
+    ActionBarDrawerToggle actionBarDrawerToggle;
     @Override
     public void onBackPressed() {
         Fragment fragmentBack = getSupportFragmentManager().findFragmentById(R.id.frame);
@@ -208,62 +203,32 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        if (BuildConfig.DEBUG) {
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build());
-        }
-        GenerateDataHardCode(getApplicationContext());
-        super.onCreate(savedInstanceState);
-        selectedId = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.green_300));
-        }
-        try {
-            pInfo = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        if (!isMyServiceRunning(ServiceNative.class)) {
-            startService(new Intent(ActivityMainMenu.this, ServiceNative.class));
-        }
-        setContentView(R.layout.activity_main);
-        unbinder = ButterKnife.bind(this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        View headerNav = navigationView.getHeaderView(0);
-        tvEmail = (TextView) headerNav.findViewById(R.id.tvEmail);
-        tvUsername = (TextView) headerNav.findViewById(R.id.tvUsername);
-        pDialog = new ProgressDialog(ActivityMainMenu.this, ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gson = gsonBuilder.create();
-        mAccountManager = AccountManager.get(getBaseContext());
-        isOnCreate = true;
-        if (getIntent().getStringExtra(i_View) != null) {
-            if (getIntent().getStringExtra(i_View).equals("FragmentNotification")) {
-            } else {
-                toolbar.setTitle("Home");
+    protected void onNewIntent(Intent intent) {
+        if (intent.getStringExtra("idNotification")!=null){
+            if (intent.getStringExtra("idRole").equals("1")){
                 setSupportActionBar(toolbar);
-                FragmentHome homFragment = new FragmentHome();
-                FragmentTransaction fragmentTransactionHome = getSupportFragmentManager().beginTransaction();
-                fragmentTransactionHome.replace(R.id.frame, homFragment);
-                fragmentTransactionHome.commit();
+                toolbar.setTitle("APPROVER LIST");
+
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                // fragment yang dituju
+                FragmentApprover fragmentApprover = new FragmentApprover();
+                FragmentTransaction fragmentTransactionApprover = getSupportFragmentManager().beginTransaction();
+                fragmentTransactionApprover.replace(R.id.frame, fragmentApprover);
+                fragmentTransactionApprover.commit();
                 selectedId = 99;
             }
-        }
-        if (getIntent().getStringExtra(new ClsHardCode().txtBundleKeyBarcode) != null) {
-            FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
+        }else if (intent.getStringExtra(new ClsHardCode().txtBundleKeyBarcode) != null) {
+            /*FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
             FragmentTransaction fragmentTransactionInfoChecker = getSupportFragmentManager().beginTransaction();
             fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
-            fragmentTransactionInfoChecker.commit();
-        } else if (getIntent().getStringExtra(i_View) != null) {
-            if (getIntent().getStringExtra(i_View).equals("FragmentNotification")) {
+            fragmentTransactionInfoChecker.commit();*/
+            FragmentTab fragmentTab = new FragmentTab();
+            FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+            fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+            fragmentTransactionTab.commit();
+        } else if (intent.getStringExtra(i_View) != null) {
+            if (intent.getStringExtra(i_View).equals("FragmentNotification")) {
                 toolbar.setTitle("Notification");
                 setSupportActionBar(toolbar);
 
@@ -272,7 +237,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                 fragmentTransactionNotification.replace(R.id.frame, fragmentNotification);
                 fragmentTransactionNotification.commit();
                 selectedId = 99;
-            } else if (getIntent().getStringExtra(i_View).equals("FragmentPushData")) {
+            } else if (intent.getStringExtra(i_View).equals("FragmentPushData")) {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 toolbar.setTitle("Push Data");
                 setSupportActionBar(toolbar);
@@ -304,6 +269,63 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             selectedId = 99;
         }
 
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build());
+        }
+        GenerateDataHardCode(getApplicationContext());
+
+        super.onCreate(savedInstanceState);
+        selectedId = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorAccent));
+        }
+        try {
+            pInfo = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (!isMyServiceRunning(ServiceNative.class)) {
+            startService(new Intent(ActivityMainMenu.this, ServiceNative.class));
+        }
+        setContentView(R.layout.activity_main);
+        unbinder = ButterKnife.bind(this);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        View headerNav = navigationView.getHeaderView(0);
+        tvEmail = (TextView) headerNav.findViewById(R.id.tvEmail);
+        tvUsername = (TextView) headerNav.findViewById(R.id.tvUsername);
+        pDialog = new ProgressDialog(ActivityMainMenu.this, ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gson = gsonBuilder.create();
+        mAccountManager = AccountManager.get(getBaseContext());
+        isOnCreate = true;
+        onNewIntent(getIntent());
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        if (getIntent().getStringExtra(i_View) != null) {
+            if (getIntent().getStringExtra(i_View).equals("FragmentNotification")) {
+            } else {
+                toolbar.setTitle("Home");
+                setSupportActionBar(toolbar);
+                FragmentHome homFragment = new FragmentHome();
+                FragmentTransaction fragmentTransactionHome = getSupportFragmentManager().beginTransaction();
+                fragmentTransactionHome.replace(R.id.frame, homFragment);
+                fragmentTransactionHome.commit();
+                selectedId = 99;
+            }
+        }
+
+
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         View vwHeader = navigationView.getHeaderView(0);
@@ -311,7 +333,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
         // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+/*        mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(AppIndex.API).build();
@@ -320,7 +342,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
-        locationRequest.setFastestInterval(5 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);*/
         ivProfile.setEnabled(false);
 
 
@@ -381,7 +403,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         });
 
 //        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -596,6 +618,14 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         return super.onPrepareOptionsMenu(menu);
 
@@ -618,7 +648,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         pertanyaan.setIntPertanyaanId(2);
         pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanCheckBox);
         pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(true);
+        pertanyaan.setBolHavePhoto(false);
         pertanyaan.setTxtPertanyaan("pilih beberapa dari pertanyaan di checkbox di bawah ya pak");
         try{
             new RepomPertanyaan(context).createOrUpdate(pertanyaan);
@@ -858,7 +888,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+        /*LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
         PendingResult<LocationSettingsResult> result =
@@ -867,7 +897,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                         builder.build()
                 );
 
-        result.setResultCallback(this);
+        result.setResultCallback(this);*/
     }
 
     @Override
@@ -879,38 +909,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-    @Override
-    public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
-        final Status status = locationSettingsResult.getStatus();
-        switch (status.getStatusCode()) {
-            case LocationSettingsStatusCodes.SUCCESS:
-
-                // NO need to show the dialog;
-
-                break;
-
-            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                //  Location settings are not satisfied. Show the user a dialog
-
-                try {
-                    // Show the dialog by calling startResolutionForResult(), and check the result
-                    // in onActivityResult().
-
-                    status.startResolutionForResult(ActivityMainMenu.this, REQUEST_CHECK_SETTINGS);
-
-                } catch (IntentSender.SendIntentException e) {
-
-                    //failed to show
-                }
-                break;
-
-            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                // Location settings are unavailable so not possible to show any dialog now
-                break;
-        }
-    }
-
     public class Utility {
         public final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
 

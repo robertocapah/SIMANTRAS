@@ -34,7 +34,7 @@
                     android:id="@+id/image_profil_home"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:src="@drawable/deliverycar2"
+                    android:src="@drawable/ic_simantra"
                     app:civ_border="true"
                     app:civ_border_width="2dp"
                     app:civ_shadow="true"

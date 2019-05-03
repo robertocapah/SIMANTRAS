@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentTab extends Fragment {
-    private ViewPager view_pager;
+    private ViewPager mPager;
     private SectionsPagerAdapter viewPagerAdapter;
     private TabLayout tab_layout;
     View v;
@@ -39,11 +39,11 @@ public class FragmentTab extends Fragment {
         return v;
     }
     private void initComponent() {
-        view_pager = (ViewPager) v.findViewById(R.id.view_pager);
+        mPager = (ViewPager) v.findViewById(R.id.view_pager);
         tab_layout = (TabLayout) v.findViewById(R.id.tab_layout);
-        setupViewPager(view_pager);
+        setupViewPager(mPager);
 
-        tab_layout.setupWithViewPager(view_pager);
+        tab_layout.setupWithViewPager(mPager);
 
         tab_layout.getTabAt(0).setIcon(R.drawable.ic_question_answer_black_24dp);
         tab_layout.getTabAt(1).setIcon(R.drawable.ic_directions_car_black_24dp);
@@ -81,8 +81,8 @@ public class FragmentTab extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         viewPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-        viewPagerAdapter.addFragment(FragmentDetailInfoChecker.newInstance(), "Questioner Checker");    // index 0
-//        viewPagerAdapter.addFragment(FragmentTestUI.newInstance(), "Questioner Checker");    // index 0
+//        viewPagerAdapter.addFragment(FragmentDetailInfoChecker.newInstance(), "Questioner Checker");    // index 0
+        viewPagerAdapter.addFragment(FragmentTestUI.newInstance(), "Questioner Checker");    // index 0
         viewPagerAdapter.addFragment(FragmentDestinationDetail.newInstance(), "General Information");   // index 1
         viewPager.setAdapter(viewPagerAdapter);
     }

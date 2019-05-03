@@ -79,6 +79,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int a = 1;
         /*IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {

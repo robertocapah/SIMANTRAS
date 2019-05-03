@@ -207,7 +207,7 @@ public class ActivitySplash extends AppCompatActivity {
         anim = AnimationUtils.loadAnimation(this, R.anim.bounce);
         anim.reset();
         ImageView iv2 = (ImageView) findViewById(R.id.imageView2);
-        iv2.setBackgroundResource(R.drawable.ic_kalbe);
+        iv2.setBackgroundResource(R.drawable.ic_simantra);
         iv2.clearAnimation();
         iv2.startAnimation(anim);
     }
@@ -401,7 +401,7 @@ public class ActivitySplash extends AppCompatActivity {
                             if (resUpdate) {
 
                                 DonutProgress donutProgress = new DonutProgress(context);
-                                donutProgress.setFinishedStrokeColor(R.color.success_stroke_color);
+                                donutProgress.setFinishedStrokeColor(R.color.green_500);
                                 donutProgress.setText("Downloading New App");
                                 donutProgress.setUnfinishedStrokeColor(R.color.red_800);
 

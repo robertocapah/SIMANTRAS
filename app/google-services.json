@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "258220662364",
+    "firebase_url": "https://simantra-4089b.firebaseio.com",
+    "project_id": "simantra-4089b",
+    "storage_bucket": "simantra-4089b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258220662364:android:b662dd2e08a987bf",
+        "android_client_info": {
+          "package_name": "com.kalbenutritionals.simantra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "258220662364-t5ehl09apc6oe8j86je72s1og7i2jmqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL4CDjlbe6iNkrhGhpvKuNtL0za48BZLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "258220662364-t5ehl09apc6oe8j86je72s1og7i2jmqj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

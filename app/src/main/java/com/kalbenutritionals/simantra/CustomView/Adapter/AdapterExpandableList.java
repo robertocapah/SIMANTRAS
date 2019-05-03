@@ -141,7 +141,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         new PickImage().CaptureImage(ctx, new ClsHardCode().txtFolderDataQuest, filename, FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION);
 //        final CharSequence[] items = {"Ambil Foto", "Pilih dari Galeri",
 //                "Batal"};
-//        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+//        AlertDialogs.Builder builder = new AlertDialogs.Builder(ctx);
 //        builder.setTitle("Add Photo");
 //        builder.setItems(items, new DialogInterface.OnClickListener() {
 //            @Override

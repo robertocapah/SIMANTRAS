@@ -1,23 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:gravity="center_horizontal">
 
-    <com.bcgdv.asia.lib.ticktock.TickTockView
-        android:id="@+id/view_ticktock_countup"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="16dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        app:tickMiddleColor="#333333"
-        app:tickMoveCounterClockwise="true"
-        app:tickTextColor="#CCCCCC"
-        app:tickText="00h:00m:00s"
-        app:tickDotRadius="6dp"
-        app:tickEmptyRingColor="@android:color/white"
-        app:tickFillRingColor="@color/colorPrimary"
-        app:tickRingThickness="3dp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|center_vertical"
+            android:text="TIME NOW"
+            android:textColor="@color/blue_800" />
+
+        <com.bcgdv.asia.lib.ticktock.TickTockView
+            android:id="@+id/view_ticktock_countup"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            app:tickDotRadius="6dp"
+            app:tickEmptyRingColor="@android:color/white"
+            app:tickFillRingColor="@color/colorPrimary"
+            app:tickMiddleColor="#333333"
+            app:tickMoveCounterClockwise="true"
+            app:tickRingThickness="3dp"
+            app:tickText="00h:00m:00s"
+            app:tickTextColor="#CCCCCC" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Start Time : "
+                android:textColor="@color/blue_800" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvStartTime"
+                android:text="00h:00m:00s"
+                android:textColor="@color/back_splash" />
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:gravity="center|center_vertical"
+            android:text="LOADING TIMER"
+            android:textColor="@color/blue_800" />
+
+        <TextView
+            android:id="@+id/tvTimerLoad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="00:00:00"
+            android:textColor="@color/back_splash"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

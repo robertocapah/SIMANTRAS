@@ -12,7 +12,7 @@
 
     <string name="crash_toast_text">ups ! Your Application has Stopped, but a report has been sent to my developer to help fix the issue !</string>
 
-    <string name="crash_dialog_title">SPG Mobile has crashed</string>
+    <string name="crash_dialog_title">App has crashed</string>
     <string name="crash_dialog_text">An unexpected error occurred forcing the
     application to stop. Please help us fix this by sending us error data,
     all you have to do is click OK.</string>

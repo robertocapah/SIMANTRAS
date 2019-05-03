@@ -3,7 +3,7 @@ package com.kalbenutritionals.simantra.Fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -30,11 +30,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
+import com.google.gson.JsonObject;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterImageSlider;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasic;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
+import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.Images;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,17 +107,50 @@ public class FragmentApprover extends Fragment {
             @Override
             public void onItemClick(View view, VmAdapterBasic obj, int position) {
                 Snackbar.make(parent_view, "Item " + obj.getTitle() + " clicked", Snackbar.LENGTH_SHORT).show();
-                showDialogPolygon(obj, position);
+                ViewDialog(view, obj, position);
+
             }
         });
         return v;
     }
+    private void ViewDialog(View view, final VmAdapterBasic obj, final int position){
+        String link = new ClsHardCode().linkLogin;
+        JSONObject jsonObject = new JSONObject();
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), link, jsonObject, "getData", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                List<VmAdapterBasic> objList = new ArrayList<>();
+                for (int i=0;i<5;i++){
+                    VmAdapterBasic ob = new VmAdapterBasic();
+                    ob.setSubtitle("poin "+i);
+                    ob.setTitle("title "+i);
+                    ob.setTxtLinkImage("https://afdanisasyahroza.files.wordpress.com/2011/05/images.jpeg");
+                    objList.add(ob);
+                }
+                showDialogPolygon(objList, position);
+            }
 
-    private void showDialogPolygon(VmAdapterBasic objDt, final int position) {
+            @Override
+            public void onError(ANError error) {
+                List<VmAdapterBasic> objList = new ArrayList<>();
+                for (int i=0;i<5;i++){
+                    VmAdapterBasic ob = new VmAdapterBasic();
+                    ob.setSubtitle("poin "+i);
+                    ob.setTitle("title "+i);
+                    ob.setTxtLinkImage("https://afdanisasyahroza.files.wordpress.com/2011/05/images.jpeg");
+                    objList.add(ob);
+                }
+                showDialogPolygon(objList, position);
+            }
+        });
+    }
+
+    private void showDialogPolygon(List<VmAdapterBasic> objDt, final int position) {
 
         final Dialog dialogMain = new Dialog(getActivity());
         dialogMain.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialogMain.setContentView(R.layout.dialog_header_polygon);
+        RecyclerView rvListExcalation = (RecyclerView) dialogMain.findViewById(R.id.rvListExcalation);
         adapterImageSlider = new AdapterImageSlider(getActivity(), new ArrayList<Images>());
         viewPager = dialogMain.findViewById(R.id.pager);
 //        layout_dots = dialog.findViewById(R.id.layout_dots);
@@ -126,6 +166,9 @@ public class FragmentApprover extends Fragment {
         adapterImageSlider.setItems(items);
         viewPager.setAdapter(adapterImageSlider);
         viewPager.setCurrentItem(0);
+        AdapterListBasic adapterListBasica = new AdapterListBasic(getActivity().getApplicationContext(),objDt);
+        rvListExcalation.setAdapter(adapterListBasica);
+        rvListExcalation.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        addBottomDots(layout_dots, adapterImageSlider.getCount(), 0);
 //        ((TextView) dialog.findViewById(R.id.title)).setText(items.get(0).txtPertanyaan);
 //        ((TextView) dialog.findViewById(R.id.brief)).setText(items.get(0).brief);
@@ -148,7 +191,7 @@ public class FragmentApprover extends Fragment {
 
         startAutoSlider(adapterImageSlider.getCount());
 
-        dialogMain.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialogMain.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogMain.setCancelable(true);
 
         ((Button) dialogMain.findViewById(R.id.bt_join)).setOnClickListener(new View.OnClickListener() {
@@ -195,7 +238,6 @@ public class FragmentApprover extends Fragment {
 
         dialogMain.show();
     }
-
 
 
     private void startAutoSlider(final int count) {

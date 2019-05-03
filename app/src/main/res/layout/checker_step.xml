@@ -9,10 +9,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="@dimen/spacing_large"
-        android:layout_marginEnd="@dimen/spacing_large"
-        android:layout_marginRight="@dimen/spacing_large"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/spacing_medium"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -30,15 +28,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="70sp"
+        android:layout_marginTop="30sp"
         android:paddingLeft="@dimen/spacing_large"
         android:paddingRight="@dimen/spacing_large"
-        android:paddingBottom="@dimen/spacing_middle">
+        android:paddingBottom="@dimen/spacing_small">
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:paddingBottom="@dimen/spacing_small"
             android:orientation="vertical">
 
             <LinearLayout
@@ -86,7 +85,7 @@
                     android:id="@+id/tv_shipping"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_mxlarge"
+                    android:layout_marginTop="@dimen/spacing_large"
                     android:text="Pemeriksaan \nFisik"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/grey_90" />
@@ -110,7 +109,7 @@
                     android:id="@+id/tv_payment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_mxlarge"
+                    android:layout_marginTop="@dimen/spacing_large"
                     android:text="Loading"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/grey_20" />
@@ -135,7 +134,7 @@
                     android:id="@+id/tv_confirm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_mxlarge"
+                    android:layout_marginTop="@dimen/spacing_large"
                     android:text="Finish"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/grey_20" />
@@ -149,7 +148,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="90sp"
         android:orientation="vertical"
         android:scrollbars="vertical">
 
@@ -200,6 +199,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/NEXT"
+                        android:id="@+id/tvNext"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
                         android:textColor="@android:color/white" />
 

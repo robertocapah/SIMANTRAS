@@ -31,6 +31,7 @@ import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterExpandableList;
 import com.kalbenutritionals.simantra.CustomView.Adapter.LineItemDecoration;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
+import com.kalbenutritionals.simantra.CustomView.Utils.onValidateData;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Database.Common.ClsTJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
@@ -52,7 +53,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class FragmentDetailInfoChecker extends Fragment implements OnReceivedData {
+public class FragmentDetailInfoChecker extends Fragment implements OnReceivedData{
     View v;
     Unbinder unbinder;
     @BindView(R.id.bt_toggle_pic)
@@ -79,10 +80,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     RecyclerView rvMandatory;
     @BindView(R.id.btnValidate)
     Button btnValidate;
+    boolean statusValid = false;
+    boolean statusRejected = false;
     static AdapterExpandableList mAdapter;
     List<VmListItemAdapterPertanyaan> items;
     static List<View> listAnswer = new ArrayList<>();
-
+    onValidateData onValidateData;
     public static int GLOBAL_PICK_PICTURE_ID = 1;
     public static int GLOBAL_PICK_PICTURE_QUEST_ID = 1;
     HashMap<Integer, View> HMPertanyaan1 = new HashMap<Integer, View>();
@@ -312,20 +315,26 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         super.onDestroyView();
         unbinder.unbind();
     }
+
     LinearLayout ln;
+
     @OnClick(R.id.btnValidate)
     public void onViewClicked() {
+        validateAnsw();
+    }
+
+    public boolean validateAnsw() {
         boolean bolValid = true;
         for (int i = 0; i < ListAnswerView.size(); i++) {
             List<Jawaban> jawabans = new ArrayList<>();
             int intPertanyaanId = ListAnswerView.get(i).getIntPertanyaanId();
             int position = ListAnswerView.get(i).getIntPosition();
-            if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
-                ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*24);
-            }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
-              ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*22);
-            }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
-             ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*21);
+            if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 21);
             }
             int size = ln.getChildCount();
             int count = 0;
@@ -337,15 +346,16 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     if (checkBox.isChecked()) {
                         ltDataPertanyaan.get(position).jawabans.get(x).bitChoosen = true;
                         count++;
-                    }else{
+                    } else {
                         ltDataPertanyaan.get(position).jawabans.get(x).bitChoosen = false;
                     }
                 }
-                if (count == 0&&ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+                if (count == 0 && ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
                     bolValid = false;
                     ltDataPertanyaan.get(position).bitValid = false;
                     ltDataPertanyaan.get(position).message = "Checkbox at least 1 option";
-                }else if (count > 0&&ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
+                } else if (count > 0 && ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    bolValid = true;
                     ltDataPertanyaan.get(position).bitValid = true;
                     ltDataPertanyaan.get(position).message = "";
                 }
@@ -356,19 +366,20 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         ltDataPertanyaan.get(position).bitValid = false;
                         ltDataPertanyaan.get(position).message = "Choose 1 option";
                         int index = 0;
-                        for (Jawaban jwb : ltDataPertanyaan.get(position).jawabans){
+                        for (Jawaban jwb : ltDataPertanyaan.get(position).jawabans) {
                             ltDataPertanyaan.get(position).jawabans.get(index).bitChoosen = false;
                             index++;
                         }
                     } else {
+                        bolValid = true;
                         ltDataPertanyaan.get(position).bitValid = true;
                         ltDataPertanyaan.get(position).message = "";
                         int posisi = radioGroup.getCheckedRadioButtonId();
                         int index = 0;
-                        for (Jawaban jwb : ltDataPertanyaan.get(position).jawabans){
-                            if (jwb.idJawaban==posisi){
+                        for (Jawaban jwb : ltDataPertanyaan.get(position).jawabans) {
+                            if (jwb.idJawaban == posisi) {
                                 ltDataPertanyaan.get(position).jawabans.get(index).bitChoosen = true;
-                            }else {
+                            } else {
                                 ltDataPertanyaan.get(position).jawabans.get(index).bitChoosen = false;
                             }
                             index++;
@@ -384,6 +395,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         ltDataPertanyaan.get(position).message = "Please fill this text";
 
                     } else {
+                        bolValid = true;
                         ltDataPertanyaan.get(position).bitValid = true;
                         ltDataPertanyaan.get(position).message = "";
                     }
@@ -397,12 +409,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 }
                 if (nextChild instanceof ImageView) {
                     ImageView imageView = (ImageView) nextChild;
-                    if (ltDataPertanyaan.get(position).path == null){
+                    if (ltDataPertanyaan.get(position).path == null) {
                         bolValid = false;
                     }
                     if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == false) {
                         ltDataPertanyaan.get(position).bitValid = false;
-                        ltDataPertanyaan.get(position).message = ltDataPertanyaan.get(position).message +" and take a picture...";
+                        ltDataPertanyaan.get(position).message = ltDataPertanyaan.get(position).message + " and take a picture...";
                     } else if (ltDataPertanyaan.get(position).path == null && ltDataPertanyaan.get(position).bitValid == true) {
                         ltDataPertanyaan.get(position).bitValid = false;
                         ltDataPertanyaan.get(position).message = "Please take a picture...";
@@ -412,22 +424,32 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     } else {
                         ltDataPertanyaan.get(position).bitValid = true;
                         ltDataPertanyaan.get(position).message = "";
+                        bolValid = true;
                     }
                 }
             }
         }
-        if (bolValid){
-            List<ClsTJawaban> tJawabanList =  save();
+        if (bolValid) {
+            statusRejected = ValidasiMandatoryStatus();
+            statusValid = true;
+            List<ClsTJawaban> tJawabanList = saveData();
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        } else {
+            statusValid = false;
         }
-
         mAdapter.notifyDataSetChanged();
         rvOptional.setAdapter(mAdapter);
 
+
+        return statusValid;
+    }
+    public boolean ValidasiMandatoryStatus(){
+
+
+        return true;
     }
 
-
-    private List<ClsTJawaban> save(){
+    public List<ClsTJawaban> saveData() {
         List<ClsTJawaban> tJawabanList = new ArrayList<>();
         for (int i = 0; i < ListAnswerView.size(); i++) {
             try {
@@ -440,21 +462,21 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-                if (pertanyaans.isBolHavePhoto()){
+                if (pertanyaans.isBolHavePhoto()) {
                     tJawaban.setTxtPathImage(ltDataPertanyaan.get(position).path.getPath());
-                }else {
+                } else {
                     tJawaban.setTxtPathImage("");
                 }
 
 
                 List<Jawaban> jawabans = new ArrayList<>();
 
-                if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
-                    ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*24);
-                }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
-                    ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*22);
-                }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
-                    ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*21);
+                if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                    ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 24);
+                } else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                    ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 22);
+                } else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 21);
                 }
                 int count = 0;
                 for (int x = 0; x < ln.getChildCount(); x++) {
@@ -470,7 +492,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     if (nextChild instanceof RadioGroup) {
                         RadioGroup radioGroup = (RadioGroup) nextChild;
                         int posisi = radioGroup.getCheckedRadioButtonId();
-                        RadioButton rb = (RadioButton)rvOptional.getChildAt(i).findViewById(posisi);
+                        RadioButton rb = (RadioButton) rvOptional.getChildAt(i).findViewById(posisi);
                         String txtJawaban = rb.getText().toString();
                         tJawaban.setIntmJawabanId(posisi);
                         tJawaban.setTxtJawaban(txtJawaban);
@@ -490,18 +512,19 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         }
         return tJawabanList;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST_QUESTION) {
             if (resultCode == -1) {
                 for (int i = 0; i < rvOptional.getChildCount(); i++) {
                     int position = ListAnswerView.get(i).getIntPosition();
-                    if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
-                        ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*24);
-                    }else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
-                        ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*22);
-                    }else if(ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox){
-                        ln  = (LinearLayout)rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId()*21);
+                    if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                        ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 24);
+                    } else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                        ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 22);
+                    } else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                        ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 21);
                     }
 
                     for (int x = 0; x < ln.getChildCount(); x++) {
@@ -571,4 +594,5 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         this.ListAnswerView = ListAnswerView;
 
     }
+
 }

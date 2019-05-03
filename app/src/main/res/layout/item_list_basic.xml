@@ -19,7 +19,7 @@
             android:layout_marginLeft="@dimen/spacing_large"
             android:layout_marginRight="@dimen/spacing_large"
             android:layout_marginTop="@dimen/spacing_middle"
-            android:src="@drawable/ic_kalbe" />
+            android:src="@drawable/ic_simantra" />
 
         <View
             android:layout_width="@dimen/spacing_medium"
