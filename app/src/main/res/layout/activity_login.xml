@@ -284,7 +284,8 @@
                         android:textColor="@color/green_300"
                         android:ems="10"
                         android:textStyle="bold"
-                        android:drawableRight="@mipmap/ic_lock_close"
+                        android:drawableRight="@drawable/ic_lock_close"
+                        android:drawableTint="@color/green_300"
                         android:theme="@style/EditText.Grey" />
 
                     <View

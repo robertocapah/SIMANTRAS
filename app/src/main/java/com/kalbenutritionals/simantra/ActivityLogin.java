@@ -342,11 +342,11 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
             public boolean onDrawableClick() {
                 if (intSet == 1) {
                     editTextPass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    editTextPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_lock, 0);
+                    editTextPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_lock_open, 0);
                     intSet = 0;
                 } else {
                     editTextPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    editTextPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_lock_close, 0);
+                    editTextPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_lock_close, 0);
                     intSet = 1;
                 }
 
