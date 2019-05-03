@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
  * Created by Robert on 04/01/2018.
  */
 
-public class AlertDialog {
+public class AlertDialogs {
     public static void alertDialogExit(final Context activity){
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(activity);
 
