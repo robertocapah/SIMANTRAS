@@ -40,8 +40,10 @@ import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.Jawaban;
+import com.kalbenutritionals.simantra.ViewModel.VmImageContainer;
 import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
+import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class FragmentDetailInfoChecker extends Fragment implements OnReceivedData{
+public class FragmentDetailInfoChecker extends Fragment implements OnReceivedData {
     View v;
     Unbinder unbinder;
     @BindView(R.id.bt_toggle_pic)
@@ -253,6 +255,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 obj.image = 1;
                 obj.txtPertanyaan = pertanyaan.getTxtPertanyaan();
                 obj.bitImage = pertanyaan.isBolHavePhoto();
+                if (obj.bitImage) {
+                    obj.countImage = 4;
+                }
+
                 obj.bitValid = true;
                 obj.message = "";
                 obj.bolHaveAnswer = pertanyaan.isBolHaveAnswer();
@@ -270,6 +276,16 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     jawabans.add(jwbn);
                 }
                 obj.jawabans = jawabans;
+
+                List<VmImageContainer> containerList = new ArrayList<>();
+                for (int i = 0; i < obj.countImage; i++) {
+                    VmImageContainer imageContainer = new VmImageContainer();
+                    imageContainer.setPosition(i);
+                    imageContainer.setPath(null);
+                    imageContainer.setBitmap(null);
+                    containerList.add(imageContainer);
+                }
+                obj.listImage = containerList;
                 items.add(obj);
 
             }
@@ -336,7 +352,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             } else if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
                 ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 21);
             }
-            int size = ln.getChildCount();
+
             int count = 0;
             for (int x = 0; x < ln.getChildCount(); x++) {
                 View nextChild = ln.getChildAt(x);
@@ -407,6 +423,32 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     jawabans.add(jwbn);
                     ltDataPertanyaan.get(position).jawabans = jawabans;
                 }
+                if (nextChild instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) nextChild;
+                    boolean bolValidImg = true;
+                    for (VmImageContainer data : ltDataPertanyaan.get(position).listImage) {
+                        if (data.getPath() == null) {
+                            bolValid = false;
+                            bolValidImg = false;
+                        }
+                    }
+
+                    if (bolValidImg == false && ltDataPertanyaan.get(position).bitValid == false) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = ltDataPertanyaan.get(position).message + " and take all picture...";
+                    } else if (bolValidImg == false && ltDataPertanyaan.get(position).bitValid == true) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = "Please take all picture...";
+                    } else if (bolValidImg == true && ltDataPertanyaan.get(position).bitValid == false) {
+                        ltDataPertanyaan.get(position).bitValid = false;
+                        ltDataPertanyaan.get(position).message = ltDataPertanyaan.get(position).message + "...";
+                    } else {
+                        ltDataPertanyaan.get(position).bitValid = true;
+                        ltDataPertanyaan.get(position).message = "";
+                        bolValid = true;
+                    }
+                }
+
                 if (nextChild instanceof ImageView) {
                     ImageView imageView = (ImageView) nextChild;
                     if (ltDataPertanyaan.get(position).path == null) {
@@ -432,7 +474,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         if (bolValid) {
             statusRejected = ValidasiMandatoryStatus();
             statusValid = true;
-            List<ClsTJawaban> tJawabanList = saveData();
+            List<VmTJawabanUser> tJawabanList = saveData();
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
             statusValid = false;
@@ -443,33 +485,39 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
         return statusValid;
     }
-    public boolean ValidasiMandatoryStatus(){
+
+    public boolean ValidasiMandatoryStatus() {
 
 
         return true;
     }
 
-    public List<ClsTJawaban> saveData() {
-        List<ClsTJawaban> tJawabanList = new ArrayList<>();
+    public List<VmTJawabanUser> saveData() {
+        List<VmTJawabanUser> tJawabanList = new ArrayList<>();
         for (int i = 0; i < ListAnswerView.size(); i++) {
             try {
                 int intPertanyaanId = ListAnswerView.get(i).getIntPertanyaanId();
                 int position = ListAnswerView.get(i).getIntPosition();
                 ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
-                ClsTJawaban tJawaban = new ClsTJawaban();
+                VmTJawabanUser tJawaban = new VmTJawabanUser();
+                List<String> listImage = new ArrayList<>();
                 tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
                 tJawaban.setIntPertanyaanId(intPertanyaanId);
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
+
                 if (pertanyaans.isBolHavePhoto()) {
-                    tJawaban.setTxtPathImage(ltDataPertanyaan.get(position).path.getPath());
-                } else {
-                    tJawaban.setTxtPathImage("");
+                    for (int x = 0; x < ltDataPertanyaan.get(position).listImage.size(); x++) {
+                        listImage.add(ltDataPertanyaan.get(position).listImage.get(x).getPath().getPath());
+                    }
+//                    tJawaban.setTxtPathImage(ltDataPertanyaan.get(position).path.getPath());
                 }
-
-
-                List<Jawaban> jawabans = new ArrayList<>();
+// else {
+//
+//                    tJawaban.setTxtPathImage("");
+//                }
+                tJawaban.setListPathImage(listImage);
 
                 if (ltDataPertanyaan.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
                     ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerView.get(i).getIntPertanyaanId() * 24);
@@ -501,7 +549,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         EditText editText = (EditText) nextChild;
                         tJawaban.setIntmJawabanId(0);
                         tJawaban.setTxtJawaban(editText.getText().toString());
-                    }
+                    } 
                 }
 
                 tJawabanList.add(tJawaban);
@@ -529,21 +577,64 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                     for (int x = 0; x < ln.getChildCount(); x++) {
                         View nextChild = ln.getChildAt(x);
-                        if (nextChild instanceof ImageView) {
-                            ImageView imageView = (ImageView) nextChild;
-                            if (imageView.getId() == GLOBAL_PICK_PICTURE_ID) {
+                        if (nextChild instanceof RecyclerView) {
+                            RecyclerView recyclerView = (RecyclerView) nextChild;
+                            if (recyclerView.getId() == CAMERA_REQUEST_QUESTION) {
+                                LinearLayout lnRc = (LinearLayout) recyclerView.getChildAt(GLOBAL_PICK_PICTURE_ID);
+                                lnRc.setBackgroundColor(getContext().getResources().getColor(R.color.grey_3));
+                                View child = lnRc.getChildAt(0);
+                                ImageView imageView = (ImageView) child;
                                 try {
-//                                Bitmap thePic = BitmapFactory.decodeFile(uriImage.getPath());
                                     Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
                                     new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
-                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
-                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
+                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setPath(uriImage);
+                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setBitmap(thePic);
+//                                            ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
+//                                            ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
                                 } catch (Exception ex) {
                                     String a = ex.getMessage();
                                 }
 
                             }
+//                            Toast.makeText(getContext(), String.valueOf(rcId), Toast.LENGTH_SHORT).show();
+//                            int pst = GLOBAL_PICK_PICTURE_QUEST_ID;
+//                            int posisi = GLOBAL_PICK_PICTURE_ID % 15;
+//                            LinearLayout lnRc = (LinearLayout) recyclerView.getChildAt(posisi);
+//                            View child = lnRc.getChildAt(0);
+//                            if (child instanceof ImageView){
+//                                ImageView imageView = (ImageView) child;
+//                                if (imageView.getId() == GLOBAL_PICK_PICTURE_ID) {
+//                                    try {
+//                                        Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
+//                                        new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
+//                                        ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setPath(uriImage);
+//                                        ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setBitmap(thePic);
+////                                            ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
+////                                            ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
+//                                    } catch (Exception ex) {
+//                                        String a = ex.getMessage();
+//                                    }
+//
+//                                }
+//                            }
                         }
+
+
+//                        if (nextChild instanceof ImageView) {
+//                            ImageView imageView = (ImageView) nextChild;
+//                            if (imageView.getId() == GLOBAL_PICK_PICTURE_ID) {
+//                                try {
+////                                Bitmap thePic = BitmapFactory.decodeFile(uriImage.getPath());
+//                                    Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
+//                                    new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
+//                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
+//                                    ltDataPertanyaan.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
+//                                } catch (Exception ex) {
+//                                    String a = ex.getMessage();
+//                                }
+//
+//                            }
+//                        }
                     }
 //                for (int i = 0; i < ListAnswerView.size(); i++) {
 //                    View view = ListAnswerView.get(i).getVwJawaban();
@@ -587,7 +678,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     }
 
     @Override
-    public void onDataTransportReceived(List<View> listAnswer, HashMap<Integer, View> HMPertanyaan1, List<VmListAnswerView> ListAnswerView) {
+    public void onDataTransportReceived
+            (List<View> listAnswer, HashMap<Integer, View> HMPertanyaan1, List<VmListAnswerView> ListAnswerView) {
         this.listAnswer = listAnswer;
         this.HMPertanyaan1 = HMPertanyaan1;
 //        this.ListAnswerView = new ArrayList<>();

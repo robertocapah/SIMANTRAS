@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -32,6 +33,7 @@ import com.kalbe.mobiledevknlibs.PermissionChecker.PermissionChecker;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
+import com.kalbenutritionals.simantra.CustomView.Utils.SpacingItemDecoration;
 import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
 import com.kalbenutritionals.simantra.CustomView.Utils.setDataChecklist;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
@@ -42,6 +44,7 @@ import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.CustomView.Utils.ClsTools;
 import com.kalbenutritionals.simantra.ViewModel.Jawaban;
 import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
+import com.kalbenutritionals.simantra.ViewModel.VmListImageAdapter;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
 
 import java.io.File;
@@ -132,9 +135,9 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    private void selectImageProfile(final int id, int position) {
+    private void selectImageProfile(final int id, int position, final int imgId) {
         FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION = id;
-        FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_ID = id;
+        FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_ID = imgId;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_QUEST_ID = position;
         String filename = "tmp_act"+id;
         FragmentDetailInfoChecker.uriImage = new UriData().getOutputMediaImageUri(ctx, new ClsHardCode().txtFolderDataQuest, filename);
@@ -292,16 +295,16 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                         checkBox.setChecked(false);
                     }
                     checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            String msg = "You have " + (isChecked ? "checked" : "unchecked") + " this Check it Checkbox.";
-//                            if (position==items.size()-1){
-//                                receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView);
-//                            }
-                            Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+//                    checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                        @Override
+//                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                            String msg = "You have " + (isChecked ? "checked" : "unchecked") + " this Check it Checkbox.";
+////                            if (position==items.size()-1){
+////                                receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView);
+////                            }
+//                            Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
 
                     linearLayout.addView(checkBox);
                 }
@@ -314,24 +317,37 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 tvPicture.setTextAlignment(TEXT_ALIGNMENT_CENTER);
                 tvPicture.setGravity(Gravity.CENTER);
                 linearLayout.addView(tvPicture);
-                ImageView image;
-                image = new ImageView(v.getContext());
-                image.setId(pa.id*15);
-                image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-
-                if(pa.bitmap!=null){
-                    Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
-                    image.setImageBitmap(mybitmap);
+                RecyclerView rcImage = new RecyclerView(v.getContext());
+                rcImage.setId(pa.id*15);
+                if (pa.listImage.size()>1){
+                    rcImage.setLayoutManager(new GridLayoutManager(v.getContext(), 2));
+                    rcImage.addItemDecoration(new SpacingItemDecoration(2, new ClsTools().dpToPx(v.getContext(), 1), false));
+                }else {
+                    rcImage.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
+                    rcImage.addItemDecoration(new SpacingItemDecoration(1, new ClsTools().dpToPx(v.getContext(), 1), false));
                 }
-                linearLayout.addView(image);
-                final int paId2 = pa.id;
-                image.setOnClickListener(new View.OnClickListener() {
+                rcImage.setHasFixedSize(true);
+                rcImage.setNestedScrollingEnabled(false);
+                final int position2 = position;
+                List<VmListImageAdapter> listImage = new ArrayList<>();
+                for (int i = 0; i < pa.listImage.size(); i++){
+                    VmListImageAdapter imageAdapter = new VmListImageAdapter();
+                    imageAdapter.setIntId((pa.id*15)+pa.listImage.get(i).getPosition());
+                    imageAdapter.setBmpImage(pa.listImage.get(i).getBitmap());
+                    imageAdapter.setIntPosition(pa.listImage.get(i).getPosition());
+                    listImage.add(imageAdapter);
+                }
+
+                RecyclerGridImageAdapter adapter = new RecyclerGridImageAdapter(v.getContext(), listImage);
+                rcImage.setAdapter(adapter);
+                final int paId = pa.id*15;
+                adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        selectImageProfile(paId2*15,position);
+                    public void onItemClick(View view, VmListImageAdapter obj, int position) {
+                        selectImageProfile(paId,position2, position);
                     }
                 });
-
+                linearLayout.addView(rcImage);
             }
             holder.ll_jawaban1.addView(linearLayout);
         }else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
@@ -374,28 +390,37 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 tvPicture.setTextAlignment(TEXT_ALIGNMENT_CENTER);
                 tvPicture.setGravity(Gravity.CENTER);
                 linearLayout.addView(tvPicture);
-                ImageView image;
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                params.weight = 1.0f;
-                params.gravity = Gravity.CENTER;
-
-                image = new ImageView(v.getContext());
-                image.setId(pa.id*15);
-                image.setLayoutParams(params);
-                image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-
-                if(pa.bitmap!=null){
-                    Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
-                    image.setImageBitmap(mybitmap);
+                RecyclerView rcImage = new RecyclerView(v.getContext());
+                rcImage.setId(pa.id*15);
+                if (pa.listImage.size()>1){
+                    rcImage.setLayoutManager(new GridLayoutManager(v.getContext(), 2));
+                    rcImage.addItemDecoration(new SpacingItemDecoration(2, new ClsTools().dpToPx(v.getContext(), 1), false));
+                }else {
+                    rcImage.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
+                    rcImage.addItemDecoration(new SpacingItemDecoration(1, new ClsTools().dpToPx(v.getContext(), 1), false));
                 }
-                linearLayout.addView(image);
-                final int paId2 = pa.id;
-                image.setOnClickListener(new View.OnClickListener() {
+                rcImage.setHasFixedSize(true);
+                rcImage.setNestedScrollingEnabled(false);
+                final int position2 = position;
+                List<VmListImageAdapter> listImage = new ArrayList<>();
+                for (int i = 0; i < pa.listImage.size(); i++){
+                    VmListImageAdapter imageAdapter = new VmListImageAdapter();
+                    imageAdapter.setIntId((pa.id*15)+pa.listImage.get(i).getPosition());
+                    imageAdapter.setBmpImage(pa.listImage.get(i).getBitmap());
+                    imageAdapter.setIntPosition(pa.listImage.get(i).getPosition());
+                    listImage.add(imageAdapter);
+                }
+
+                RecyclerGridImageAdapter adapter = new RecyclerGridImageAdapter(v.getContext(), listImage);
+                rcImage.setAdapter(adapter);
+                final int paId = pa.id*15;
+                adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        selectImageProfile(paId2*15,position);
+                    public void onItemClick(View view, VmListImageAdapter obj, int position) {
+                        selectImageProfile(paId,position2, position);
                     }
                 });
+                linearLayout.addView(rcImage);
 
             }
             holder.ll_jawaban1.addView(linearLayout);
@@ -477,24 +502,47 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 tvPicture.setGravity(Gravity.CENTER);
                 linearLayout.addView(tvPicture);
                 View v = new ImageView(ctx);
-                ImageView image;
-                image = new ImageView(v.getContext());
-                image.setId(pa.id*15);
-                image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
 
-                if(pa.bitmap!=null){
-                    Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
-                    image.setImageBitmap(mybitmap);
+                RecyclerView rcImage = new RecyclerView(v.getContext());
+                rcImage.setId(pa.id*15);
+                if (pa.listImage.size()>1){
+                    rcImage.setLayoutManager(new GridLayoutManager(v.getContext(), 2));
+                    rcImage.addItemDecoration(new SpacingItemDecoration(2, new ClsTools().dpToPx(v.getContext(), 1), false));
+                }else {
+                    rcImage.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
+                    rcImage.addItemDecoration(new SpacingItemDecoration(1, new ClsTools().dpToPx(v.getContext(), 1), false));
                 }
-                linearLayout.addView(image);
-                final int paId2 = pa.id;
-                image.setOnClickListener(new View.OnClickListener() {
+                rcImage.setHasFixedSize(true);
+                rcImage.setNestedScrollingEnabled(false);
+                final int position2 = position;
+                List<VmListImageAdapter> listImage = new ArrayList<>();
+                for (int i = 0; i < pa.listImage.size(); i++){
+                    VmListImageAdapter imageAdapter = new VmListImageAdapter();
+                    imageAdapter.setIntId((pa.id*15)+pa.listImage.get(i).getPosition());
+                    imageAdapter.setBmpImage(pa.listImage.get(i).getBitmap());
+                    imageAdapter.setIntPosition(pa.listImage.get(i).getPosition());
+                    listImage.add(imageAdapter);
+                }
+
+                RecyclerGridImageAdapter adapter = new RecyclerGridImageAdapter(v.getContext(), listImage);
+                rcImage.setAdapter(adapter);
+                final int paId = pa.id*15;
+                adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        selectImageProfile(paId2*15,position);
+                    public void onItemClick(View view, VmListImageAdapter obj, int position) {
+                        selectImageProfile(paId,position2, position);
                     }
                 });
-
+//                ImageView image;
+//                image = new ImageView(v.getContext());
+//                image.setId(pa.id*15);
+//                image.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+//
+//                if(pa.bitmap!=null){
+//                    Bitmap mybitmap = Bitmap.createScaledBitmap(pa.bitmap, 400, 500, true);
+//                    image.setImageBitmap(mybitmap);
+//                }
+                linearLayout.addView(rcImage);
             }
             holder.ll_jawaban1.addView(linearLayout);
 

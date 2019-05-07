@@ -16,6 +16,8 @@ public class VmListItemAdapterPertanyaan {
     public boolean bitImage;
     public Bitmap bitmap;
     public Uri path;
+    public int countImage;
+    public List<VmImageContainer> listImage;
     public boolean bolHaveAnswer;
     public boolean bitValid;
     public String message;

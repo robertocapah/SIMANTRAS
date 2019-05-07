@@ -1,5 +1,7 @@
 package com.kalbenutritionals.simantra.ViewModel;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 /**
@@ -7,40 +9,31 @@ import java.io.Serializable;
  */
 
 public class VmListImageAdapter implements Serializable{
-    public String txtId;
-    public String txtImgName;
-    public String txtUrl;
-    public byte[] blobImg;
+    private int intId;
+    private int intPosition;
+    private Bitmap bmpImage;
 
-    public String getTxtImgName() {
-        return txtImgName;
+    public int getIntId() {
+        return intId;
     }
 
-    public void setTxtImgName(String txtImgName) {
-        this.txtImgName = txtImgName;
+    public void setIntId(int intId) {
+        this.intId = intId;
     }
 
-    public byte[] getBlobImg() {
-        return blobImg;
+    public int getIntPosition() {
+        return intPosition;
     }
 
-    public void setBlobImg(byte[] blobImg) {
-        this.blobImg = blobImg;
+    public void setIntPosition(int intPosition) {
+        this.intPosition = intPosition;
     }
 
-    public String getTxtUrl() {
-        return txtUrl;
+    public Bitmap getBmpImage() {
+        return bmpImage;
     }
 
-    public void setTxtUrl(String txtUrl) {
-        this.txtUrl = txtUrl;
-    }
-
-    public String getTxtId() {
-        return txtId;
-    }
-
-    public void setTxtId(String txtId) {
-        this.txtId = txtId;
+    public void setBmpImage(Bitmap bmpImage) {
+        this.bmpImage = bmpImage;
     }
 }

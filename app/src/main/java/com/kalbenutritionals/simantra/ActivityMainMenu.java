@@ -648,7 +648,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         pertanyaan.setIntPertanyaanId(2);
         pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanCheckBox);
         pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(false);
+        pertanyaan.setBolHavePhoto(true);
         pertanyaan.setTxtPertanyaan("pilih beberapa dari pertanyaan di checkbox di bawah ya pak");
         try{
             new RepomPertanyaan(context).createOrUpdate(pertanyaan);
