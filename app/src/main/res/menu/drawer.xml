@@ -45,6 +45,14 @@
             android:iconTint="@color/black"
             android:title="Transaction"
             app:actionLayout="@layout/menu_counter"/>
+        <item
+            android:id="@+id/validator"
+            android:checked="true"
+            android:icon="@drawable/ic_import_export_black_24dp"
+            android:orderInCategory="0"
+            android:iconTint="@color/black"
+            android:title="Validator"
+            app:actionLayout="@layout/menu_counter"/>
 
     </group>
     <group

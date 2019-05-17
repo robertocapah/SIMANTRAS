@@ -14,9 +14,28 @@ public class ClsmPertanyaan {
     @DatabaseField
     private int intJenisPertanyaanId;
     @DatabaseField
+    private int intValidateID;
+    @DatabaseField
     private boolean bolHaveAnswer;
     @DatabaseField
     private boolean bolHavePhoto;
+    @DatabaseField
+    private int intPhotoNeeded;
+    @DatabaseField
+    private int intSeq;
+
+    public static String TXTINTLOCATIONID = "intLocationDocsId";
+    public static String TXTJENISPERTANYAAN = "intJenisPertanyaanId";
+    public static String INTVALIDATEID = "intValidateID";
+
+
+    public int getIntValidateID() {
+        return intValidateID;
+    }
+
+    public void setIntValidateID(int intValidateID) {
+        this.intValidateID = intValidateID;
+    }
 
     public boolean isBolHavePhoto() {
         return bolHavePhoto;
@@ -24,6 +43,21 @@ public class ClsmPertanyaan {
 
     public void setBolHavePhoto(boolean bolHavePhoto) {
         this.bolHavePhoto = bolHavePhoto;
+    }
+    public int getIntSeq() {
+        return intSeq;
+    }
+
+    public void setIntSeq(int intSeq) {
+        this.intSeq = intSeq;
+    }
+
+    public int getIntPhotoNeeded() {
+        return intPhotoNeeded;
+    }
+
+    public void setIntPhotoNeeded(int intPhotoNeeded) {
+        this.intPhotoNeeded = intPhotoNeeded;
     }
 
     public int getIntPertanyaanId() {

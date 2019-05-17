@@ -3,6 +3,8 @@ package com.kalbenutritionals.simantra.Database.Repo;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.DatabaseHelper;
 import com.kalbenutritionals.simantra.Database.DatabaseManager;
@@ -86,5 +88,85 @@ public class RepomPertanyaan implements CRUD {
             e.printStackTrace();
         }
         return items;
+    }
+    public List<ClsmPertanyaan> findQuestion(int intValidateId) throws SQLException {
+        List<ClsmPertanyaan> items = null;
+        if (intValidateId == ClsHardCode.BASIC){
+            try {
+                QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }else if(intValidateId == ClsHardCode.HEADER){
+            try {
+                QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.HEADER).query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }else if(intValidateId == ClsHardCode.BODY){
+            try {
+                QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BODY).query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }else if(intValidateId == ClsHardCode.FOOTER){
+            try {
+                QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.FOOTER).query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return items;
+    }
+    /*public List<ClsmPertanyaan> findQuestionOptional(int intValidateId) throws SQLException {
+        List<ClsmPertanyaan> items = null;
+        try {
+            QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+            items = builder.where().ne(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.HEADER).and().eq(ClsmPertanyaan.INTVALIDATEID,ClsHardCode.OPTIONAL).query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+    public List<ClsmPertanyaan> findQuestionBodyAndFooter(int intValidateId) throws SQLException {
+        List<ClsmPertanyaan> items = null;
+        try {
+            QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+            items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BODY).and().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.FOOTER).query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+    public List<ClsmPertanyaan> findGenerateInfo() throws SQLException {
+        List<ClsmPertanyaan> items = null;
+        try {
+            QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+            items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().ne(ClsmPertanyaan.TXTJENISPERTANYAAN,"7").query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+    public List<ClsmPertanyaan> findGenerateNestedInfo() throws SQLException {
+        List<ClsmPertanyaan> items = null;
+        try {
+            QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+            items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,"1").and().eq(ClsmPertanyaan.TXTJENISPERTANYAAN,"7").query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }*/
+    public boolean deleteAllData(){
+        return helper.clearDataNotif();
+    }
+    public boolean deleteDataPertanyaanJawaban(){
+        return helper.clearDataNotif();
     }
 }

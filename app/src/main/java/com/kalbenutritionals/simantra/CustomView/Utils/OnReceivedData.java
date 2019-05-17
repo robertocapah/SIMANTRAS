@@ -13,5 +13,5 @@ import java.util.List;
  */
 
 public interface OnReceivedData {
-    public void onDataTransportReceived(List<View> listAnswer, HashMap<Integer, View> HMPertanyaan1, List<VmListAnswerView> ListAnswerView );
+    public void onDataTransportReceived(List<View> listAnswer, HashMap<Integer, View> HMPertanyaan1, List<VmListAnswerView> ListAnswerViewOptional, int type);
 }

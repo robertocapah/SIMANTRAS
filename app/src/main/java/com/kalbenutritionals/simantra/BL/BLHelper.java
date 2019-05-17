@@ -1,11 +1,19 @@
 package com.kalbenutritionals.simantra.BL;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.pdf.PdfDocument;
+import android.os.Debug;
 import android.os.Environment;
 import android.print.pdf.PrintedPdfDocument;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -14,6 +22,9 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.kalbe.mobiledevknlibs.DeviceInformation.DeviceInformation;
+import com.kalbe.mobiledevknlibs.DeviceInformation.ModelDevice;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Database.Common.ClsDataError;
 import com.kalbenutritionals.simantra.Database.Common.ClsDataJson;
 import com.kalbenutritionals.simantra.Database.Common.ClsPushData;
@@ -40,7 +51,15 @@ import java.util.List;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
+import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
+import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
+import com.kalbenutritionals.simantra.ViewModel.UserRequest;
+import com.kalbenutritionals.simantra.ViewModel.VMRequestData;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -82,6 +101,75 @@ public class BLHelper {
             greetings = "Good Night ";
         }
         return greetings;
+    }
+    public DeviceInfo getDeviceInfo(){
+        DeviceInfo data = new DeviceInfo();
+        try{
+            ModelDevice model = DeviceInformation.getDeviceInformation();
+            data.setDevice(model.getDevice());
+            data.setModel(model.getModel());
+            data.setOs_version(model.getOsVersion());
+            data.setProduct(model.getProduct());
+            data.setVersion_sdk(model.getVersionSDK());
+        }catch (Exception ex){
+
+        }
+        return data;
+    }
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+    public void updateTokenFirebase(final Context context){
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        FirebaseMessaging.getInstance().subscribeToTopic("KNMobileDev");
+        String txtLink = "http://10.171.13.50/SMT_API/api/updateUserToken";
+        VMRequestData data = new VMRequestData();
+        DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
+        UserRequest userData = new BLHelper().getUserInfo(context);
+        data.setData(userData);
+        data.setDevice_info(dataDevice);
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new FastNetworkingUtils().FNRequestPostDataUpdateToken(context,txtLink,obj,"",new InterfaceFastNetworking(){
+
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(context,"success",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(ANError error) {
+                Toast.makeText(context,"refresh token failed",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public UserRequest getUserInfo(Context context){
+        UserRequest data = new UserRequest();
+        try{
+            ClsmUserLogin userLogin = new RepomUserLogin(context).getUserLogin(context);
+            data.setIntOrgID(userLogin.getOrgId());
+            data.setIntRoleId(userLogin.getIntRoleID());
+            data.setPassword(userLogin.getPassword());
+            data.setTxtNameApp(ClsHardCode.nameApp);
+            data.setUsername(userLogin.getTxtUserName());
+            data.setTxtUserToken(userLogin.getToken());
+        }catch (Exception ex){
+
+        }
+        return data;
     }
     public ClsPushData pushData(String versionName, Context context){
         ClsPushData dtclsPushData = new ClsPushData();

@@ -53,10 +53,22 @@ public class ClsHardCode {
     public String linkChangePassword = new RepomConfig(context).API +"gantiPassword";
     public String linkGetDataMasterNew = new RepomConfig(context).API +"getDataMasterNew";
     public String txtBundleKeyBarcode = "BarcodeScanner";
+
+    public static int JenisPertanyaanTextView = 7;
     public static int JenisPertanyaanTextBox = 1;
-    public static int JenisPertanyaanCheckBox = 2;
-    public static int JenisPertanyaanRadioButton = 3;
-    public static int JenisPertanyaanSpinner = 4;
+    public static int JenisPertanyaanCheckBox = 3;
+    public static int JenisPertanyaanRadioButton = 4;
+    public static int JenisPertanyaanSpinner = 5;
+
+    public static int OPTIONAL = 2;
+    public static int MANDATORY = 3;
+
+    public static int BASIC = 1;
+    public static int HEADER = 2;
+    public static int BODY = 3;
+    public static int FOOTER = 4;
+
+    public static String nameApp = "SIMANTRAMOBILE";
 
     public String copydb(Context context) throws IOException {
         String CURRENT_DATABASE_PATH = "data/data/" + context.getPackageName() + "/databases/"+ new ClsHardCode().dbName;

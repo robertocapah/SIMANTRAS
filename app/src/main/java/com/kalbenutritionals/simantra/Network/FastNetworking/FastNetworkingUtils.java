@@ -86,8 +86,36 @@ public class FastNetworkingUtils {
                     }
                 });
     }
+    public void FNRequestPostDataUpdateToken(final Context context, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener) {
+        String access_token = "";
+        List<ClsToken> dataToken = null;
+        try {
+            dataToken = new RepoclsToken(context).findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+//        access_token = dataToken.get(0).txtUserToken.toString();
+        access_token = "abSRnV5k-WqJWkzEm_-Yi8GWV9wR7FqNAjrzGjw-25Ldbu_rH8_KD-TGYSdQH_Gbg98oOjR74ko0Q1OdO8OFryEzvOBS48MrEKfahY8Bv7cL9mRsctBUPOS6tzhSr3AMIBItRnb6CViP_ncOL9gcGQXYxnj14gttZ_ls_LQ2LhDm0VQYZheCzYu7itLJI-Notfr_3ei6sJfwrlBXCFfZ5pY90hMHwBSYf1HAyZgWStUmgDQx0U-ghHtB9qkZjY64oI2xjVCwpuVx0LFqVdcnIDCWDwZtKPJ_C_eWDoTTsGNIYPeWxeWwuREu3RbU1ewhS3_6heYzwm1vRfsf_YZgRELtlZA46mKo7om5drF9yP4eYf3fMxEXvIvMLkMMKSxP";
+        AndroidNetworking.post(txtLink)
+                .addJSONObjectBody(JObject)
+                .addHeaders("Authorization", "Bearer " + access_token)
+                .setTag("test")
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        listener.onResponse(response);
+                    }
 
-    public void FNRequestPostData(final Activity context, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener) {
+                    @Override
+                    public void onError(ANError error) {
+                        listener.onError(error);
+                        ErrorHandlerFN(context, error, TAG);
+                    }
+                });
+    }
+    public void FNRequestPostData(final Context context, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener) {
         String access_token = "";
         List<ClsToken> dataToken = null;
         final ProgressDialog Dialog = new ProgressDialog(context);
@@ -100,7 +128,8 @@ public class FastNetworkingUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        access_token = dataToken.get(0).txtUserToken.toString();
+//        access_token = dataToken.get(0).txtUserToken.toString();
+        access_token = "abSRnV5k-WqJWkzEm_-Yi8GWV9wR7FqNAjrzGjw-25Ldbu_rH8_KD-TGYSdQH_Gbg98oOjR74ko0Q1OdO8OFryEzvOBS48MrEKfahY8Bv7cL9mRsctBUPOS6tzhSr3AMIBItRnb6CViP_ncOL9gcGQXYxnj14gttZ_ls_LQ2LhDm0VQYZheCzYu7itLJI-Notfr_3ei6sJfwrlBXCFfZ5pY90hMHwBSYf1HAyZgWStUmgDQx0U-ghHtB9qkZjY64oI2xjVCwpuVx0LFqVdcnIDCWDwZtKPJ_C_eWDoTTsGNIYPeWxeWwuREu3RbU1ewhS3_6heYzwm1vRfsf_YZgRELtlZA46mKo7om5drF9yP4eYf3fMxEXvIvMLkMMKSxP";
         AndroidNetworking.post(txtLink)
                 .addJSONObjectBody(JObject)
                 .addHeaders("Authorization", "Bearer " + access_token)

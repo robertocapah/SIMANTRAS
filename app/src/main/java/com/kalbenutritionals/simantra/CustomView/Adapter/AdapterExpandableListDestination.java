@@ -2,12 +2,9 @@ package com.kalbenutritionals.simantra.CustomView.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -18,37 +15,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.kalbe.mobiledevknlibs.PermissionChecker.PermissionChecker;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
+import com.kalbenutritionals.simantra.CustomView.Utils.ClsTools;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.CustomView.Utils.SpacingItemDecoration;
-import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
 import com.kalbenutritionals.simantra.CustomView.Utils.setDataChecklist;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
-import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
-import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Fragment.FragmentDetailInfoChecker;
 import com.kalbenutritionals.simantra.R;
-import com.kalbenutritionals.simantra.CustomView.Utils.ClsTools;
 import com.kalbenutritionals.simantra.ViewModel.Jawaban;
 import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
 import com.kalbenutritionals.simantra.ViewModel.VmListImageAdapter;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,13 +46,12 @@ import java.util.List;
 import java.util.Locale;
 
 import static android.view.View.TEXT_ALIGNMENT_CENTER;
-import static com.kalbenutritionals.simantra.Fragment.FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_POSITION_ID;
 
 /**
  * Created by Roberto on 4/4/2019.
  */
 
-public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements setDataChecklist {
+public class AdapterExpandableListDestination extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements setDataChecklist {
 
     private List<VmListItemAdapterPertanyaan> items = new ArrayList<>();
 
@@ -91,7 +79,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void submit() {
-        
+
     }
 
     public interface OnItemClickListener {
@@ -101,10 +89,10 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
     }
-    public AdapterExpandableList(){
+    public AdapterExpandableListDestination(){
 
     }
-    public AdapterExpandableList(Context context, List<VmListItemAdapterPertanyaan> items) {
+    public AdapterExpandableListDestination(Context context, List<VmListItemAdapterPertanyaan> items) {
         this.items = items;
         ctx = context;
     }
@@ -203,10 +191,10 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     linearLayout = (LinearLayout) v.findViewById(pa.id*21);
                 }
             }
-//            listAnswer.add(linearLayout);
+            listAnswer.add(linearLayout);
             VmListAnswerView vmListAnswerView = new VmListAnswerView();
             vmListAnswerView.setIntPertanyaanId(pa.id);
-//            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
+            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
             ListAnswerView.add(vmListAnswerView);
         }else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanRadioButton){
@@ -218,10 +206,10 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     linearLayout = (LinearLayout) v.findViewById(pa.id*22);
                 }
             }
-//            listAnswer.add(linearLayout);
+            listAnswer.add(linearLayout);
             VmListAnswerView vmListAnswerView = new VmListAnswerView();
             vmListAnswerView.setIntPertanyaanId(pa.id);
-//            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
+            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
             ListAnswerView.add(vmListAnswerView);
         }/*else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanTextBox){
@@ -253,10 +241,10 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     linearLayout = (LinearLayout) v.findViewById(pa.id*25);
                 }
             }
-//             listAnswer.add(linearLayout);
+            listAnswer.add(linearLayout);
             VmListAnswerView vmListAnswerView = new VmListAnswerView();
             vmListAnswerView.setIntPertanyaanId(pa.id);
-//            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
+            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
             ListAnswerView.add(vmListAnswerView);
 
@@ -277,7 +265,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 
             LinearLayout linearLayout = new LinearLayout(ctx);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.gravity =  Gravity.CENTER_VERTICAL;
             linearLayout.setLayoutParams(layoutParams);
             linearLayout.setId(pa.id*21);
@@ -295,7 +283,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     }else{
                         checkBox.setChecked(false);
                     }
-                    checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 //                    checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //                        @Override
 //                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -327,7 +315,6 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     rcImage.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
                     rcImage.addItemDecoration(new SpacingItemDecoration(1, new ClsTools().dpToPx(v.getContext(), 1), false));
                 }
-
                 rcImage.setHasFixedSize(true);
                 rcImage.setNestedScrollingEnabled(false);
                 final int position2 = position;
@@ -347,7 +334,6 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
                         selectImageProfile(paId,position2, position);
-                        GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });
                 linearLayout.addView(rcImage);
@@ -360,7 +346,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 
             LinearLayout linearLayout = new LinearLayout(ctx);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.gravity =  Gravity.CENTER_VERTICAL;
             linearLayout.setLayoutParams(layoutParams);
             linearLayout.setId(pa.id*22);
@@ -421,13 +407,47 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
                         selectImageProfile(paId,position2, position);
-                        GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });
                 linearLayout.addView(rcImage);
 
             }
             holder.ll_jawaban1.addView(linearLayout);
+
+        }else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanTextView){
+            TextView tvPertanyaan = new TextView(ctx);
+            tvPertanyaan.setText(pa.txtPertanyaan);
+            holder.lyt_pertayaan.addView(tvPertanyaan);
+
+            LinearLayout linearLayout = new LinearLayout(ctx);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+            linearLayout.setLayoutParams(layoutParams);
+            linearLayout.setId(pa.id*23);
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            Activity activity = (Activity) ctx;
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels - 60;
+            int heigth = displayMetrics.heightPixels / 10;
+            LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(width, heigth);
+            layoutParams2.gravity = Gravity.CENTER_HORIZONTAL;
+            final TextView etTest = new TextView(ctx);
+            etTest.setText("");
+            etTest.setHint("Please fill...");
+            etTest.setId(pa.id*13);
+            etTest.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            etTest.setSingleLine(false);
+//            etTest.setEms(10);
+            etTest.setGravity(Gravity.TOP);
+            etTest.setBackgroundResource(R.drawable.bg_edtext);
+            etTest.setLayoutParams(layoutParams2);
+
+            linearLayout.addView(etTest);
+
+            holder.ll_jawaban1.addView(linearLayout);
+            pa = new VmListItemAdapterPertanyaan();
 
         }else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
             TextView tvPertanyaan = new TextView(ctx);
@@ -437,7 +457,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             List<Jawaban> jawabans  = pa.jawabans;
             LinearLayout linearLayout = new LinearLayout(ctx);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
             linearLayout.setLayoutParams(layoutParams);
             linearLayout.setId(pa.id*24);
@@ -500,7 +520,6 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
                         selectImageProfile(paId,position2, position);
-                        GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });
 //                ImageView image;
@@ -544,9 +563,9 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             final OriginalViewHolder view = (OriginalViewHolder) holder;
              p = items.get(position);
              generateQ( p,view,position);
-             findViewId(p, view,position);
-             if (position==items.size()-1){
-                 receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView, p.intPositionId);
+//             findViewId(p, view,position);
+             /*if (position==items.size()-1){
+                 receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView);
                  ListAnswerView = new ArrayList<>();
              }
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
@@ -556,7 +575,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                         mOnItemClickListener.onItemClick(view, items.get(position), position);
                     }
                 }
-            });
+            });*/
 
 
         }

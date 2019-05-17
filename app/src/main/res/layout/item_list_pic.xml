@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/lyt_expand_passenger"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/spacing_small"
+        android:paddingBottom="@dimen/spacing_small">
+
+        <TextView
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/txtNumberPIC"
+            android:text="1."
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/grey_40" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:id="@+id/txtNamaPIC"
+            android:minHeight="?attr/actionBarSize"
+            android:text="Mr. Roberto Oloan Capah"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/grey_90" />
+
+        <View
+            android:layout_width="@dimen/spacing_large"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtJabatanPIC"
+            android:gravity="center_vertical"
+            android:background="@color/grey_5"
+            android:padding="@dimen/spacing_small"
+            android:text="SHP"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/grey_60" />
+
+        <View
+            android:layout_width="@dimen/spacing_smlarge"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</LinearLayout>

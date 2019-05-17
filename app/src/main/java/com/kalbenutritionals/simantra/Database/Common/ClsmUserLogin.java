@@ -24,6 +24,12 @@ public class ClsmUserLogin implements Serializable {
     private String TxtEmpID;
     @DatabaseField(columnName = "TxtEmail")
     private String TxtEmail;
+    @DatabaseField(columnName = "OrgId")
+    private String OrgId;
+    @DatabaseField(columnName = "Password")
+    private String Password;
+    @DatabaseField(columnName = "Token")
+    private String Token;
     @DatabaseField(columnName = "intRoleID")
     private int intRoleID;
     @DatabaseField(columnName = "txtRoleName")
@@ -57,6 +63,30 @@ public class ClsmUserLogin implements Serializable {
     public String Property_ListDatamUserLogin = "ListDatamUserLogin";
     public String Property_txtGuID = "txtGuID";
 
+
+    public String getToken() {
+        return Token;
+    }
+
+    public void setToken(String token) {
+        Token = token;
+    }
+
+    public String getOrgId() {
+        return OrgId;
+    }
+
+    public void setOrgId(String orgId) {
+        OrgId = orgId;
+    }
+
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String password) {
+        Password = password;
+    }
 
     public int getIntUserID() {
         return IntUserID;

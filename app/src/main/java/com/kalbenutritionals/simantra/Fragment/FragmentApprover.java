@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -24,13 +25,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidnetworking.error.ANError;
+import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterImageSlider;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasic;
@@ -55,7 +59,7 @@ public class FragmentApprover extends Fragment {
     AdapterListBasic adapterBasic;
     private static List<VmAdapterBasic> listData = new ArrayList<>();
     private View parent_view;
-    private AdapterImageSlider adapterImageSlider;
+    AdapterImageSlider adapterImageSlider;
     View v;
     Context context;
     @BindView(R.id.bg_image)
@@ -73,7 +77,7 @@ public class FragmentApprover extends Fragment {
             R.drawable.img_social_android,
             R.drawable.img_social_behance
     };
-
+    List<Images> itemsImagePu;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -152,18 +156,23 @@ public class FragmentApprover extends Fragment {
         dialogMain.setContentView(R.layout.dialog_header_polygon);
         RecyclerView rvListExcalation = (RecyclerView) dialogMain.findViewById(R.id.rvListExcalation);
         adapterImageSlider = new AdapterImageSlider(getActivity(), new ArrayList<Images>());
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialogMain.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
         viewPager = dialogMain.findViewById(R.id.pager);
 //        layout_dots = dialog.findViewById(R.id.layout_dots);
-        final List<Images> items = new ArrayList<>();
+        itemsImagePu = new ArrayList<>();
         for (int i = 0; i < array_image_place.length; i++) {
             Images obj = new Images();
             obj.image = array_image_place[i];
             obj.imageDrw = getResources().getDrawable(obj.image);
             obj.imgLink = "http://cdn2.tstatic.net/aceh/foto/bank/images/tidur_20160102_105659.jpg";
-            items.add(obj);
+            itemsImagePu.add(obj);
         }
 
-        adapterImageSlider.setItems(items);
+        adapterImageSlider.setItems(itemsImagePu);
         viewPager.setAdapter(adapterImageSlider);
         viewPager.setCurrentItem(0);
         AdapterListBasic adapterListBasica = new AdapterListBasic(getActivity().getApplicationContext(),objDt);
@@ -172,13 +181,43 @@ public class FragmentApprover extends Fragment {
 //        addBottomDots(layout_dots, adapterImageSlider.getCount(), 0);
 //        ((TextView) dialog.findViewById(R.id.title)).setText(items.get(0).txtPertanyaan);
 //        ((TextView) dialog.findViewById(R.id.brief)).setText(items.get(0).brief);
+        adapterListBasica.setOnItemClickListener(new AdapterListBasic.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, VmAdapterBasic obj, int position) {
+                if(position == 1){
+                    itemsImagePu = new ArrayList<>();
+                    Images obj2 = new Images();
+                    obj2.image = array_image_place[1];;
+                    obj2.imageDrw = getResources().getDrawable(obj2.image);
+                    obj2.imgLink = "https://jendelainspirasi.com/wp-content/uploads/2018/05/kata-kata-semangat-untuk-diri-sendiri-1.jpg";
+                    itemsImagePu.add(obj2);
+                    obj2 = new Images();
+                    obj2.image = array_image_place[1];;
+                    obj2.imageDrw = getResources().getDrawable(obj2.image);
+                    obj2.imgLink = "https://lerry07.files.wordpress.com/2017/04/kata-kata-semangat.jpg?w=307&h=307";
+                    itemsImagePu.add(obj2);
+                }
+                adapterImageSlider.setItems(itemsImagePu);
+                adapterImageSlider.notifyDataSetChanged();
+                viewPager.setAdapter(adapterImageSlider);
+                viewPager.setCurrentItem(0);
+            }
+        });
+        adapterImageSlider.setOnItemClickListener(new AdapterImageSlider.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, Images obj) {
+                showDialogImageCenter("https://lerry07.files.wordpress.com/2017/04/kata-kata-semangat.jpg?w=307&h=307");
+            }
+        });
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int pos, float positionOffset, int positionOffsetPixels) {
+                int a = 1;
             }
 
             @Override
             public void onPageSelected(int pos) {
+                int a = 1;
 //                ((TextView) dialog.findViewById(R.id.title)).setText(items.get(pos).txtPertanyaan);
 //                ((TextView) dialog.findViewById(R.id.brief)).setText(items.get(pos).brief);
 //                addBottomDots(layout_dots, adapterImageSlider.getCount(), pos);
@@ -186,6 +225,7 @@ public class FragmentApprover extends Fragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                int a = 1;
             }
         });
 
@@ -237,6 +277,23 @@ public class FragmentApprover extends Fragment {
 
 
         dialogMain.show();
+    }
+    private void showDialogImageCenter(String linkImages) {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_image_center);
+        ImageView imageView = dialog.findViewById(R.id.imageDialog);
+        ImageButton btnClosed = dialog.findViewById(R.id.btnClose);
+        Glide.with(this).load(linkImages).placeholder(R.drawable.ic_cloud_download_black_24dp).into(imageView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.setCancelable(true);
+        dialog.show();
+        btnClosed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
 

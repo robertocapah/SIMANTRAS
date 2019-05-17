@@ -71,6 +71,45 @@
                             tools:ignore="VectorDrawableCompat" />
 
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/white"
+                        android:gravity="center_vertical"
+                        android:minHeight="?attr/actionBarSize"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="@dimen/spacing_smlarge"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="No Doscument"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                            android:textColor="@color/grey_80" />
+
+                        <TextView
+                            android:id="@+id/tv_no_doc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/spacing_large"
+                            android:text="2019.12345.CXDT28"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                            android:textColor="@color/colorAccent" />
+
+                        <ImageButton
+                            android:id="@+id/bt_copy_doc"
+                            android:layout_width="?attr/actionBarSize"
+                            android:layout_height="?attr/actionBarSize"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:tint="@color/grey_60"
+                            app:srcCompat="@drawable/ic_content_copy"
+                            tools:ignore="VectorDrawableCompat" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -125,6 +164,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Roberto oloan capah"
+                                android:id="@+id/tvDriverName"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textColor="@color/grey_40" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Anton"
+                                android:id="@+id/tvKeraniName"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/grey_40" />
 
@@ -168,6 +216,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="17.40"
+                                    android:id="@+id/tvTimeFrom"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                                     android:textColor="@color/grey_90"
                                     android:textStyle="bold" />
@@ -176,6 +225,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="28 Sep"
+                                    android:id="@+id/tvDateFrom"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                     android:textColor="@color/grey_40" />
 
@@ -195,6 +245,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="18.55"
+                                    android:id="@+id/tvTimeTo"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                                     android:textColor="@color/grey_90"
                                     android:textStyle="bold" />
@@ -203,6 +254,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="28 Sep"
+                                    android:id="@+id/tvDateTo"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                     android:textColor="@color/grey_40" />
 
@@ -254,6 +306,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Sanghiang Perkasa Factory"
+                                    android:id="@+id/tvOutletFrom"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                                     android:textColor="@color/grey_90"
                                     android:textStyle="bold" />
@@ -262,6 +315,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Cikampek"
+                                    android:id="@+id/tvAddressFrom"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                     android:textColor="@color/grey_80" />
 
@@ -280,6 +334,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:id="@+id/tvOutletTo"
                                     android:text="Kalbe Milko Indonesia (KMI)"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                                     android:textColor="@color/grey_90"
@@ -288,6 +343,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:id="@+id/tvAddressTo"
                                     android:text="Bogor"
                                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                     android:textColor="@color/grey_80" />
@@ -311,6 +367,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/spacing_smlarge"
+                        android:id="@+id/tvTanggal"
                         android:text="duration 1 hour 15 minutes"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/grey_60" />
@@ -318,6 +375,17 @@
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
+            <android.support.v7.widget.RecyclerView
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:id="@+id/rvGeneralInformation"
+                android:background="@android:color/white">
+
+            </android.support.v7.widget.RecyclerView>
         </LinearLayout>
+
     </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

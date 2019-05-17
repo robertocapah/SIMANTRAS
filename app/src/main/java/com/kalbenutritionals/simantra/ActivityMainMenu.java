@@ -41,6 +41,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidnetworking.error.ANError;
 import com.google.android.gms.common.ConnectionResult;
@@ -49,6 +50,7 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
@@ -73,6 +75,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import me.leolin.shortcutbadger.ShortcutBadgeException;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.BL.BLMain;
 import com.kalbenutritionals.simantra.CustomView.Utils.AuthenticatorUtil;
 import com.kalbenutritionals.simantra.CustomView.Utils.IOBackPressed;
@@ -107,6 +110,9 @@ import com.kalbenutritionals.simantra.Fragment.FragmentTransactions;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.Service.ServiceNative;
+import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
+import com.kalbenutritionals.simantra.ViewModel.UserRequest;
+import com.kalbenutritionals.simantra.ViewModel.VMRequestData;
 
 /**
  * Created by Rian Andrivani on 11/22/2017.
@@ -281,8 +287,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                     .penaltyDeath()
                     .build());
         }
-        GenerateDataHardCode(getApplicationContext());
-
         super.onCreate(savedInstanceState);
         selectedId = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -505,6 +509,31 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             selectedId = 99;
                             break;
 
+                        case R.id.validator:
+                            checkNavItem = null;
+                            toolbar.setTitle("SIMANTRA");
+
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                            // fragment yang dituju
+                            FragmentTab fragmentTab2 = new FragmentTab();
+                            FragmentTransaction fragmentTransactionTab2 = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionTab2.replace(R.id.frame, fragmentTab2);
+                            fragmentTransactionTab2.commit();
+
+
+                            /*FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
+                            FragmentTransactions fragmentTransactionInfoChecker = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
+                            fragmentTransactionInfoChecker.commit();*/
+
+                            /*FragmentChecklist checklistFragment = new FragmentChecklist();
+                            FragmentTransactions fragmentTransactionChecklist = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionChecklist.replace(R.id.frame, checklistFragment);
+                            fragmentTransactionChecklist.commit();*/
+                            selectedId = 99;
+                            break;
+
                         case R.id.transaction:
                             FragmentTransactions fragmentTransactions = new FragmentTransactions();
                             FragmentTransaction fragmentTransactionsTrans = getSupportFragmentManager().beginTransaction();
@@ -630,135 +659,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         return super.onPrepareOptionsMenu(menu);
 
     }
-    public void GenerateDataHardCode(Context context){
-        ClsmPertanyaan pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-        pertanyaan.setBolHaveAnswer(false);
-        pertanyaan.setIntJenisPertanyaanId(1);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
 
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setBolHaveAnswer(true);
-        pertanyaan.setIntPertanyaanId(2);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanCheckBox);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setTxtPertanyaan("pilih beberapa dari pertanyaan di checkbox di bawah ya pak");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(3);
-        pertanyaan.setBolHaveAnswer(true);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanRadioButton);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setTxtPertanyaan("pilih satu dari beberapa di radioButton di bawah ya pak");
-        try{
-            new RepomPertanyaan(getApplicationContext()).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(4);
-        pertanyaan.setBolHaveAnswer(true);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setTxtPertanyaan("isi textbox dan ambil sebuah gambar ya pak");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(7);
-        pertanyaan.setBolHaveAnswer(false);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak (2)");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-
-        ClsmJawaban clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(1);
-        clsmJawaban.setIdPertanyaan(2);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja   1");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(2);
-        clsmJawaban.setIdPertanyaan(2);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(3);
-        clsmJawaban.setIdPertanyaan(2);
-        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(4);
-        clsmJawaban.setIdPertanyaan(3);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja 1");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(5);
-        clsmJawaban.setIdPertanyaan(3);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(6);
-        clsmJawaban.setIdPertanyaan(3);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-
-    }
 
     // put image from camera
     @Override

@@ -6,11 +6,13 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.kalbenutritionals.simantra.Database.Common.ClsPhotoProfile;
 import com.kalbenutritionals.simantra.Database.Common.ClsTChecker;
 import com.kalbenutritionals.simantra.Database.Common.ClsTJawaban;
+import com.kalbenutritionals.simantra.Database.Common.ClsTNotifikasi;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
 import com.kalbenutritionals.simantra.Database.Common.ClsmChecklist;
 import com.kalbenutritionals.simantra.Database.Common.ClsmConfigData;
@@ -38,7 +40,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // txtPertanyaan of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = _path.dbName;
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     // the DAO object we use to access the SimpleData table
     protected Dao<ClsmConfigData, Integer> mConfigDao;
@@ -58,6 +60,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     protected Dao<ClsmJawaban, Integer> mJawabanDao;
     protected Dao<ClsTJawaban, Integer> tJawabanDao;
     protected Dao<ClsTChecker, Integer> tCheckersDao;
+    protected Dao<ClsTNotifikasi, Integer> tNotifikasisDao;
 
 
 
@@ -85,6 +88,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, ClsmJawaban.class);
             TableUtils.createTableIfNotExists(connectionSource, ClsTJawaban.class);
             TableUtils.createTableIfNotExists(connectionSource, ClsTChecker.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsTNotifikasi.class);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,6 +120,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, ClsmJawaban.class,true);
             TableUtils.dropTable(connectionSource, ClsTJawaban.class,true);
             TableUtils.dropTable(connectionSource, ClsTChecker.class,true );
+            TableUtils.dropTable(connectionSource, ClsTNotifikasi.class,true );
 
             onCreate(database, connectionSource);
         } catch (SQLException e) {
@@ -139,10 +144,42 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, ClsmJawaban.class);
             TableUtils.clearTable(connectionSource, ClsTJawaban.class);
             TableUtils.clearTable(connectionSource, ClsTChecker.class);
+            TableUtils.clearTable(connectionSource, ClsTNotifikasi.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+    }
+    public boolean clearDataNotif(){
+        boolean valid = false;
+        try{
+            TableUtils.clearTable(connectionSource, ClsTNotifikasi.class);
+            valid = true;
+        }catch (SQLException e) {
+            e.printStackTrace();
+            valid = false;
+        }
+        return valid;
+    }
+    public boolean clearDataPertanyaanJawaban(){
+        boolean valid = false;
+        try{
+            TableUtils.clearTable(connectionSource, ClsTNotifikasi.class);
+            TableUtils.clearTable(connectionSource, ClsmJawaban.class);
+            TableUtils.clearTable(connectionSource, ClsmPertanyaan.class);
+            valid = true;
+        }catch (SQLException e) {
+            e.printStackTrace();
+            valid = false;
+        }
+        return valid;
+    }
+
+    public Dao<ClsTNotifikasi, Integer> gettNotifikasisDao() throws SQLException {
+        if(tNotifikasisDao == null){
+            tNotifikasisDao = getDao(ClsTNotifikasi.class);
+        }
+        return tNotifikasisDao;
     }
 
     public Dao<ClsTJawaban, Integer> gettJawabanDao() throws SQLException {
@@ -279,5 +316,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         mJawabanDao = null;
         tCheckersDao = null;
         tJawabanDao = null;
+        tNotifikasisDao = null;
     }
 }

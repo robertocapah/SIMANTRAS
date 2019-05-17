@@ -23,7 +23,7 @@ public class AdapterImageSlider extends PagerAdapter {
 
     private AdapterImageSlider.OnItemClickListener onItemClickListener;
 
-    private interface OnItemClickListener {
+    public interface OnItemClickListener {
         void onItemClick(View view, Images obj);
     }
 

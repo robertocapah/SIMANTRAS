@@ -353,15 +353,29 @@
                             app:srcCompat="@drawable/ic_import_export_black_24dp"
                             tools:ignore="VectorDrawableCompat" />
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Optional"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                            android:textColor="@color/grey_90"
-                            android:textStyle="bold" />
+                            android:orientation="vertical">
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Optional"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_90"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/tvDescOptional"
+                                android:text="Di anjurkan di isi"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textColor="@color/grey_40" />
+
+                        </LinearLayout>
                         <View
                             android:layout_width="@dimen/spacing_large"
                             android:layout_height="wrap_content" />
@@ -447,15 +461,30 @@
                             android:tint="@color/colorPrimaryLight"
                             app:srcCompat="@drawable/ic_import_export_black_24dp"
                             tools:ignore="VectorDrawableCompat" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Mandatory"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                            android:textColor="@color/grey_90"
-                            android:textStyle="bold" />
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mandatory Conditions"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_90"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/tvDescBody"
+                                android:text="Ketentuan wajib lolos"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textColor="@color/grey_40" />
+
+                        </LinearLayout>
+
 
                         <View
                             android:layout_width="@dimen/spacing_large"
@@ -553,7 +582,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="PIC"
+                                android:text="Mandatory Filled"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/grey_90"
                                 android:textStyle="bold" />
@@ -561,7 +590,8 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="3 People"
+                                android:id="@+id/tvDescFooter"
+                                android:text="Wajib terisi"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/grey_40" />
 
@@ -581,155 +611,26 @@
                             tools:ignore="VectorDrawableCompat" />
 
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/lyt_expand_passenger"
+                <LinearLayout
+                    android:id="@+id/lyt_expand_passenger"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rvPIC"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="vertical"
+                        android:scrollingCache="true" />
+                    <!--<ListView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
+                        android:id="@+id/lvPIC"
+                        android:nestedScrollingEnabled="false">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/grey_10" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingTop="@dimen/spacing_small"
-                            android:paddingBottom="@dimen/spacing_small">
-
-                            <TextView
-                                android:layout_width="?attr/actionBarSize"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="1."
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_40" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:minHeight="?attr/actionBarSize"
-                                android:text="Mr. Roberto Oloan Capah"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_90" />
-
-                            <View
-                                android:layout_width="@dimen/spacing_large"
-                                android:layout_height="wrap_content" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:background="@color/grey_5"
-                                android:padding="@dimen/spacing_small"
-                                android:text="SHP"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_60" />
-
-                            <View
-                                android:layout_width="@dimen/spacing_smlarge"
-                                android:layout_height="wrap_content" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingTop="@dimen/spacing_small"
-                            android:paddingBottom="@dimen/spacing_small">
-
-                            <TextView
-                                android:layout_width="?attr/actionBarSize"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="2."
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_40" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:minHeight="?attr/actionBarSize"
-                                android:text="Mr. Albet"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_90" />
-
-                            <View
-                                android:layout_width="@dimen/spacing_large"
-                                android:layout_height="wrap_content" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:background="@color/grey_5"
-                                android:padding="@dimen/spacing_small"
-                                android:text="SHP"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_60" />
-
-                            <View
-                                android:layout_width="@dimen/spacing_smlarge"
-                                android:layout_height="wrap_content" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingTop="@dimen/spacing_small"
-                            android:paddingBottom="@dimen/spacing_small">
-
-                            <TextView
-                                android:layout_width="?attr/actionBarSize"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="3."
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_40" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:minHeight="?attr/actionBarSize"
-                                android:text="Mrs Pevita Pearce"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_90" />
-
-                            <View
-                                android:layout_width="@dimen/spacing_large"
-                                android:layout_height="wrap_content" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:background="@color/grey_5"
-                                android:padding="@dimen/spacing_small"
-                                android:text="KMI"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_60" />
-
-                            <View
-                                android:layout_width="@dimen/spacing_smlarge"
-                                android:layout_height="wrap_content" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
+                    </ListView>-->
+                </LinearLayout>
 
                 </LinearLayout>
 
@@ -740,7 +641,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:layout_marginBottom="@dimen/spacing_medium"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:cardCornerRadius="0dp"
                 app:cardElevation="2dp">
 
