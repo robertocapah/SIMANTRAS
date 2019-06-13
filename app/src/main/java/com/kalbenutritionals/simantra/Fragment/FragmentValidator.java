@@ -1,6 +1,7 @@
 package com.kalbenutritionals.simantra.Fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +9,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
+import com.google.zxing.Result;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.R;
 
 import java.text.SimpleDateFormat;
@@ -26,51 +30,56 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class FragmentLoading extends Fragment {
-    View v;
+public class FragmentValidator extends Fragment implements ZXingScannerView.ResultHandler {
+
     Unbinder unbinder;
-    @BindView(R.id.tvStartTime)
-    TextView tvStartTime;
-    @BindView(R.id.tvTimerLoad)
-    TextView tvTimerLoad;
-    Handler handler;
-    int Seconds, Hours, Minutes, MinutesTime, MilliSeconds;
-    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L, TimeBuff2;
+    Context context;
+    View v;
     @BindView(R.id.btnStart)
     Button btnStart;
     @BindView(R.id.spin_kit)
     SpinKitView spinKit;
-    @BindView(R.id.btnFinish)
-    Button btnFinish;
     @BindView(R.id.ivDone)
     ImageView ivDone;
-    public boolean isFinished = false;
+    @BindView(R.id.tvStartTime)
+    TextView tvStartTime;
+    @BindView(R.id.tvTimerLoad)
+    TextView tvTimerLoad;
+    @BindView(R.id.btnFinish)
+    Button btnFinish;
+    Handler handler;
+    int Seconds, Hours, Minutes, MinutesTime, MilliSeconds;
+    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
+    boolean isFinished = false;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_loading, container, false);
+        v = inflater.inflate(R.layout.fragment_loading_validator, container, false);
         unbinder = ButterKnife.bind(this, v);
         handler = new Handler();
         spinKit.setVisibility(View.GONE);
         btnFinish.setVisibility(View.GONE);
-        /*viewTicktockCountup = (TickTockView) v.findViewById(R.id.view_ticktock_countup);
-        if (viewTicktockCountup != null) {
-            viewTicktockCountup.setOnTickListener(new TickTockView.OnTickListener() {
-
-                Date date = new Date();
-                @Override
-                public String getText(long timeRemaining) {
-                    date.setTime(System.currentTimeMillis());
-                    return format.format(date);
-                }
-            });
-        }*/
-
 
         return v;
     }
 
+    @Override
+    public void handleResult(Result result) {
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
     public Runnable runnable = new Runnable() {
 
         public void run() {
@@ -123,13 +132,6 @@ public class FragmentLoading extends Fragment {
 //        viewTicktockCountup.stop();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-//        handler.removeCallbacks(runnable);
-    }
-
     @OnClick(R.id.btnStart)
     public void onViewClicked() {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -163,30 +165,39 @@ public class FragmentLoading extends Fragment {
 
     @OnClick(R.id.btnFinish)
     public void onViewBtnFinishClicked() {
+        if (isFinished){
+            Bundle arguments2 = new Bundle();
+            arguments2.putInt( ClsHardCode.TXT_STATUS_MENU , ClsHardCode.INT_VALIDATOR);
+            FragmentSPMSearch fragmentSPMSearch2 = new FragmentSPMSearch();
+            fragmentSPMSearch2.setArguments(arguments2);
+            FragmentTransaction fragmentTransactionSPMSearch2 = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransactionSPMSearch2.replace(R.id.frame, fragmentSPMSearch2);
+            fragmentTransactionSPMSearch2.commit();
+        }else{
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setMessage("Are sure to finish loading process ?")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            handler.removeCallbacks(runnable);
+                            btnFinish.setText("Close Transaction");
+                            isFinished = true;
+                            ivDone.setVisibility(View.VISIBLE);
+                            spinKit.setVisibility(View.GONE);
+                            btnStart.setVisibility(View.GONE);
+                        }
+                    })
+                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
 
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder
-                .setCancelable(false)
-                .setMessage("Are sure to finish loading process ?")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handler.removeCallbacks(runnable);
-                        btnFinish.setText("Finished");
-                        ivDone.setVisibility(View.VISIBLE);
-                        spinKit.setVisibility(View.GONE);
-                        btnStart.setVisibility(View.GONE);
-                        btnFinish.setClickable(false);
-                        isFinished = true;
-                    }
-                })
-                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+            final AlertDialog alertD = alertDialogBuilder.create();
+            alertD.show();
+        }
 
-        final AlertDialog alertD = alertDialogBuilder.create();
-        alertD.show();
     }
 }

@@ -33,7 +33,6 @@ import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -55,6 +54,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
     ImageView ivScanBarcode;
     Context context;
     private Gson gson;
+    int intStatus = 0;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,7 +62,8 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         unbinder = ButterKnife.bind(this, v);
         context = getActivity().getApplicationContext();
         //is there any way that I can stay in your eyes
-
+        Bundle arguments = getArguments();
+        intStatus = arguments.getInt(ClsHardCode.TXT_STATUS_MENU);
         return v;
     }
 
@@ -86,7 +87,11 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
             case R.id.etSpmNumber:
                 break;
             case R.id.btnGo:
-                goToInfoChecker();
+                if(intStatus == ClsHardCode.INT_CHECKER){
+                    goToInfoChecker();
+                }else if (intStatus == ClsHardCode.INT_VALIDATOR){
+                    goToValidatorUnLoading();
+                }
                 break;
             case R.id.ivScanBarcode:
                 scanBarcode();
@@ -99,44 +104,57 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         FragmentTransactions fragmentTransactionInfoChecker = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
         fragmentTransactionInfoChecker.commit();*/
-        String txtLink = "http://10.171.13.50/SMT_API/api/getListFormByOrg";
-        JSONObject obj = null;
-        try {
-            obj = new JSONObject("{\n" +
-                    "  \"data\": {\n" +
-                    "    \"username\": \"michael.leonard\",\n" +
-                    "    \"password\": \"krucil123\",\n" +
-                    "    \"intRoleId\": 3,\n" +
-                    "    \"txtNameApp\": \"simantra\",\n" +
-                    "    \"txtUserToken\": \"tokenTest\",\n" +
-                    "    \"intOrgID\": \"0\"\n" +
-                    "  },\n" +
-                    "  \"device_info\": {\n" +
-                    "    \"os_version\": \"sample string 1\",\n" +
-                    "    \"version_sdk\": \"sample string 2\",\n" +
-                    "    \"device\": \"sample string 3\",\n" +
-                    "    \"model\": \"sample string 4\",\n" +
-                    "    \"product\": \"sample string 5\"\n" +
-                    "  }\n" +
-                    "}");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String txtLink = new ClsHardCode().linkGetListFormByOrg;
+        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,"KNS17090047");
+
         new FastNetworkingUtils().FNRequestPostData(getActivity(), txtLink, obj, "Processing SPM", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
-                if (model.getResult().isStatus()){
-                    new RepomPertanyaan(context).deleteAllData();
-                    GenerateDataHardCode(getActivity().getApplicationContext(),model);
-                    FragmentTab fragmentTab = new FragmentTab();
-                    FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
-                    fragmentTransactionTab.commit();
-                }else{
-                    Toast.makeText(context,model.getResult().getMessage(),Toast.LENGTH_SHORT).show();
+                if(model.getResult()!=null){
+                    if ( model.getResult().isStatus()){
+                        new RepomPertanyaan(context).deleteAllData();
+                        GenerateData(getActivity().getApplicationContext(),model);
+                        FragmentTab fragmentTab = new FragmentTab();
+                        FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                        fragmentTransactionTab.commit();
+                    }else{
+                        Toast.makeText(context,model.getResult().getMessage(),Toast.LENGTH_SHORT).show();
+                    }
                 }
+            }
 
+            @Override
+            public void onError(ANError error) {
+                int a = 1;
+            }
+        });
+    }
+    private void goToValidatorUnLoading() {
+       /* FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
+        FragmentTransactions fragmentTransactionInfoChecker = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
+        fragmentTransactionInfoChecker.commit();*/
+        String txtLink = new ClsHardCode().linkGetListFormByOrg;
+        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,"KNS17090047");
+
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), txtLink, obj, "Processing SPM", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
+                if(model.getResult()!=null){
+                    if ( model.getResult().isStatus()){
+//                        new RepomPertanyaan(context).deleteAllData();
+//                        GenerateData(getActivity().getApplicationContext(),model);
+                        FragmentValidator fragmentValidator = new FragmentValidator();
+                        FragmentTransaction fragmentTransactionValidator = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionValidator.replace(R.id.frame, fragmentValidator);
+                        fragmentTransactionValidator.commit();
+                    }else{
+                        Toast.makeText(context,model.getResult().getMessage(),Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
 
             @Override
@@ -150,7 +168,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         Intent intent = new Intent(getActivity(), FullScannerFragmentActivity.class);
         startActivity(intent);
     }
-    public void GenerateDataHardCode(Context context, ResponseGetQuestion model){
+    public void GenerateData(Context context, ResponseGetQuestion model){
         List<DataItem> datas =  model.getData();
         for (DataItem data :
                 datas) {
@@ -161,27 +179,32 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
             pertanyaan.setIntLocationDocsId(data.getINTPOSITIONID());
             pertanyaan.setIntSeq(Integer.parseInt(data.getINTSEQ()));
             pertanyaan.setIntValidateID(data.getINTVALIDATEID());
+            pertanyaan.setTxtMapCol(data.getTXTMAPCOL());
             if (data.getBITIMG().equals("1")){
                 pertanyaan.setBolHavePhoto(true);
                 pertanyaan.setIntPhotoNeeded(Integer.parseInt(data.getINTIMGNEED()));
             }else{
                 pertanyaan.setBolHavePhoto(false);
             }
-            if (data.getBITDATA().equals("1")){
+            if(data.getBITDATA().equals("1")){
                 pertanyaan.setBolHaveAnswer(true);
+            }
+            if (data.getListDatIsian()!= null){
                 List<ListDatIsianItem> lisDataIsian = data.getListDatIsian();
                 for (ListDatIsianItem jwb :
                         lisDataIsian) {
                     ClsmJawaban clsmJawaban = new ClsmJawaban();
                     clsmJawaban.setBitActive(true);
+                    clsmJawaban.setTxtIdJawaban(jwb.getTXTDATADTLID());
                     clsmJawaban.setIdJawaban(jwb.getINTDATADTLID());
                     clsmJawaban.setIdPertanyaan(data.getINTFORMDTLID());
                     clsmJawaban.setBitChoosen(false);
+                    clsmJawaban.setTxtMapCol(jwb.getTXTMAPCOL());
                     clsmJawaban.setTxtJawaban(jwb.getTXTVALUE());
                     try{
                         new RepomJawaban(context).createOrUpdate(clsmJawaban);
                     }catch (Exception ex){
-
+                        ex.getMessage();
                     }
                 }
 

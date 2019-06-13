@@ -11,7 +11,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -41,16 +40,11 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.androidnetworking.error.ANError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
@@ -59,7 +53,6 @@ import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -71,11 +64,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import me.leolin.shortcutbadger.ShortcutBadgeException;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
-import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.BL.BLMain;
 import com.kalbenutritionals.simantra.CustomView.Utils.AuthenticatorUtil;
 import com.kalbenutritionals.simantra.CustomView.Utils.IOBackPressed;
@@ -83,21 +74,14 @@ import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
 import com.kalbenutritionals.simantra.Database.Common.ClsStatusMenuStart;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
-import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
-import com.kalbenutritionals.simantra.Database.Common.ClsmJenisPertanyaan;
-import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
 import com.kalbenutritionals.simantra.Database.DatabaseHelper;
 import com.kalbenutritionals.simantra.Database.DatabaseManager;
 import com.kalbenutritionals.simantra.Database.Repo.EnumStatusMenuStart;
 import com.kalbenutritionals.simantra.Database.Repo.RepoclsToken;
 import com.kalbenutritionals.simantra.Database.Repo.RepomConfig;
-import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
-import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 import com.kalbenutritionals.simantra.Fragment.FragmentApprover;
-import com.kalbenutritionals.simantra.Fragment.FragmentChecklist;
-import com.kalbenutritionals.simantra.Fragment.FragmentDetailInfoChecker;
 import com.kalbenutritionals.simantra.Fragment.FragmentHome;
 import com.kalbenutritionals.simantra.Fragment.FragmentNotification;
 import com.kalbenutritionals.simantra.Fragment.FragmentPushData;
@@ -105,14 +89,11 @@ import com.kalbenutritionals.simantra.Fragment.FragmentSPMSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSetting;
 import com.kalbenutritionals.simantra.Fragment.FragmentTab;
-import com.kalbenutritionals.simantra.Fragment.FragmentTestUI;
+import com.kalbenutritionals.simantra.Fragment.FragmentQuestionTab;
 import com.kalbenutritionals.simantra.Fragment.FragmentTransactions;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.Service.ServiceNative;
-import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
-import com.kalbenutritionals.simantra.ViewModel.UserRequest;
-import com.kalbenutritionals.simantra.ViewModel.VMRequestData;
 
 /**
  * Created by Rian Andrivani on 11/22/2017.
@@ -491,8 +472,10 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             FragmentTransactions fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
                             fragmentTransactionTab.replace(R.id.frame, fragmentTab);
                             fragmentTransactionTab.commit();*/
-
+                            Bundle arguments = new Bundle();
+                            arguments.putInt( ClsHardCode.TXT_STATUS_MENU , ClsHardCode.INT_CHECKER);
                             FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
+                            fragmentSPMSearch.setArguments(arguments);
                             FragmentTransaction fragmentTransactionSPMSearch = getSupportFragmentManager().beginTransaction();
                             fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
                             fragmentTransactionSPMSearch.commit();
@@ -511,15 +494,18 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
                         case R.id.validator:
                             checkNavItem = null;
-                            toolbar.setTitle("SIMANTRA");
+                            toolbar.setTitle("Validator");
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
                             // fragment yang dituju
-                            FragmentTab fragmentTab2 = new FragmentTab();
-                            FragmentTransaction fragmentTransactionTab2 = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionTab2.replace(R.id.frame, fragmentTab2);
-                            fragmentTransactionTab2.commit();
+                            Bundle arguments2 = new Bundle();
+                            arguments2.putInt( ClsHardCode.TXT_STATUS_MENU , ClsHardCode.INT_VALIDATOR);
+                            FragmentSPMSearch fragmentSPMSearch2 = new FragmentSPMSearch();
+                            fragmentSPMSearch2.setArguments(arguments2);
+                            FragmentTransaction fragmentTransactionSPMSearch2 = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionSPMSearch2.replace(R.id.frame, fragmentSPMSearch2);
+                            fragmentTransactionSPMSearch2.commit();
 
 
                             /*FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
@@ -535,6 +521,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             break;
 
                         case R.id.transaction:
+                            toolbar.setTitle("Transaction History");
                             FragmentTransactions fragmentTransactions = new FragmentTransactions();
                             FragmentTransaction fragmentTransactionsTrans = getSupportFragmentManager().beginTransaction();
                             fragmentTransactionsTrans.replace(R.id.frame,fragmentTransactions);
@@ -598,9 +585,9 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            FragmentTestUI fragmentTestUI = new FragmentTestUI();
+                            FragmentQuestionTab fragmentQuestionTab = new FragmentQuestionTab();
                             FragmentTransaction fragmentTransactionTestUI = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionTestUI.replace(R.id.frame, fragmentTestUI);
+                            fragmentTransactionTestUI.replace(R.id.frame, fragmentQuestionTab);
                             fragmentTransactionTestUI.commit();
                             selectedId = 99;
                             break;

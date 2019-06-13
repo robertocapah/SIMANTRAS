@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnStart"
+            android:layout_gravity="center_horizontal"
+            android:text="Start"
+            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorAccent"/>
+
+        <!--<com.bcgdv.asia.lib.ticktock.TickTockView
+            android:id="@+id/view_ticktock_countup"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            app:tickDotRadius="6dp"
+            app:tickEmptyRingColor="@android:color/white"
+            app:tickFillRingColor="@color/colorPrimary"
+            app:tickMiddleColor="#333333"
+            app:tickMoveCounterClockwise="true"
+            app:tickRingThickness="3dp"
+            app:tickText=""
+            app:tickTextColor="#CCCCCC" />-->
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/spin_kit"
+            android:layout_margin="@dimen/spacing_large"
+            style="@style/SpinKitView.Large.Circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/colorAccent"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivDone"
+            android:src="@drawable/ic_checklist"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Start Time : "
+                android:textColor="@color/blue_800" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvStartTime"
+                android:text="00h:00m:00s"
+                android:textColor="@color/back_splash" />
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:gravity="center|center_vertical"
+            android:text="LOADING TIMER"
+            android:textColor="@color/blue_800" />
+
+        <TextView
+            android:id="@+id/tvTimerLoad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="00:00:00"
+            android:textColor="@color/back_splash"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:id="@+id/btnFinish"
+            android:layout_gravity="center_horizontal"
+            android:text="Finish ?"
+            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorAccent"/>
+    </LinearLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

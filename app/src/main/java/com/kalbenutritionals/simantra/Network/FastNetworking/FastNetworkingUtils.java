@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.kalbenutritionals.simantra.ActivitySplash;
 import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
@@ -122,14 +123,7 @@ public class FastNetworkingUtils {
         Dialog.setMessage(progressBarType);
         Dialog.setCancelable(false);
         Dialog.show();
-
-        try {
-            dataToken = new RepoclsToken(context).findAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-//        access_token = dataToken.get(0).txtUserToken.toString();
-        access_token = "abSRnV5k-WqJWkzEm_-Yi8GWV9wR7FqNAjrzGjw-25Ldbu_rH8_KD-TGYSdQH_Gbg98oOjR74ko0Q1OdO8OFryEzvOBS48MrEKfahY8Bv7cL9mRsctBUPOS6tzhSr3AMIBItRnb6CViP_ncOL9gcGQXYxnj14gttZ_ls_LQ2LhDm0VQYZheCzYu7itLJI-Notfr_3ei6sJfwrlBXCFfZ5pY90hMHwBSYf1HAyZgWStUmgDQx0U-ghHtB9qkZjY64oI2xjVCwpuVx0LFqVdcnIDCWDwZtKPJ_C_eWDoTTsGNIYPeWxeWwuREu3RbU1ewhS3_6heYzwm1vRfsf_YZgRELtlZA46mKo7om5drF9yP4eYf3fMxEXvIvMLkMMKSxP";
+        access_token = getToken(context);
         AndroidNetworking.post(txtLink)
                 .addJSONObjectBody(JObject)
                 .addHeaders("Authorization", "Bearer " + access_token)
@@ -239,11 +233,12 @@ public class FastNetworkingUtils {
                 });
     }
 
-    public void FNRequestUploadFotoProfile(final Activity ctx, String strLinkAPI, final String mRequestBody, final Dialog dialog, final String tag, final ClsmUserLogin dtLogin, String access_token, final InterfaceFastNetworkingUploadFile listener) {
+    public void FNRequestUploadFotoProfile(final Activity ctx, String strLinkAPI, final String mRequestBody, final Dialog dialog, final String tag, final ClsmUserLogin dtLogin, final InterfaceFastNetworkingUploadFile listener) {
         dialog.show();
         final DonutProgress progressD = (DonutProgress) dialog.findViewById(R.id.progressPercentage);
         TextView tvProgressDesc = (TextView) dialog.findViewById(R.id.tvProgressDesc);
         tvProgressDesc.setText("Updating Profile");
+        String access_token  = getToken(ctx);
         byte[] b = dtLogin.getBlobImg();
         String path = new ClsHardCode().txtPathTemp;
         File fileFoto = new PickFile().decodeByteArraytoFile(b, path, "FotoProfileName.jpg");
@@ -283,6 +278,51 @@ public class FastNetworkingUtils {
                     }
                 });
     }
+    public String getToken(Context context){
+        String token= "";
+        try {
+            token = new RepoclsToken(context).findToken();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return token;
+    }
+    public void FNRequestUploadListImage(final Activity ctx, String strLinkAPI, final JSONObject mRequestBody, Map<String,File> files, final String progressBarType, final String tag, final InterfaceFastNetworking listener) {
+        String access_token = getToken(ctx);
+        AndroidNetworking.upload(strLinkAPI)
+                .addMultipartFile(files)
+                .addHeaders("Authorization", "Bearer " + access_token)
+                .setTag("uploadTest")
+                .setPriority(Priority.HIGH)
+                .build()
+                .setUploadProgressListener(new UploadProgressListener() {
+                    @Override
+                    public void onProgress(final long bytesUploaded, final long totalBytes) {
+                        // do anything with progress
+                        ctx.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                double precentage = ((double) bytesUploaded / (double) totalBytes) * 100;
+//                                progressD.setProgress((int) precentage);
+                            }
+                        });
+                    }
+                })
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // do anything with response
+                        listener.onResponse(response);
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        // handle error
+                        listener.onError(error);
+                        ErrorHandlerFN(ctx,error,tag);
+                    }
+                });
+    }
 
     private void ErrorHandlerFN(Context context, ANError error, String TAG) {
         if (error.getErrorCode() != 0) {
@@ -292,7 +332,7 @@ public class FastNetworkingUtils {
         } else {
             Log.d(TAG, "onError errorDetail : " + error.getErrorDetail());
         }
-        new ToastCustom().showToasty(context, error.getErrorBody() + " " + error.getErrorDetail(), 4);
+        new ToastCustom().showToasty(context, "Network Error "+error.getErrorBody() + " " + error.getErrorDetail(), 4);
         if (error.getErrorCode() == 401){
             new ActivitySplash().requestToken(context);
         }

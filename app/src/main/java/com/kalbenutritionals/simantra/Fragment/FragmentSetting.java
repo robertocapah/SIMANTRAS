@@ -436,8 +436,6 @@ public class FragmentSetting extends Fragment {
         JSONObject resJson = new JSONObject();
 
         try {
-            tokenRepo = new RepoclsToken(getContext());
-            dataToken = (List<ClsToken>) tokenRepo.findAll();
             VmUploadFoto dataUp = new VmUploadFoto();
             dataUp.setIntRoleId(dataLogin.getIntRoleID());
             dataUp.setIntUserId(dataLogin.getIntUserID());
@@ -449,11 +447,9 @@ public class FragmentSetting extends Fragment {
             resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
         } catch (JSONException e) {
             e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         final String mRequestBody = resJson.toString();
-        new FastNetworkingUtils().FNRequestUploadFotoProfile(getActivity(), strLinkAPI, mRequestBody, dialog, TAG_UPLOAD_FOTO_PROFILE, dataLogin, dataToken.get(0).getTxtUserToken(), new InterfaceFastNetworkingUploadFile() {
+        new FastNetworkingUtils().FNRequestUploadFotoProfile(getActivity(), strLinkAPI, mRequestBody, dialog, TAG_UPLOAD_FOTO_PROFILE, dataLogin,  new InterfaceFastNetworkingUploadFile() {
             @Override
             public void onProgress(long bytesDownloaded, long totalBytes) {
             }

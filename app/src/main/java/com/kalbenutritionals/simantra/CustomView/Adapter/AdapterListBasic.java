@@ -37,14 +37,12 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public ImageView image;
         public TextView title;
         public TextView desc;
         public View lyt_parent;
 
         public OriginalViewHolder(View v) {
             super(v);
-            image = (ImageView) v.findViewById(R.id.image);
             title = (TextView) v.findViewById(R.id.title);
             desc = (TextView) v.findViewById(R.id.description);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
@@ -68,7 +66,6 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
             VmAdapterBasic p = items.get(position);
             view.title.setText(p.getTitle());
             view.desc.setText(p.getSubtitle());
-            ClsTools.displayImageRoundUrl(ctx, view.image, p.getTxtLinkImage());
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

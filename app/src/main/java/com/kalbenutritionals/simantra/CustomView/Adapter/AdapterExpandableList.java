@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.text.method.KeyListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -433,8 +434,21 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             TextView tvPertanyaan = new TextView(ctx);
             tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
+            CheckBox checkBoxSesuai = new CheckBox(ctx);
+            if (pa.intPositionId==2 && pa.intValidateId ==1){
 
-            List<Jawaban> jawabans  = pa.jawabans;
+                checkBoxSesuai.setText("Data Sesuai");
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.gravity = Gravity.RIGHT;
+                layoutParams.weight = 1.0f;
+                checkBoxSesuai.setLayoutParams(layoutParams);
+                checkBoxSesuai.setChecked(true);
+
+                holder.lyt_pertayaan.addView(checkBoxSesuai);
+            }
+
+
+            final List<Jawaban> jawabans  = pa.jawabans;
             LinearLayout linearLayout = new LinearLayout(ctx);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -461,6 +475,23 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             etTest.setLayoutParams(layoutParams2);
             if (jawabans.size()>0){
                 etTest.setText(jawabans.get(0).jawaban);
+            }
+            if (pa.intPositionId==2 && pa.intValidateId ==1){
+                final KeyListener variable = etTest.getKeyListener();
+                etTest.setKeyListener(null);
+                checkBoxSesuai.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if(isChecked){
+                            if (jawabans.size()>0){
+                                etTest.setText(jawabans.get(0).jawaban);
+                                etTest.setKeyListener(null);
+                            }
+                        }else{
+                            etTest.setKeyListener(variable);
+                        }
+                    }
+                });
             }
 
             linearLayout.addView(etTest);
@@ -514,6 +545,42 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 //                }
                 linearLayout.addView(rcImage);
             }
+            holder.ll_jawaban1.addView(linearLayout);
+
+        }else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanTextView){
+            TextView tvPertanyaan = new TextView(ctx);
+            tvPertanyaan.setText(pa.txtPertanyaan);
+            holder.lyt_pertayaan.addView(tvPertanyaan);
+
+            List<Jawaban> jawabans  = pa.jawabans;
+            LinearLayout linearLayout = new LinearLayout(ctx);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+            linearLayout.setLayoutParams(layoutParams);
+            linearLayout.setId(pa.id*24);
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            Activity activity = (Activity) ctx;
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels - 60;
+            int heigth = displayMetrics.heightPixels / 10;
+            LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(width, heigth);
+            layoutParams2.gravity = Gravity.CENTER_HORIZONTAL;
+            final TextView tvTest = new EditText(ctx);
+            tvTest.setText("");
+            tvTest.setHint("Please fill...");
+            tvTest.setId(pa.id*14);
+            tvTest.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            tvTest.setSingleLine(false);
+//            etTest.setEms(10);
+            tvTest.setGravity(Gravity.TOP);
+            tvTest.setBackgroundResource(R.drawable.bg_edtext);
+            tvTest.setLayoutParams(layoutParams2);
+            if (jawabans.size()>0){
+                tvTest.setText(jawabans.get(0).jawaban);
+            }
+            linearLayout.addView(tvTest);
             holder.ll_jawaban1.addView(linearLayout);
 
         }

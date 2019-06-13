@@ -3,6 +3,8 @@ package com.kalbenutritionals.simantra.Database.Repo;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
 import com.kalbenutritionals.simantra.Database.DatabaseHelper;
 import com.kalbenutritionals.simantra.Database.DatabaseManager;
@@ -63,6 +65,16 @@ public class RepomJawaban implements CRUD {
         List<ClsmJawaban> items = null;
         try {
             items = helper.getmJawabanDao().queryForEq(ClsmJawaban.ID_PERTANYAAN,intHeaderId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+    public List<ClsmJawaban> findByHeadertoFindDetail(int intHeaderId, String detailCode) throws SQLException{
+        List<ClsmJawaban> items = null;
+        QueryBuilder<ClsmJawaban, Integer> builder = helper.getmJawabanDao().queryBuilder();
+        try {
+            items = builder.where().eq(ClsmJawaban.ID_PERTANYAAN, intHeaderId).and().eq(ClsmJawaban.TXTMAPCOL,detailCode).query();
         } catch (SQLException e) {
             e.printStackTrace();
         }

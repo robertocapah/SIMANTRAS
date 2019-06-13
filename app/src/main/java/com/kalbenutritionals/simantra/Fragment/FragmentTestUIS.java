@@ -1,7 +1,6 @@
 package com.kalbenutritionals.simantra.Fragment;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,8 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +16,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kalbenutritionals.simantra.CustomView.Utils.onValidateData;
 import com.kalbenutritionals.simantra.R;
 
-public class FragmentTestUI extends Fragment {
+public class FragmentTestUIS extends Fragment {
 
-    public FragmentTestUI() {
+    public FragmentTestUIS() {
     }
 
-    public static FragmentTestUI newInstance() {
-        FragmentTestUI fragmentTestUI = new FragmentTestUI();
+    public static FragmentTestUIS newInstance() {
+        FragmentTestUIS fragmentTestUI = new FragmentTestUIS();
         return fragmentTestUI;
     }
 
@@ -72,7 +68,7 @@ public class FragmentTestUI extends Fragment {
                 }else{
                     if(array_state[idx_state].name().equalsIgnoreCase(State.CHECKING.name())){
                         FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-                        boolean valid = myFragment.validateAnsw();
+                        boolean valid = myFragment.validateAnswHeader();
                         boolean isRejected = myFragment.statusRejected;
                         valid = true;
                         isRejected = false;

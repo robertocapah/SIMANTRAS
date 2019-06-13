@@ -93,8 +93,8 @@ public class FragmentApprover extends Fragment {
         for (int i = 0; i < 5; i++) {
             VmAdapterBasic adapterData = new VmAdapterBasic();
             adapterData.setTxtLinkImage("http://www.livescience.com/images/i/000/065/149/original/bananas.jpg");
-            adapterData.setTitle("Title " + i);
-            adapterData.setSubtitle("Description " + i);
+            adapterData.setTitle("NO SPM KN1231231231231 " + i);
+            adapterData.setSubtitle("Dari/Tujuan " + i +" sanghiang perkasa/ KLB");
             listData.add(adapterData);
         }
         if (0 > 0) {
@@ -139,8 +139,8 @@ public class FragmentApprover extends Fragment {
                 List<VmAdapterBasic> objList = new ArrayList<>();
                 for (int i=0;i<5;i++){
                     VmAdapterBasic ob = new VmAdapterBasic();
-                    ob.setSubtitle("poin "+i);
-                    ob.setTitle("title "+i);
+                    ob.setSubtitle("Bersih, tidak berlubang, tidak bau, tidak bocor"+i);
+                    ob.setTitle("Truck Bagian Dalam"+i);
                     ob.setTxtLinkImage("https://afdanisasyahroza.files.wordpress.com/2011/05/images.jpeg");
                     objList.add(ob);
                 }

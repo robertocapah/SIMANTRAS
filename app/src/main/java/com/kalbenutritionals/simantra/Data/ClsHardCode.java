@@ -28,8 +28,9 @@ public class ClsHardCode {
     public String txtPathApp = "data" + File.separator + "data" + File.separator + "shp.simantra" + File.separator + "databases" + File.separator;
     public String txtPathTemp = Environment.getExternalStorageDirectory()+ File.separator;
 
-    //    public String txtFolderData = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"KalbeCallPlanAEDP"+File.separator+"image_Person"+File.separator;
-    public String pathApp = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+ File.separator+"Android"+File.separator+"data"+File.separator+"simantra"+File.separator;
+//        public String txtFolderData = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"KalbeCallPlanAEDP"+File.separator+"image_Person"+File.separator;
+//    public String pathApp = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+ File.separator+"Android"+File.separator+"data"+File.separator+"simantra"+File.separator;
+    public String pathApp = Environment.getExternalStorageDirectory()+ File.separator+"Android"+File.separator+"data"+File.separator+"simantra"+File.separator+"image"+File.separator;
     public String txtPathUserData = pathApp + "user_data"+File.separator;
     public String txtPathTempData = pathApp + "tempdata" + File.separator;
     public String txtApkName = "Simantra.apk";
@@ -52,6 +53,9 @@ public class ClsHardCode {
     public String linkPushDataError = new RepomConfig(context).API +"PushLogError";
     public String linkChangePassword = new RepomConfig(context).API +"gantiPassword";
     public String linkGetDataMasterNew = new RepomConfig(context).API +"getDataMasterNew";
+    public String linkGetUpdateToken = new RepomConfig(context).API +"updateUserToken";
+    public String linkGetListFormByOrg = new RepomConfig(context).API +"getListFormByOrg";
+    public String linkSetTransactionList = new RepomConfig(context).API +"setTransaksiMobile";
     public String txtBundleKeyBarcode = "BarcodeScanner";
 
     public static int JenisPertanyaanTextView = 7;
@@ -67,8 +71,25 @@ public class ClsHardCode {
     public static int HEADER = 2;
     public static int BODY = 3;
     public static int FOOTER = 4;
-
     public static String nameApp = "SIMANTRAMOBILE";
+
+    public static int INT_CHECKER = 1;
+    public static int INT_VALIDATOR = 2;
+    public static String TXT_STATUS_MENU = "STATUS_MENU";
+
+    public static String TXT_DEFAULT = "000";
+    public static String TXT_CREATION_DATE = "CREATION_DATE";
+    public static String TXT_PLAN_DELIVERY_DATE = "PLAN_DELIVERY_DATE";
+    public static String TXT_SPM_NO = "SPM_NO";
+    public static String TXT_EXPEDITION_NAME = "EXPEDITION_NAME";
+    public static String TXT_FIND_DETAIL_HCD = "FIND_DETAIL_HCD";
+    public static String TXT_VEHICLE_TYPE = "VEHICLE_TYPE";
+    public static String TXT_ITEM_TYPE = "ITEM_TYPE";
+    public static String TXT_FIND_DETAIL = "FIND_DETAIL";
+
+    public static String TXT_SHIP_FROM = "SHIP_FROM";
+    public static String TXT_SHIP_TO = "SHIP_TO";
+
 
     public String copydb(Context context) throws IOException {
         String CURRENT_DATABASE_PATH = "data/data/" + context.getPackageName() + "/databases/"+ new ClsHardCode().dbName;

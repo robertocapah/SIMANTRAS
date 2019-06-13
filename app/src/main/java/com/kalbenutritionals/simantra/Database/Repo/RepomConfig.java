@@ -16,15 +16,8 @@ import java.util.List;
 
 public class RepomConfig {
     DatabaseHelper helper;
-    //    public String API = "http://10.171.14.10/WebAPITemplate/API/";
-//    public String APIToken = "http://10.171.14.10/WebAPITemplate/";
-//    public String APIToken = "http://10.171.13.50:8013/";
-    public String APIToken = "http://10.171.13.50/SMT_API/";
-//    public String APIToken = "http://10.171.161.96/apiAEDP/";
-    //    public String APIToken = "http://10.171.14.16/apiAEDP/";
-//    public String API = "http://10.171.13.50:8013/api/";
+    public String APIToken = "http://10.171.13.152/simantra-api/";
     public String API = APIToken + "api/";
-    public String APIKLB = "http://api.karsalintasbuwana.com/";
 
     public RepomConfig(Context context) {
         DatabaseManager.init(context);

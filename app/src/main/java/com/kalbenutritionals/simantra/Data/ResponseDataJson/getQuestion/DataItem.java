@@ -1,23 +1,27 @@
 package com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion;
 
-import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 @Generated("com.robohorse.robopojogenerator")
 public class DataItem{
 
 	@SerializedName("INT_SEQ")
-	private String iNTSEQ; //buat urutan posisi
+	private String iNTSEQ;
 
 	@SerializedName("TXT_VALIDATE_NAME")
 	private String tXTVALIDATENAME;
 
-	@SerializedName("TXT_FORM_NAME")
-	private String tXTFORMNAME;
+	@SerializedName("TXT_MAP_COL")
+	private String tXTMAPCOL;
 
 	@SerializedName("TXT_TYPE_NAME")
 	private String tXTTYPENAME;
+
+	@SerializedName("TXT_FORM_NAME")
+	private String tXTFORMNAME;
 
 	@SerializedName("INT_DATA_VERS_ID")
 	private int iNTDATAVERSID;
@@ -37,11 +41,11 @@ public class DataItem{
 	@SerializedName("TXT_FORM_DESC")
 	private String tXTFORMDESC;
 
-	@SerializedName("INT_IMG_NEED")
-	private String iNTIMGNEED;
-
 	@SerializedName("INT_POSITION_ID")
 	private int iNTPOSITIONID;
+
+	@SerializedName("INT_IMG_NEED")
+	private String iNTIMGNEED;
 
 	@SerializedName("INT_FORM_VERS_ID")
 	private int iNTFORMVERSID;
@@ -74,12 +78,12 @@ public class DataItem{
 		return tXTVALIDATENAME;
 	}
 
-	public void setTXTFORMNAME(String tXTFORMNAME){
-		this.tXTFORMNAME = tXTFORMNAME;
+	public void setTXTMAPCOL(String tXTMAPCOL){
+		this.tXTMAPCOL = tXTMAPCOL;
 	}
 
-	public String getTXTFORMNAME(){
-		return tXTFORMNAME;
+	public String getTXTMAPCOL(){
+		return tXTMAPCOL;
 	}
 
 	public void setTXTTYPENAME(String tXTTYPENAME){
@@ -88,6 +92,14 @@ public class DataItem{
 
 	public String getTXTTYPENAME(){
 		return tXTTYPENAME;
+	}
+
+	public void setTXTFORMNAME(String tXTFORMNAME){
+		this.tXTFORMNAME = tXTFORMNAME;
+	}
+
+	public String getTXTFORMNAME(){
+		return tXTFORMNAME;
 	}
 
 	public void setINTDATAVERSID(int iNTDATAVERSID){
@@ -138,20 +150,20 @@ public class DataItem{
 		return tXTFORMDESC;
 	}
 
-	public void setINTIMGNEED(String iNTIMGNEED){
-		this.iNTIMGNEED = iNTIMGNEED;
-	}
-
-	public String getINTIMGNEED(){
-		return iNTIMGNEED;
-	}
-
 	public void setINTPOSITIONID(int iNTPOSITIONID){
 		this.iNTPOSITIONID = iNTPOSITIONID;
 	}
 
 	public int getINTPOSITIONID(){
 		return iNTPOSITIONID;
+	}
+
+	public void setINTIMGNEED(String iNTIMGNEED){
+		this.iNTIMGNEED = iNTIMGNEED;
+	}
+
+	public String getINTIMGNEED(){
+		return iNTIMGNEED;
 	}
 
 	public void setINTFORMVERSID(int iNTFORMVERSID){
@@ -200,16 +212,17 @@ public class DataItem{
 			"DataItem{" + 
 			"iNT_SEQ = '" + iNTSEQ + '\'' + 
 			",tXT_VALIDATE_NAME = '" + tXTVALIDATENAME + '\'' + 
-			",tXT_FORM_NAME = '" + tXTFORMNAME + '\'' + 
+			",tXT_MAP_COL = '" + tXTMAPCOL + '\'' + 
 			",tXT_TYPE_NAME = '" + tXTTYPENAME + '\'' + 
+			",tXT_FORM_NAME = '" + tXTFORMNAME + '\'' + 
 			",iNT_DATA_VERS_ID = '" + iNTDATAVERSID + '\'' + 
 			",bIT_IMG = '" + bITIMG + '\'' + 
 			",tXT_POSITION_NAME = '" + tXTPOSITIONNAME + '\'' + 
 			",listDatIsian = '" + listDatIsian + '\'' + 
 			",iNT_FORM_DTL_ID = '" + iNTFORMDTLID + '\'' + 
 			",tXT_FORM_DESC = '" + tXTFORMDESC + '\'' + 
-			",iNT_IMG_NEED = '" + iNTIMGNEED + '\'' + 
 			",iNT_POSITION_ID = '" + iNTPOSITIONID + '\'' + 
+			",iNT_IMG_NEED = '" + iNTIMGNEED + '\'' + 
 			",iNT_FORM_VERS_ID = '" + iNTFORMVERSID + '\'' + 
 			",iNT_SEQ_POSITION = '" + iNTSEQPOSITION + '\'' + 
 			",iNT_VALIDATE_ID = '" + iNTVALIDATEID + '\'' + 

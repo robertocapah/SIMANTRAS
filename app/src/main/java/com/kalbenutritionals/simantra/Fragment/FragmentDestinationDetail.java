@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterExpandableListDestination;
 import com.kalbenutritionals.simantra.CustomView.Adapter.LineItemDecoration;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
@@ -38,32 +39,30 @@ import butterknife.Unbinder;
 public class FragmentDestinationDetail extends Fragment {
     View v;
     Unbinder unbinder;
-    @BindView(R.id.tv_number_spm)
-    TextView tvNumberSpm;
-    @BindView(R.id.bt_copy_code)
-    ImageButton btCopyCode;
+    @BindView(R.id.tv_transporter_name)
+    TextView tvTransporterNam;
     @BindView(R.id.tv_no_pol)
     TextView tvNoPol;
-    @BindView(R.id.tvDriverName)
-    TextView tvDriverName;
-    @BindView(R.id.tvKeraniName)
-    TextView tvKeraniName;
+//    @BindView(R.id.tvDriverName)
+//    TextView tvDriverName;
+//    @BindView(R.id.tvKeraniName)
+//    TextView tvKeraniName;
     @BindView(R.id.tvTimeFrom)
-    TextView tvTimeFrom;
-    @BindView(R.id.tvDateFrom)
+//    TextView tvTimeFrom;
+//    @BindView(R.id.tvDateFrom)
     TextView tvDateFrom;
     @BindView(R.id.tvTimeTo)
-    TextView tvTimeTo;
-    @BindView(R.id.tvDateTo)
+//    TextView tvTimeTo;
+//    @BindView(R.id.tvDateTo)
     TextView tvDateTo;
     @BindView(R.id.tvOutletFrom)
     TextView tvOutletFrom;
-    @BindView(R.id.tvAddressFrom)
-    TextView tvAddressFrom;
+//    @BindView(R.id.tvAddressFrom)
+//    TextView tvAddressFrom;
     @BindView(R.id.tvOutletTo)
     TextView tvOutletTo;
-    @BindView(R.id.tvAddressTo)
-    TextView tvAddressTo;
+//    @BindView(R.id.tvAddressTo)
+//    TextView tvAddressTo;
     @BindView(R.id.rvGeneralInformation)
     RecyclerView rvGeneralInformation;
     @BindView(R.id.nested_scroll_view)
@@ -76,8 +75,6 @@ public class FragmentDestinationDetail extends Fragment {
     TextView tvTanggal;
     @BindView(R.id.tv_no_doc)
     TextView tvNoDoc;
-    @BindView(R.id.bt_copy_doc)
-    ImageButton btCopyDoc;
 
     public FragmentDestinationDetail() {
 
@@ -105,35 +102,17 @@ public class FragmentDestinationDetail extends Fragment {
         ltDataPertanyaan = getData();
         //set data and list adapter
 //        CustomAdapter mAdapterOptional = new CustomAdapter(getActivity(), mItems);
-        List<ClsmPertanyaan> nestedInfo = new ArrayList<>();
-        try {
-            nestedInfo = new RepomPertanyaan(context).findQuestion(ClsHardCode.BASIC);
-            for (ClsmPertanyaan p :
-                    nestedInfo) {
-                int seqId = p.getIntSeq();
-                if (seqId == 1) {
-                    tvNoDoc.setText(p.getTxtPertanyaan());
-                } else if (seqId == 2) {
-                    tvTanggal.setText(p.getTxtPertanyaan());
-                } else if (seqId == 3) {
-                    tvNumberSpm.setText(p.getTxtPertanyaan());
-                } else if (seqId == 4) {
+        String noDoc = new BLHelper().getNestedInfo(context,ClsHardCode.TXT_SPM_NO);
+        tvNoDoc.setText(noDoc);
+        String tanggal = new BLHelper().getNestedInfo(context,ClsHardCode.TXT_PLAN_DELIVERY_DATE);
+        tvTanggal.setText(tanggal);
+        String transporter = new BLHelper().getNestedInfo(context,ClsHardCode.TXT_EXPEDITION_NAME);
+        tvTransporterNam.setText(transporter);
+        String OutletFrom = new BLHelper().getNestedInfoDetail(context,ClsHardCode.TXT_FIND_DETAIL_HCD,ClsHardCode.TXT_SHIP_FROM);
+        tvOutletFrom.setText(OutletFrom);
+        String OutletTo = new BLHelper().getNestedInfoDetail(context,ClsHardCode.TXT_FIND_DETAIL_HCD,ClsHardCode.TXT_SHIP_TO);
+        tvOutletTo.setText(OutletTo);
 
-                } else if (seqId == 5) {
-                    List<ClsmJawaban> ltJwb = new RepomJawaban(context).findByHeader(p.getIntPertanyaanId());
-                    for (ClsmJawaban jwb :
-                            ltJwb) {
-                        if (jwb.getIdJawaban() == 1) {
-                            tvOutletFrom.setText(jwb.getTxtJawaban());
-                        } else {
-                            tvOutletTo.setText(jwb.getTxtJawaban());
-                        }
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         mAdapter = new AdapterExpandableListDestination(getActivity(), ltDataPertanyaan);
         rvGeneralInformation.setAdapter(mAdapter);
     }
@@ -142,7 +121,7 @@ public class FragmentDestinationDetail extends Fragment {
 
         items = new ArrayList<>();
         try {
-            List<ClsmPertanyaan> pertanyaans = new RepomPertanyaan(context).findQuestion(ClsHardCode.BASIC);
+            List<ClsmPertanyaan> pertanyaans = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_DEFAULT);
             for (ClsmPertanyaan pertanyaan :
                     pertanyaans) {
 

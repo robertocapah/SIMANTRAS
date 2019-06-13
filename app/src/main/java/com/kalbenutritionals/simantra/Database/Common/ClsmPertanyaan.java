@@ -10,6 +10,8 @@ public class ClsmPertanyaan {
     @DatabaseField
     private String txtPertanyaan;
     @DatabaseField
+    private String txtMapCol;
+    @DatabaseField
     private int intLocationDocsId;
     @DatabaseField
     private int intJenisPertanyaanId;
@@ -27,7 +29,15 @@ public class ClsmPertanyaan {
     public static String TXTINTLOCATIONID = "intLocationDocsId";
     public static String TXTJENISPERTANYAAN = "intJenisPertanyaanId";
     public static String INTVALIDATEID = "intValidateID";
+    public static String TXTMAPCOL = "txtMapCol";
 
+    public String getTxtMapCol() {
+        return txtMapCol;
+    }
+
+    public void setTxtMapCol(String txtMapCol) {
+        this.txtMapCol = txtMapCol;
+    }
 
     public int getIntValidateID() {
         return intValidateID;

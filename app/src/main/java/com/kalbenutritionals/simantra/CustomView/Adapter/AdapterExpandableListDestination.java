@@ -430,12 +430,13 @@ public class AdapterExpandableListDestination extends RecyclerView.Adapter<Recyc
             Activity activity = (Activity) ctx;
             activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             int width = displayMetrics.widthPixels - 60;
-            int heigth = displayMetrics.heightPixels / 10;
+            int heigth = displayMetrics.heightPixels / 15;
             LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(width, heigth);
+            layoutParams2.setMargins(10,0,0,0);
             layoutParams2.gravity = Gravity.CENTER_HORIZONTAL;
             final TextView etTest = new TextView(ctx);
-            etTest.setText("");
-            etTest.setHint("Please fill...");
+
+            etTest.setText(pa.jawabans.get(0).jawaban);
             etTest.setId(pa.id*13);
             etTest.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
             etTest.setSingleLine(false);

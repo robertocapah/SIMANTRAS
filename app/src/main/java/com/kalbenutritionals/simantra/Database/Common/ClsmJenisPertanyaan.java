@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class ClsmJenisPertanyaan {
     @DatabaseField(id = true)
-    private int intJenisPertanyaanId;
+    private String intJenisPertanyaanId;
     @DatabaseField
     private String txtJenisPertanyaan;
     @DatabaseField
@@ -16,11 +16,11 @@ public class ClsmJenisPertanyaan {
     @DatabaseField
     private boolean bolActive;
 
-    public int getIntjenisPertanyaanId() {
+    public String getIntjenisPertanyaanId() {
         return intJenisPertanyaanId;
     }
 
-    public void setIntJenisPertanyaanId(int intJenisPertanyaanId) {
+    public void setIntJenisPertanyaanId(String intJenisPertanyaanId) {
         this.intJenisPertanyaanId = intJenisPertanyaanId;
     }
 

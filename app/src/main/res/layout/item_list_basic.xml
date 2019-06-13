@@ -10,16 +10,8 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:minHeight="?attr/actionBarSize"
+        android:background="@color/grey_3"
         android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="@dimen/spacing_large"
-            android:layout_marginRight="@dimen/spacing_large"
-            android:layout_marginTop="@dimen/spacing_middle"
-            android:src="@drawable/ic_simantra" />
 
         <View
             android:layout_width="@dimen/spacing_medium"
@@ -54,7 +46,6 @@
                     android:layout_marginEnd="@dimen/spacing_middle"
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:layout_marginTop="@dimen/spacing_medium"
-                    android:maxLines="2"
                     android:text="@string/lorem_ipsum"
 
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"

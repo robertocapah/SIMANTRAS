@@ -90,4 +90,19 @@ public class RepoclsToken implements CRUD {
         }
         return items;
     }
+    public String findToken() throws SQLException {
+        List<ClsToken> items = null;
+        try{
+            items = helper.getTokenDao().queryForAll();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        if (items.size()>0){
+            return items.get(0).getTxtUserToken();
+        }else{
+            return "";
+        }
+
+    }
 }

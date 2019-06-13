@@ -2,11 +2,13 @@ package com.kalbenutritionals.simantra.BL;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.pdf.PdfDocument;
-import android.os.Debug;
 import android.os.Environment;
-import android.print.pdf.PrintedPdfDocument;
+import android.support.v4.widget.NestedScrollView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -19,7 +21,6 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.kalbe.mobiledevknlibs.DeviceInformation.DeviceInformation;
@@ -30,9 +31,12 @@ import com.kalbenutritionals.simantra.Database.Common.ClsDataJson;
 import com.kalbenutritionals.simantra.Database.Common.ClsPushData;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
 import com.kalbenutritionals.simantra.Database.Common.ClsmCounterData;
+import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
+import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
-import com.kalbenutritionals.simantra.Database.Common.ClstLogError;
 import com.kalbenutritionals.simantra.Database.EnumCounterData;
+import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
+import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 import com.kalbenutritionals.simantra.Database.Repo.RepotLogError;
 import com.kalbenutritionals.simantra.Database.Repo.RepomCounterData;
@@ -53,10 +57,11 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
-import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
 import com.kalbenutritionals.simantra.ViewModel.UserRequest;
 import com.kalbenutritionals.simantra.ViewModel.VMRequestData;
+import com.kalbenutritionals.simantra.ViewModel.VMRequestDataSPM;
+import com.kalbenutritionals.simantra.ViewModel.VMTransaksiChecker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,6 +107,40 @@ public class BLHelper {
         }
         return greetings;
     }
+    /**
+     * Used to scroll to the given view.
+     *
+     * @param scrollViewParent Parent ScrollView
+     * @param view View to which we need to scroll.
+     */
+    public void scrollToView(final NestedScrollView scrollViewParent, final View view) {
+        // Get deepChild Offset
+        Point childOffset = new Point();
+        getDeepChildOffset(scrollViewParent, view.getParent(), view, childOffset);
+        // Scroll to child.
+        scrollViewParent.smoothScrollTo(0, childOffset.y);
+    }
+
+    /**
+     * Used to get deep child offset.
+     * <p/>
+     * 1. We need to scroll to child in scrollview, but the child may not the direct child to scrollview.
+     * 2. So to get correct child position to scroll, we need to iterate through all of its parent views till the main parent.
+     *
+     * @param mainParent        Main Top parent.
+     * @param parent            Parent.
+     * @param child             Child.
+     * @param accumulatedOffset Accumulated Offset.
+     */
+    private void getDeepChildOffset(final ViewGroup mainParent, final ViewParent parent, final View child, final Point accumulatedOffset) {
+        ViewGroup parentGroup = (ViewGroup) parent;
+        accumulatedOffset.x += child.getLeft();
+        accumulatedOffset.y += child.getTop();
+        if (parentGroup.equals(mainParent)) {
+            return;
+        }
+        getDeepChildOffset(mainParent, parentGroup.getParent(), parentGroup, accumulatedOffset);
+    }
     public DeviceInfo getDeviceInfo(){
         DeviceInfo data = new DeviceInfo();
         try{
@@ -126,10 +165,7 @@ public class BLHelper {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
-    public void updateTokenFirebase(final Context context){
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        FirebaseMessaging.getInstance().subscribeToTopic("KNMobileDev");
-        String txtLink = "http://10.171.13.50/SMT_API/api/updateUserToken";
+    public JSONObject getDataRequestCommon(Context context){
         VMRequestData data = new VMRequestData();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
         UserRequest userData = new BLHelper().getUserInfo(context);
@@ -143,6 +179,44 @@ public class BLHelper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return obj;
+    }
+    public JSONObject getDataRequestDataSPM(Context context, String SPMNumber){
+        VMRequestDataSPM data = new VMRequestDataSPM();
+        DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
+        VMRequestDataSPM.UserRequestSPM userData = new BLHelper().getUserInfoSPM(context,SPMNumber);
+        data.setData(userData);
+        data.setDevice_info(dataDevice);
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+    public JSONObject getDataTransaksiJson(Context context, VMTransaksiChecker.DatatTransaksi transaksiData){
+        VMTransaksiChecker data = new VMTransaksiChecker();
+        DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
+        data.setDatatTransaksi(transaksiData);
+        data.setDeviceInfo(dataDevice);
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+    public void updateTokenFirebase(final Context context){
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        FirebaseMessaging.getInstance().subscribeToTopic("KNMobileDev");
+        String txtLink = new ClsHardCode().linkGetUpdateToken;
+        JSONObject obj = getDataRequestCommon(context);
         new FastNetworkingUtils().FNRequestPostDataUpdateToken(context,txtLink,obj,"",new InterfaceFastNetworking(){
 
             @Override
@@ -170,6 +244,112 @@ public class BLHelper {
 
         }
         return data;
+    }
+    public VMRequestDataSPM.UserRequestSPM getUserInfoSPM(Context context, String SPMNumber){
+        VMRequestDataSPM.UserRequestSPM data = new VMRequestDataSPM().new UserRequestSPM();
+        try{
+            ClsmUserLogin userLogin = new RepomUserLogin(context).getUserLogin(context);
+            data.setIntOrgID(userLogin.getOrgId());
+            data.setIntRoleId(userLogin.getIntRoleID());
+            data.setTxtNameApp(ClsHardCode.nameApp);
+            data.setUsername(userLogin.getTxtUserName());
+            data.setTxtNoSPM(SPMNumber);
+        }catch (Exception ex){
+
+        }
+        return data;
+    }
+    public String getNestedInfo(Context context, String txtCode){
+        String noDoc = "";
+
+        try {
+            if (txtCode.equals(ClsHardCode.TXT_DEFAULT)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_DEFAULT);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.TXT_CREATION_DATE)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_CREATION_DATE);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.TXT_VEHICLE_TYPE)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_VEHICLE_TYPE);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.TXT_SPM_NO)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_SPM_NO);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.TXT_ITEM_TYPE)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_ITEM_TYPE);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.TXT_FIND_DETAIL_HCD)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_FIND_DETAIL_HCD);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.TXT_EXPEDITION_NAME)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_EXPEDITION_NAME);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.TXT_PLAN_DELIVERY_DATE)){
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_PLAN_DELIVERY_DATE);
+                if (pert.size()>0){
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size()>0){
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return noDoc;
+    }
+    public String getNestedInfoDetail(Context context, String txtCode, String txtChildCode){
+        String noDoc = "";
+        List<ClsmPertanyaan> pert = null;
+        try {
+            pert = new RepomPertanyaan(context).findQuestionGeneralInfo(txtCode);
+            if (pert.size()>0){
+                List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeadertoFindDetail(pert.get(0).getIntPertanyaanId(),txtChildCode);
+                if (jawabans.size()>0){
+                    noDoc = jawabans.get(0).getTxtJawaban();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return noDoc;
     }
     public ClsPushData pushData(String versionName, Context context){
         ClsPushData dtclsPushData = new ClsPushData();

@@ -6,15 +6,36 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class ClsmJawaban {
     @DatabaseField(id = true)
+    private String txtIdJawaban;
+    @DatabaseField
     private int idJawaban;
     @DatabaseField
     private int idPertanyaan;
     @DatabaseField
     private String txtJawaban;
     @DatabaseField
+    private String txtMapCol;
+    @DatabaseField
     private boolean bitChoosen;
     @DatabaseField
     private boolean bitActive;
+
+    public static String TXTMAPCOL = "txtMapCol";
+    public String getTxtMapCol() {
+        return txtMapCol;
+    }
+
+    public void setTxtMapCol(String txtMapCol) {
+        this.txtMapCol = txtMapCol;
+    }
+
+    public String getTxtIdJawaban() {
+        return txtIdJawaban;
+    }
+
+    public void setTxtIdJawaban(String txtIdJawaban) {
+        this.txtIdJawaban = txtIdJawaban;
+    }
 
     public boolean isBitChoosen() {
         return bitChoosen;

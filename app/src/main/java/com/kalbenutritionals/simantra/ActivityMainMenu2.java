@@ -272,7 +272,7 @@ public class ActivityMainMenu2 extends AppCompatActivity {
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            /*FragmentTestUI fragmentTestUI = new FragmentTestUI();
+                            /*FragmentQuestionTab fragmentTestUI = new FragmentQuestionTab();
                             FragmentTransactions fragmentTransactionTestUI = getSupportFragmentManager().beginTransaction();
                             fragmentTransactionTestUI.replace(R.id.frame, fragmentTestUI);
                             fragmentTransactionTestUI.commit();*/

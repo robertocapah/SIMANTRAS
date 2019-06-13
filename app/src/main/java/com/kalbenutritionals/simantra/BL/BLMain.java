@@ -5,9 +5,13 @@ import android.util.Log;
 
 
 import com.kalbenutritionals.simantra.Database.Common.ClsStatusMenuStart;
+import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
+import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Database.Repo.EnumStatusMenuStart;
+import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
+import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 
 import java.io.ByteArrayOutputStream;
@@ -35,9 +39,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Created by Rian Andrivani on 11/22/2017.
- */
+
 
 public class BLMain {
 
@@ -67,6 +69,8 @@ public class BLMain {
         }
         return _clsStatusMenuStart;
     }
+
+
 
     public ClsmUserLogin getUserLogin(Context context){
         List <ClsmUserLogin> dtList = new ArrayList<>();
