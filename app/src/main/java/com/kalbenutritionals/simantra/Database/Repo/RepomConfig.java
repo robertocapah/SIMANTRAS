@@ -16,7 +16,8 @@ import java.util.List;
 
 public class RepomConfig {
     DatabaseHelper helper;
-    public String APIToken = "http://10.171.13.152/simantra-api/";
+    public String APIToken = "http://10.171.13.50:8092/";
+//    public String APIToken = "http://10.171.13.152/simantra-api/";
     public String API = APIToken + "api/";
 
     public RepomConfig(Context context) {
