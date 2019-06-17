@@ -49,13 +49,13 @@ public class VMTransaksiChecker {
         private String INT_STATUS_ID;
         private String BIT_ACTIVE;
         private String TXT_SPM_NO;
-        private DatatTransaksiDetail DataDetail;
+        private List<DatatTransaksiDetail> DataDetail;
 
-        public DatatTransaksiDetail getDataDetail() {
+        public List<DatatTransaksiDetail> getDataDetail() {
             return DataDetail;
         }
 
-        public void setDataDetail(DatatTransaksiDetail dataDetail) {
+        public void setDataDetail(List<DatatTransaksiDetail> dataDetail) {
             DataDetail = dataDetail;
         }
 

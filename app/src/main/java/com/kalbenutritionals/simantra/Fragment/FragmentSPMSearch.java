@@ -105,7 +105,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
         fragmentTransactionInfoChecker.commit();*/
         String txtLink = new ClsHardCode().linkGetListFormByOrg;
-        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,"KNS17090047");
+        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,"7094ecc8-493c-4122-b0d2-5de69fbea0f5");
 
         new FastNetworkingUtils().FNRequestPostData(getActivity(), txtLink, obj, "Processing SPM", new InterfaceFastNetworking() {
             @Override

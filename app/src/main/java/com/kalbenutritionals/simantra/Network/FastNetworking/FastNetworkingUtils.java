@@ -22,6 +22,7 @@ import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickFile;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -287,10 +288,11 @@ public class FastNetworkingUtils {
         }
         return token;
     }
-    public void FNRequestUploadListImage(final Activity ctx, String strLinkAPI, final JSONObject mRequestBody, Map<String,File> files, final String progressBarType, final String tag, final InterfaceFastNetworking listener) {
+    public void FNRequestUploadListImage(final Activity ctx, String strLinkAPI, final String mRequestBody, Map<String,File> files, final String progressBarType, final String tag, final InterfaceFastNetworking listener) {
         String access_token = getToken(ctx);
         AndroidNetworking.upload(strLinkAPI)
                 .addMultipartFile(files)
+                .addMultipartParameter("txtParam", mRequestBody)
                 .addHeaders("Authorization", "Bearer " + access_token)
                 .setTag("uploadTest")
                 .setPriority(Priority.HIGH)

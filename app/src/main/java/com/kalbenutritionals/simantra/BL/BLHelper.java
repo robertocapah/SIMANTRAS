@@ -16,6 +16,7 @@ import com.androidnetworking.error.ANError;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.zxing.BarcodeFormat;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -63,6 +64,7 @@ import com.kalbenutritionals.simantra.ViewModel.VMRequestData;
 import com.kalbenutritionals.simantra.ViewModel.VMRequestDataSPM;
 import com.kalbenutritionals.simantra.ViewModel.VMTransaksiChecker;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -204,6 +206,28 @@ public class BLHelper {
         data.setDeviceInfo(dataDevice);
         Gson gson = new Gson();
         String json = gson.toJson(data);
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+    public JSONArray getDataTransaksiJsonArrayCommon(Context context, Object transaksiData){
+        Gson gson = new Gson();
+        String json = gson.toJson(transaksiData);
+        JSONArray obj = null;
+        try {
+            obj = new JSONArray(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+    public JSONObject getDataTransaksiJsonObjCommon(Context context, Object transaksiData){
+        Gson gson = new Gson();
+        String json = gson.toJson(transaksiData);
         JSONObject obj = null;
         try {
             obj = new JSONObject(json);

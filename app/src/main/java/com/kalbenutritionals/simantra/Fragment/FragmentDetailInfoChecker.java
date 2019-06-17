@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,7 +32,6 @@ import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterExpandableList;
 import com.kalbenutritionals.simantra.CustomView.Adapter.LineItemDecoration;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
-import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
@@ -47,6 +45,9 @@ import com.kalbenutritionals.simantra.ViewModel.VmImageContainer;
 import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -113,7 +114,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     RecyclerView rvFooter;
     private LinearLayout linearLayout;
     Context context;
-
+    List<VmTJawabanUser> jawabanListFinal = new ArrayList<>();
     public FragmentDetailInfoChecker() {
 
     }
@@ -353,9 +354,14 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
     @OnClick(R.id.btnValidate)
     public void onViewClicked() {
-        validateAnswHeader();
-    }
 
+    }
+    public void validateAll(){
+        jawabanListFinal = new ArrayList<>();
+        validateAnswHeader();
+        validateAnswFooter();
+        validateAnswMandatory();
+    }
     public boolean validateAnswHeader() {
         boolean bolValid = true;
         for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
@@ -492,6 +498,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             statusRejected = ValidasiMandatoryStatus();
             statusValid = true;
             List<VmTJawabanUser> tJawabanList = saveData();
+            jawabanListFinal.addAll(tJawabanList);
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
             statusValid = false;
@@ -639,6 +646,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             statusRejected = ValidasiMandatoryStatus();
             statusValid = true;
             List<VmTJawabanUser> tJawabanList = saveData();
+            jawabanListFinal.addAll(tJawabanList);
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
             statusValid = false;
@@ -799,6 +807,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             statusRejected = ValidasiMandatoryStatus();
             statusValid = true;
             List<VmTJawabanUser> tJawabanList = saveData();
+            jawabanListFinal.addAll(tJawabanList);
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
             statusValid = false;
@@ -816,31 +825,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
         return true;
     }
- /*   boolean isNavigationHide = false;
-    private void animateNavigation(final boolean hide) {
-        if (isNavigationHide && hide || !isNavigationHide && !hide) return;
-        isNavigationHide = hide;
-        int moveY = hide ? (2 * navigation.getHeight()) : 0;
-        navigation.animate().translationY(moveY).setStartDelay(100).setDuration(300).start();
-    }
-
-    boolean isTitleBarHide = false;
-//pake ntar buat nge hide atas pas scrollke bawah dan hide bawah pas scroll ke atas
-    private void animateAppBar(final boolean hide) {
-        if (isTitleBarHide && hide || !isTitleBarHide && !hide) return;
-        isTitleBarHide = hide;
-        int moveY = hide ? -(2 * appBarLayout.getHeight()) : 0;
-        appBarLayout.animate().translationY(moveY).setStartDelay(100).setDuration(300).start();
-    }
-*/
-    public VMTransaksiChecker.DatatTransaksi getDataTransaction() {
-        VMTransaksiChecker.DatatTransaksi datatTransaksi = new VMTransaksiChecker().new DatatTransaksi();
-
-        VMTransaksiChecker.DatatTransaksiDetail datatTransaksiDetail = new VMTransaksiChecker().new DatatTransaksiDetail();
-
-
+    public JSONArray getDataTransaction() {
+        JSONArray json = new BLHelper().getDataTransaksiJsonArrayCommon(context,jawabanListFinal);
+        /*VMTransaksiChecker.DatatTransaksi datatTransaksi = new VMTransaksiChecker().new DatatTransaksi();
         List<VMTransaksiChecker.DataTransaksiDetailImage> lisImagesAsal = new ArrayList<>();
-
         VMTransaksiChecker.DataTransaksiDetailImage dataTransaksiDetailImageasal = new VMTransaksiChecker().new DataTransaksiDetailImage();
 
         dataTransaksiDetailImageasal.setINT_FILL_DTL_ID("");
@@ -860,6 +848,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             dataTransaksiDetailImage.setTXT_ORI_FILE_NAME("");
             lisImagesTo.add(dataTransaksiDetailImage);
         }
+        List<VMTransaksiChecker.DatatTransaksiDetail > ltDataTransaksiDetail = new ArrayList<>();
+        VMTransaksiChecker.DatatTransaksiDetail datatTransaksiDetail = new VMTransaksiChecker().new DatatTransaksiDetail();
 
         datatTransaksiDetail.setDetail_Image(lisImagesTo);
         datatTransaksiDetail.setINT_FILL_DTL_ID("");
@@ -867,16 +857,18 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         datatTransaksiDetail.setINT_FORM_DTL_ID("");
         datatTransaksiDetail.setINT_VALUE_ID("");
         datatTransaksiDetail.setTXT_VALUE("");
-        datatTransaksi.setDataDetail(datatTransaksiDetail);
+        ltDataTransaksiDetail.add(datatTransaksiDetail);
 
+        datatTransaksi.setDataDetail(ltDataTransaksiDetail);
         datatTransaksi.setBIT_ACTIVE("1");
         datatTransaksi.setINT_FILL_HDR_ID("2");
         datatTransaksi.setINT_FORM_VERS_ID("2");
         datatTransaksi.setINT_ORG_ID("0");
         datatTransaksi.setINT_STATUS_ID("1");
         datatTransaksi.setTXT_ORG_CODE("1231AB");
-        datatTransaksi.setTXT_PERIODE("2018/2019");
-        return datatTransaksi;
+        datatTransaksi.setTXT_PERIODE("2018/2019");*/
+
+        return json;
     }
     public List<VmTJawabanUser> saveData() {
         List<VmTJawabanUser> tJawabanList = new ArrayList<>();

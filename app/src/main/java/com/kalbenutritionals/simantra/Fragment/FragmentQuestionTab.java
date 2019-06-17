@@ -26,6 +26,8 @@ import com.androidnetworking.error.ANError;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickFile;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 import com.kalbenutritionals.simantra.BL.BLHelper;
@@ -35,10 +37,13 @@ import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.Response
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
+import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
 import com.kalbenutritionals.simantra.ViewModel.VMTransaksiChecker;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -239,10 +244,19 @@ public class FragmentQuestionTab extends Fragment {
     private void pushTransaction(final Dialog dialog) {
         FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         String txtLink = new ClsHardCode().linkSetTransactionList;
-        VMTransaksiChecker.DatatTransaksi data = myFragment.getDataTransaction();
-        JSONObject obj = new BLHelper().getDataTransaksiJson(context, data);
+        JSONArray data = myFragment.getDataTransaction();
+        JSONObject object = new JSONObject();
+        DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
+        JSONObject deviceInfo = new BLHelper().getDataTransaksiJsonObjCommon(context,dataDevice);
+        try {
+            object.put("dataJawaban",data);
+            object.put("deviceInfo",deviceInfo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        JSONObject obj = new BLHelper().getDataTransaksiJson(context, data);
 
-        new FastNetworkingUtils().FNRequestUploadListImage(getActivity(), txtLink, obj,listMap, "Processing SPM","transaktion", new InterfaceFastNetworking() {
+        new FastNetworkingUtils().FNRequestUploadListImage(getActivity(), txtLink, object.toString(),listMap, "Processing SPM","transaktion", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
 

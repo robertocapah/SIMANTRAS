@@ -311,6 +311,7 @@ public class ActivitySplash extends AppCompatActivity {
                     new RepoclsToken(activity.getApplicationContext()).createOrUpdate(data);
                     checkVersion(activity, mAccountManager);
                     Log.d("Data info", "get access_token & refresh_token, Success");
+
                 } catch (Exception ex) {
                     String a = "";
                 }

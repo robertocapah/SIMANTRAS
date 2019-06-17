@@ -3,9 +3,6 @@ package com.kalbenutritionals.simantra.Database.Common;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-/**
- * Created by Rian Andrivani on 11/21/2017.
- */
 @DatabaseTable
 public class ClsmConfigData {
     @DatabaseField(id = true,columnName = "intId")

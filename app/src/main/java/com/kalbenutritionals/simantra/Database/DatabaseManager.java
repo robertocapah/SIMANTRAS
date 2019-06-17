@@ -2,9 +2,7 @@ package com.kalbenutritionals.simantra.Database;
 
 import android.content.Context;
 
-/**
- * Created by Rian Andrivani on 6/22/2017.
- */
+
 
 public class DatabaseManager {
     static private DatabaseManager instance;
