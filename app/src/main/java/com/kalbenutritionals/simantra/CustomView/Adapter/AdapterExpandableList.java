@@ -2,12 +2,9 @@ package com.kalbenutritionals.simantra.CustomView.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -24,22 +21,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.kalbe.mobiledevknlibs.PermissionChecker.PermissionChecker;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.CustomView.Utils.SpacingItemDecoration;
-import com.kalbenutritionals.simantra.CustomView.Utils.ViewAnimation;
 import com.kalbenutritionals.simantra.CustomView.Utils.setDataChecklist;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
-import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
-import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Fragment.FragmentDetailInfoChecker;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.CustomView.Utils.ClsTools;
@@ -49,7 +40,6 @@ import com.kalbenutritionals.simantra.ViewModel.VmListImageAdapter;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -137,12 +127,13 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    private void selectImageProfile(final int id, int position, final int imgId) {
+    private void selectImage(final int id, int position, final int imgId) {
         FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION = id;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_ID = imgId;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_QUEST_ID = position;
         String filename = "tmp_act"+id;
         FragmentDetailInfoChecker.uriImage = new UriData().getOutputMediaImageUri(ctx, new ClsHardCode().txtFolderDataQuest, filename);
+        FragmentDetailInfoChecker.imgName = filename;
         new PickImage().CaptureImage(ctx, new ClsHardCode().txtFolderDataQuest, filename, FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION);
 //        final CharSequence[] items = {"Ambil Foto", "Pilih dari Galeri",
 //                "Batal"};
@@ -347,7 +338,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImageProfile(paId,position2, position);
+                        selectImage(paId,position2, position);
                         GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });
@@ -421,7 +412,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImageProfile(paId,position2, position);
+                        selectImage(paId,position2, position);
                         GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });
@@ -530,7 +521,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImageProfile(paId,position2, position);
+                        selectImage(paId,position2, position);
                         GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });

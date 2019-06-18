@@ -10,7 +10,16 @@ import android.net.Uri;
 public class VmImageContainer {
     private Bitmap bitmap;
     private Uri path;
+    private String imgName;
     private int position;
+
+    public String getImgName() {
+        return imgName;
+    }
+
+    public void setImgName(String imgName) {
+        this.imgName = imgName;
+    }
 
     public Bitmap getBitmap() {
         return bitmap;

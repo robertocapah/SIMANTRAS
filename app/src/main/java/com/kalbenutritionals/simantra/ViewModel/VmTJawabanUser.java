@@ -1,8 +1,5 @@
 package com.kalbenutritionals.simantra.ViewModel;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 import java.util.List;
 
 /**
@@ -15,8 +12,7 @@ public class VmTJawabanUser {
     private int intmJawabanId;
     private int intTypePertanyaanId;
     private String txtJawaban;
-    private String txtPathImage;
-    private List<String> listPathImage;
+    private List<imageModel> dtImageModels;
     private boolean bolHavePhoto;
     private boolean bolHaveAnswer;
 
@@ -68,14 +64,6 @@ public class VmTJawabanUser {
         this.txtJawaban = txtJawaban;
     }
 
-    public String getTxtPathImage() {
-        return txtPathImage;
-    }
-
-    public void setTxtPathImage(String txtPathImage) {
-        this.txtPathImage = txtPathImage;
-    }
-
     public boolean isBolHavePhoto() {
         return bolHavePhoto;
     }
@@ -92,11 +80,21 @@ public class VmTJawabanUser {
         this.bolHaveAnswer = bolHaveAnswer;
     }
 
-    public List<String> getListPathImage() {
-        return listPathImage;
+    public List<imageModel> getDtImageModels() {
+        return dtImageModels;
     }
 
-    public void setListPathImage(List<String> listPathImage) {
-        this.listPathImage = listPathImage;
+    public void setDtImageModels(List<imageModel> dtImageModels) {
+        this.dtImageModels = dtImageModels;
+    }
+
+    public class imageModel{
+        public String imgName;
+        public String imgPath;
+
+        public imageModel(String imgName, String imgPath) {
+            this.imgName = imgName;
+            this.imgPath = imgPath;
+        }
     }
 }

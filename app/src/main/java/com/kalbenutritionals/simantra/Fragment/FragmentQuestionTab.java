@@ -2,8 +2,6 @@ package com.kalbenutritionals.simantra.Fragment;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,19 +23,14 @@ import com.androidnetworking.error.ANError;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.kalbe.mobiledevknlibs.PickImageAndFile.PickFile;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasic;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
-import com.kalbenutritionals.simantra.ViewModel.VMTransaksiChecker;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
 
@@ -46,7 +38,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -123,11 +114,11 @@ public class FragmentQuestionTab extends Fragment {
                         for (VmTJawabanUser jawab :
                                 tJawabanList) {
                             if (jawab.isBolHavePhoto()) {
-                                List<String> paths = jawab.getListPathImage();
-                                for (String path :
-                                        paths) {
+                                List<VmTJawabanUser.imageModel> models = jawab.getDtImageModels();
+                                for (VmTJawabanUser.imageModel model :
+                                        models) {
 
-                                    File file = new File(path);
+                                    File file = new File(model.imgPath);
                                     if (file.exists()){
                                         listMap.put(String.valueOf(jawab.getIntmJawabanId()),file);
                                     }
