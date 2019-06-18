@@ -6,7 +6,9 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class ClsmPertanyaan {
     @DatabaseField(id = true)
-    private int intPertanyaanId;
+    private int intPertanyaanId; //formdtlID
+    @DatabaseField
+    private int intFillHeaderId;
     @DatabaseField
     private String txtPertanyaan;
     @DatabaseField
@@ -30,6 +32,14 @@ public class ClsmPertanyaan {
     public static String TXTJENISPERTANYAAN = "intJenisPertanyaanId";
     public static String INTVALIDATEID = "intValidateID";
     public static String TXTMAPCOL = "txtMapCol";
+
+    public int getIntFillHeaderId() {
+        return intFillHeaderId;
+    }
+
+    public void setIntFillHeaderId(int intFillHeaderId) {
+        this.intFillHeaderId = intFillHeaderId;
+    }
 
     public String getTxtMapCol() {
         return txtMapCol;

@@ -105,7 +105,8 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
         fragmentTransactionInfoChecker.commit();*/
         String txtLink = new ClsHardCode().linkGetListFormByOrg;
-        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,"7094ecc8-493c-4122-b0d2-5de69fbea0f5");
+        final String noQr = "7094ecc8-493c-4122-b0d2-5de69fbea0f5";
+        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,noQr);
 
         new FastNetworkingUtils().FNRequestPostData(getActivity(), txtLink, obj, "Processing SPM", new InterfaceFastNetworking() {
             @Override
@@ -114,6 +115,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                 if(model.getResult()!=null){
                     if ( model.getResult().isStatus()){
                         new RepomPertanyaan(context).deleteAllData();
+                        BLHelper.savePreference(context,"spm",noQr);
                         GenerateData(getActivity().getApplicationContext(),model);
                         FragmentTab fragmentTab = new FragmentTab();
                         FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
@@ -174,6 +176,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                 datas) {
             ClsmPertanyaan pertanyaan = new ClsmPertanyaan();
             pertanyaan.setIntPertanyaanId(data.getINTFORMDTLID());
+            pertanyaan.setIntFillHeaderId(model.getINTFILLHDRID());
             pertanyaan.setIntJenisPertanyaanId(data.getINTTYPEID());
             pertanyaan.setTxtPertanyaan(data.getTXTFORMNAME());
             pertanyaan.setIntLocationDocsId(data.getINTPOSITIONID());

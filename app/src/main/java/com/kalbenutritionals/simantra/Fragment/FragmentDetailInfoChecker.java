@@ -101,12 +101,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public static Uri uriImage;
     public static String imgName;
     public static int CAMERA_REQUEST_QUESTION = 1;
-    static List<VmListItemAdapterPertanyaan> ltDataPertanyaanOptional = new ArrayList<>();
-    static List<VmListItemAdapterPertanyaan> ltDataPertanyaanMandatory = new ArrayList<>();
-    static List<VmListItemAdapterPertanyaan> ltDataPertanyaanFooter = new ArrayList<>();
-    static List<VmListAnswerView> ListAnswerViewOptional = new ArrayList<>();
-    static List<VmListAnswerView> ListAnswerViewMandatory = new ArrayList<>();
-    static List<VmListAnswerView> ListAnswerViewFooter = new ArrayList<>();
+     List<VmListItemAdapterPertanyaan> ltDataPertanyaanOptional = new ArrayList<>();
+     List<VmListItemAdapterPertanyaan> ltDataPertanyaanMandatory = new ArrayList<>();
+     List<VmListItemAdapterPertanyaan> ltDataPertanyaanFooter = new ArrayList<>();
+     List<VmListAnswerView> ListAnswerViewOptional = new ArrayList<>();
+     List<VmListAnswerView> ListAnswerViewMandatory = new ArrayList<>();
+     List<VmListAnswerView> ListAnswerViewFooter = new ArrayList<>();
 //    List<VmBasicListView> ltDataPIC = new ArrayList<>();
     public List<VmAdapterBasic> ListRejection = new ArrayList<>();
     @BindView(R.id.rvFooter)
@@ -355,13 +355,17 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public void onViewClicked() {
 
     }
-    public void validateAll(){
+    public List<VmTJawabanUser> validateAll(){
         jawabanListFinal = new ArrayList<>();
-        validateAnswHeader();
-        validateAnswFooter();
-        validateAnswMandatory();
+        List<VmTJawabanUser> listHeader = validateAnswHeader();
+        jawabanListFinal.addAll(listHeader);
+        /*List<VmTJawabanUser> listFooter = validateAnswFooter();
+        jawabanListFinal.addAll(listFooter);
+        List<VmTJawabanUser> listMandatory = validateAnswMandatory();
+        jawabanListFinal.addAll(listMandatory);*/
+        return jawabanListFinal;
     }
-    public boolean validateAnswHeader() {
+    public List<VmTJawabanUser> validateAnswHeader() {
         boolean bolValid = true;
         for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
             List<Jawaban> jawabans = new ArrayList<>();
@@ -493,11 +497,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 }
             }
         }
+        List<VmTJawabanUser> tJawabanList = new ArrayList<>();
         if (bolValid) {
             statusRejected = ValidasiMandatoryStatus();
             statusValid = true;
-            List<VmTJawabanUser> tJawabanList = saveData();
-            jawabanListFinal.addAll(tJawabanList);
+            tJawabanList = saveData();
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
             statusValid = false;
@@ -507,9 +511,9 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         }
 
 
-        return statusValid;
+        return tJawabanList;
     }
-    public boolean validateAnswFooter() {
+    public List<VmTJawabanUser> validateAnswFooter() {
         boolean bolValid = true;
         for (int i = 0; i < ListAnswerViewFooter.size(); i++) {
             List<Jawaban> jawabans = new ArrayList<>();
@@ -641,10 +645,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 }
             }
         }
+        List<VmTJawabanUser> tJawabanList = new ArrayList<>();
         if (bolValid) {
             statusRejected = ValidasiMandatoryStatus();
             statusValid = true;
-            List<VmTJawabanUser> tJawabanList = saveData();
+            tJawabanList = saveData();
             jawabanListFinal.addAll(tJawabanList);
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
@@ -655,10 +660,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         }
 
 
-        return statusValid;
+        return tJawabanList;
     }
     String jawabanCheckbox = "";
-    public boolean validateAnswMandatory() {
+    public List<VmTJawabanUser> validateAnswMandatory() {
         boolean bolValid = true;
         ListRejection = new ArrayList<>();
         for (int i = 0; i < ListAnswerViewMandatory.size(); i++) {
@@ -802,11 +807,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 }
             }
         }
+        List<VmTJawabanUser> tJawabanList  = new ArrayList<>();
         if (bolValid) {
             statusRejected = ValidasiMandatoryStatus();
             statusValid = true;
-            List<VmTJawabanUser> tJawabanList = saveData();
-            jawabanListFinal.addAll(tJawabanList);
+            tJawabanList = saveData();
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
             statusValid = false;
@@ -816,7 +821,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
 
 
-        return statusValid;
+        return tJawabanList;
     }
 
     public boolean ValidasiMandatoryStatus() {
@@ -883,6 +888,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
+                tJawaban.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
 
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanOptional.get(position).listImage.size(); x++) {
@@ -964,7 +970,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-
+                tJawaban.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanMandatory.get(position).listImage.size(); x++) {
                         if (ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath()!= null){
@@ -1043,6 +1049,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
+                tJawaban.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
 
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanFooter.get(position).listImage.size(); x++) {

@@ -107,8 +107,8 @@ public class FragmentQuestionTab extends Fragment {
                     if (array_state[idx_state].name().equalsIgnoreCase(State.CHECKING.name())) {
                         FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 //                        boolean validBody = myFragment.validateAnswHeader();
-                        boolean validMandatory = myFragment.validateAnswMandatory();
-                        boolean validFooter = myFragment.validateAnswFooter();
+                        List<VmTJawabanUser> validMandatoryList = myFragment.validateAll();
+//                        boolean validFooter = myFragment.validateAnswFooter();
                         List<VmTJawabanUser> tJawabanList = myFragment.saveData();
 
                         for (VmTJawabanUser jawab :
@@ -136,7 +136,7 @@ public class FragmentQuestionTab extends Fragment {
                             }
 //                        boolean isRejected = myFragment.statusRejected;
 //                        isRejected = false;
-                        validFooter = true;
+                        boolean validFooter = true;
 //                        validMandatory = true;
                         if (validFooter) {
                             final Dialog dialog = new Dialog(getActivity());
@@ -150,7 +150,7 @@ public class FragmentQuestionTab extends Fragment {
                             Button btnProceed = (Button) dialog.findViewById(R.id.btnProceed);
                             TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitleAlert);
                             RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
-                            if (!validMandatory) {
+                            if (!true) {
 
                                 List<VmAdapterBasic> basic = myFragment.ListRejection;
                                 basic.addAll(basic);

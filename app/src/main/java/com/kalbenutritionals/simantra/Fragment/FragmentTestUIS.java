@@ -68,11 +68,11 @@ public class FragmentTestUIS extends Fragment {
                 }else{
                     if(array_state[idx_state].name().equalsIgnoreCase(State.CHECKING.name())){
                         FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-                        boolean valid = myFragment.validateAnswHeader();
+//                        boolean valid = myFragment.validateAnswHeader();
                         boolean isRejected = myFragment.statusRejected;
-                        valid = true;
+//                        valid = true;
                         isRejected = false;
-                        if (valid){
+                        if (true){
                             if (isRejected){
                                 final Dialog dialog = new Dialog(getActivity());
                                 dialog.setContentView(R.layout.alert_validation);

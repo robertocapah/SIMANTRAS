@@ -2,6 +2,7 @@ package com.kalbenutritionals.simantra.BL;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.pdf.PdfDocument;
 import android.os.Environment;
@@ -70,14 +71,29 @@ import org.json.JSONObject;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Created by Dewi Oktaviani on 10/10/2018.
  */
 
 public class BLHelper {
-
+    private static SharedPreferences mSharedPreferences;
+    private static SharedPreferences.Editor editor;
     String access_token,clientId = "";
     List<ClsToken> dataToken;
+    public static void savePreference(Context context,String key,String value){
+        editor = context.getSharedPreferences(ClsHardCode.TXT_SHARED_PREF_KEY, MODE_PRIVATE).edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+    public static String getPreference(Context context,String key) {
+        String result = "";
+        mSharedPreferences = context.getSharedPreferences(ClsHardCode.TXT_SHARED_PREF_KEY,
+                Context.MODE_PRIVATE);
+        result = mSharedPreferences.getString(key, "");
+        return result;
+    }
     public void setupFormats(ArrayList<Integer> mSelectedIndices,ZXingScannerView mScannerView) {
         List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();
         if(mSelectedIndices == null || mSelectedIndices.isEmpty()) {

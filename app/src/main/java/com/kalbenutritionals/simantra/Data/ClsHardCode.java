@@ -90,6 +90,7 @@ public class ClsHardCode {
     public static String TXT_SHIP_FROM = "SHIP_FROM";
     public static String TXT_SHIP_TO = "SHIP_TO";
 
+    public static String TXT_SHARED_PREF_KEY = "SimantraPref";
 
     public String copydb(Context context) throws IOException {
         String CURRENT_DATABASE_PATH = "data/data/" + context.getPackageName() + "/databases/"+ new ClsHardCode().dbName;

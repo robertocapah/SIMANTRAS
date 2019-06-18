@@ -13,6 +13,9 @@ public class ResponseGetQuestion{
 	@SerializedName("data")
 	private List<DataItem> data;
 
+	@SerializedName("INT_FILL_HDR_ID")
+	private int iNTFILLHDRID;
+
 	public void setResult(Result result){
 		this.result = result;
 	}
@@ -29,12 +32,21 @@ public class ResponseGetQuestion{
 		return data;
 	}
 
+	public void setINTFILLHDRID(int iNTFILLHDRID){
+		this.iNTFILLHDRID = iNTFILLHDRID;
+	}
+
+	public int getINTFILLHDRID(){
+		return iNTFILLHDRID;
+	}
+
 	@Override
  	public String toString(){
 		return 
 			"ResponseGetQuestion{" + 
 			"result = '" + result + '\'' + 
 			",data = '" + data + '\'' + 
+			",iNT_FILL_HDR_ID = '" + iNTFILLHDRID + '\'' + 
 			"}";
 		}
 }
