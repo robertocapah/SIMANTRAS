@@ -119,8 +119,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
     }
 
-    public static FragmentDetailInfoCheckerBackup newInstance() {
-        FragmentDetailInfoCheckerBackup fragment = new FragmentDetailInfoCheckerBackup();
+    public static FragmentDetailInfoChecker newInstance() {
+        FragmentDetailInfoChecker fragment = new FragmentDetailInfoChecker();
         return fragment;
     }
 
