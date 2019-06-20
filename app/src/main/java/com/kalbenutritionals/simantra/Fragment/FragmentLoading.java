@@ -1,7 +1,9 @@
 package com.kalbenutritionals.simantra.Fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -16,8 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
+import com.kalbenutritionals.simantra.BL.BLHelper;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.FullScannerFragmentActivity;
 import com.kalbenutritionals.simantra.R;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,8 +38,8 @@ public class FragmentLoading extends Fragment {
     Unbinder unbinder;
     @BindView(R.id.tvStartTime)
     TextView tvStartTime;
-    @BindView(R.id.tvTimerLoad)
-    TextView tvTimerLoad;
+    @BindView(R.id.tvResultTime)
+    TextView tvResultTime;
     Handler handler;
     int Seconds, Hours, Minutes, MinutesTime, MilliSeconds;
     long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L, TimeBuff2;
@@ -46,6 +52,13 @@ public class FragmentLoading extends Fragment {
     @BindView(R.id.ivDone)
     ImageView ivDone;
     public boolean isFinished = false;
+    Context context;
+    int intStatusLoading = 0;
+    @BindView(R.id.tvFinishTime)
+    TextView tvFinishTime;
+    @BindView(R.id.tv_label_result)
+    TextView tvLabelResult;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,6 +67,9 @@ public class FragmentLoading extends Fragment {
         handler = new Handler();
         spinKit.setVisibility(View.GONE);
         btnFinish.setVisibility(View.GONE);
+        context = getActivity().getApplicationContext();
+        tvResultTime.setVisibility(View.GONE);
+        tvLabelResult.setVisibility(View.GONE);
         /*viewTicktockCountup = (TickTockView) v.findViewById(R.id.view_ticktock_countup);
         if (viewTicktockCountup != null) {
             viewTicktockCountup.setOnTickListener(new TickTockView.OnTickListener() {
@@ -66,7 +82,22 @@ public class FragmentLoading extends Fragment {
                 }
             });
         }*/
-
+        String myValue;
+        if (this.getArguments() != null) {
+            myValue = this.getArguments().getString(ClsHardCode.txtMessage);
+            String noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);
+            if (myValue != null && myValue.equals(ClsHardCode.txtBundleKeyBarcodeLoad)) {
+                String spmActive = BLHelper.getPreference(context, ClsHardCode.txtNoSPMActive);
+                if (spmActive.equals(noSPM)) {
+                    int status = this.getArguments().getInt(ClsHardCode.txtStatusLoading);
+                    if (status == 0) {
+                        startingTime();
+                    } else if (status == 1) {
+                        finishingTime();
+                    }
+                }
+            }
+        }
 
         return v;
     }
@@ -91,8 +122,8 @@ public class FragmentLoading extends Fragment {
             Hours = MinutesTime / 60;
 
             MilliSeconds = (int) (UpdateTime % 1000);
-            if (tvTimerLoad != null) {
-                tvTimerLoad.setText(String.format("%d", Hours) + ":" + String.format("%d", Minutes) + ":"
+            if (tvResultTime != null) {
+                tvResultTime.setText(String.format("%d", Hours) + ":" + String.format("%d", Minutes) + ":"
                         + String.format("%02d", Seconds));
             } else {
                 handler.removeCallbacks(runnable);
@@ -117,6 +148,14 @@ public class FragmentLoading extends Fragment {
         }*/
     }
 
+    private void scanBarcode() {
+//        IntentIntegrator.initiateScan(getActivity(), zxingLibConfig);
+        Intent intent = new Intent(getActivity(), FullScannerFragmentActivity.class);
+        intent.putExtra(ClsHardCode.txtMessage, ClsHardCode.txtBundleKeyBarcodeLoad);
+        intent.putExtra(ClsHardCode.txtStatusLoading, intStatusLoading);
+        startActivity(intent);
+    }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -139,15 +178,8 @@ public class FragmentLoading extends Fragment {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
-                        spinKit.setVisibility(View.VISIBLE);
-                        handler.postDelayed(runnable, 0);
-                        Date date = new Date(System.currentTimeMillis());
-                        tvStartTime.setText(format.format(date));
-                        btnStart.setText("Processing ...");
-                        btnStart.setClickable(false);
-                        StartTime = SystemClock.uptimeMillis();
-                        btnFinish.setVisibility(View.VISIBLE);
+                        intStatusLoading = 0;
+                        scanBarcode();
                     }
                 })
                 .setNegativeButton("Close", new DialogInterface.OnClickListener() {
@@ -161,6 +193,55 @@ public class FragmentLoading extends Fragment {
 
     }
 
+    public void startingTime() {
+
+        final SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy hh:mm:ss a");
+        spinKit.setVisibility(View.VISIBLE);
+//        handler.postDelayed(runnable, 0);
+        Date date = new Date(System.currentTimeMillis());
+        String time = format.format(date);
+        tvStartTime.setText(time);
+        BLHelper.savePreference(context, ClsHardCode.StartTime, time);
+        btnStart.setText("Processing ...");
+        btnStart.setClickable(false);
+        StartTime = SystemClock.uptimeMillis();
+        btnFinish.setVisibility(View.VISIBLE);
+    }
+
+    public void finishingTime() {
+        final SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy hh:mm:ss a");
+        Date dateFinish = new Date(System.currentTimeMillis());
+        String timeFinish = format.format(dateFinish);
+        BLHelper.savePreference(context, ClsHardCode.EndTime, timeFinish);
+//        handler.removeCallbacks(runnable);
+        String startT = BLHelper.getPreference(context, ClsHardCode.StartTime);
+        tvLabelResult.setVisibility(View.VISIBLE);
+        try {
+            Date dateStart = format.parse(startT);
+            long mills = dateFinish.getTime() - dateStart.getTime();
+            int days = (int) (mills / (1000*60*60*24));
+            int hours = (int) ((mills - (1000*60*60*24*days)) / (1000*60*60));
+            int min = (int) (mills - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
+
+            int hours2 =(int) mills/(1000 * 60 * 60);
+            int mins = (int) (mills/(1000*60)) % 60;
+            String selisih = hours +" hours : " +mins+" minutes";
+            tvResultTime.setText(selisih);
+            tvResultTime.setVisibility(View.VISIBLE);
+            tvLabelResult.setVisibility(View.VISIBLE);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        tvStartTime.setText(startT);
+        tvFinishTime.setText(timeFinish);
+        btnFinish.setText("Finished");
+        ivDone.setVisibility(View.VISIBLE);
+        spinKit.setVisibility(View.GONE);
+        btnStart.setVisibility(View.GONE);
+        btnFinish.setClickable(false);
+        isFinished = true;
+    }
+
     @OnClick(R.id.btnFinish)
     public void onViewBtnFinishClicked() {
 
@@ -171,13 +252,8 @@ public class FragmentLoading extends Fragment {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        handler.removeCallbacks(runnable);
-                        btnFinish.setText("Finished");
-                        ivDone.setVisibility(View.VISIBLE);
-                        spinKit.setVisibility(View.GONE);
-                        btnStart.setVisibility(View.GONE);
-                        btnFinish.setClickable(false);
-                        isFinished = true;
+                        intStatusLoading = 1;
+                        scanBarcode();
                     }
                 })
                 .setNegativeButton("Close", new DialogInterface.OnClickListener() {

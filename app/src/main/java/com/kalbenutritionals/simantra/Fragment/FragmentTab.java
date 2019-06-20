@@ -1,5 +1,6 @@
 package com.kalbenutritionals.simantra.Fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.R;
 
 import java.util.ArrayList;
@@ -38,6 +40,12 @@ public class FragmentTab extends Fragment {
         initComponent();
         return v;
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
     private void initComponent() {
         mPager = (ViewPager) v.findViewById(R.id.view_pager);
         tab_layout = (TabLayout) v.findViewById(R.id.tab_layout);
@@ -51,7 +59,7 @@ public class FragmentTab extends Fragment {
         // set icon color pre-selected
         tab_layout.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.deep_orange_500), PorterDuff.Mode.SRC_IN);
         tab_layout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN);
-
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Questioner Checker");
         tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -81,8 +89,21 @@ public class FragmentTab extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         viewPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
+        String myValue, noSPM;
+        int statusLoading;
+        Bundle bundle = new Bundle();
+        if (this.getArguments() != null) {
+            myValue = this.getArguments().getString(ClsHardCode.txtMessage);
+            noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);
+            statusLoading = this.getArguments().getInt(ClsHardCode.txtStatusLoading);
+            bundle.putString(ClsHardCode.txtMessage, myValue);
+            bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+            bundle.putInt(ClsHardCode.txtStatusLoading, statusLoading);
+        }
 //        viewPagerAdapter.addFragment(FragmentDetailInfoChecker.newInstance(), "Questioner Checker");    // index 0
-        viewPagerAdapter.addFragment(FragmentQuestionTab.newInstance(), "Questioner Checker");    // index 0
+        Fragment fragmentQuestionTab = FragmentQuestionTab.newInstance();
+        fragmentQuestionTab.setArguments(bundle);
+        viewPagerAdapter.addFragment(fragmentQuestionTab, "Questioner Checker");    // index 0
         viewPagerAdapter.addFragment(FragmentDestinationDetail.newInstance(), "General Information");   // index 1
         viewPager.setAdapter(viewPagerAdapter);
     }

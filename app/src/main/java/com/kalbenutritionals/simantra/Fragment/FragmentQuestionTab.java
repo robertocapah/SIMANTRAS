@@ -27,6 +27,7 @@ import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasic;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
@@ -97,7 +98,15 @@ public class FragmentQuestionTab extends Fragment {
 
         image_payment.setColorFilter(getResources().getColor(R.color.grey_10), PorterDuff.Mode.SRC_ATOP);
         image_confirm.setColorFilter(getResources().getColor(R.color.grey_10), PorterDuff.Mode.SRC_ATOP);
-
+        String myValue;
+        if (this.getArguments() != null) {
+            myValue = this.getArguments().getString(ClsHardCode.txtMessage);
+            String noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);
+            if(myValue!=null && myValue.equals(ClsHardCode.txtBundleKeyBarcodeLoad)){
+                idx_state = 1;
+                BLHelper.savePreference(context,ClsHardCode.txtNoSPMActive,noSPM);
+            }
+        }
         (btnNext).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,7 +263,13 @@ public class FragmentQuestionTab extends Fragment {
         new FastNetworkingUtils().FNRequestUploadListImage(getActivity(), txtLink, object.toString(),listMap, "Processing SPM","transaktion", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
-
+                ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
+                if (model.getResult() != null) {
+                    idx_state++;
+                    displayFragment(array_state[idx_state]);
+                    dialog.dismiss();
+                    btnNext.setClickable(false);
+                }
             }
 
             @Override
@@ -306,6 +321,18 @@ public class FragmentQuestionTab extends Fragment {
         } else if (state.name().equalsIgnoreCase(State.LOADING.name())) {
             FRAGMENT_TAG = "Loading";
             fragment = new FragmentLoading();
+
+            if (this.getArguments()!=null){
+                String myValue = this.getArguments().getString(ClsHardCode.txtMessage);
+                String noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);
+                int intStatus = this.getArguments().getInt(ClsHardCode.txtStatusLoading);
+                Bundle bundle = new Bundle();
+                bundle.putString(ClsHardCode.txtMessage, myValue);
+                bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                bundle.putInt(ClsHardCode.txtStatusLoading,intStatus);
+                fragment.setArguments(bundle);
+            }
+
             line_first.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             image_shipping.setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
             image_payment.clearColorFilter();

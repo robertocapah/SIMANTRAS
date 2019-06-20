@@ -45,7 +45,7 @@ public class FragmentValidator extends Fragment implements ZXingScannerView.Resu
     ImageView ivDone;
     @BindView(R.id.tvStartTime)
     TextView tvStartTime;
-    @BindView(R.id.tvTimerLoad)
+    @BindView(R.id.tvResultTime)
     TextView tvTimerLoad;
     @BindView(R.id.btnFinish)
     Button btnFinish;

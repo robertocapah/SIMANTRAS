@@ -320,6 +320,10 @@ public class FastNetworkingUtils {
     }
     public void FNRequestUploadListImage(final Activity ctx, String strLinkAPI, final String mRequestBody, Map<String,File> files, final String progressBarType, final String tag, final InterfaceFastNetworking listener) {
         String access_token = getToken(ctx);
+        final ProgressDialog Dialog = new ProgressDialog(ctx);
+        Dialog.setMessage(progressBarType);
+        Dialog.setCancelable(false);
+        Dialog.show();
         AndroidNetworking.upload(strLinkAPI)
                 .addMultipartFile(files)
                 .addMultipartParameter("txtParam", mRequestBody)
@@ -345,6 +349,7 @@ public class FastNetworkingUtils {
                     public void onResponse(JSONObject response) {
                         // do anything with response
                         listener.onResponse(response);
+                        Dialog.dismiss();
                     }
 
                     @Override
@@ -352,6 +357,7 @@ public class FastNetworkingUtils {
                         // handle error
                         listener.onError(error);
                         ErrorHandlerFN(ctx,error,tag);
+                        Dialog.dismiss();
                     }
                 });
     }

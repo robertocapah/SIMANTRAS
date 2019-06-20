@@ -205,16 +205,36 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                 fragmentTransactionApprover.commit();
                 selectedId = 99;
             }
-        }else if (intent.getStringExtra(new ClsHardCode().txtBundleKeyBarcode) != null) {
+        }else if (intent.getStringExtra(new ClsHardCode().txtMessage) != null) {
             /*FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
             FragmentTransaction fragmentTransactionInfoChecker = getSupportFragmentManager().beginTransaction();
             fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
             fragmentTransactionInfoChecker.commit();*/
-            FragmentTab fragmentTab = new FragmentTab();
-            FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
-            fragmentTransactionTab.replace(R.id.frame, fragmentTab);
-            fragmentTransactionTab.commit();
-        } else if (intent.getStringExtra(i_View) != null) {
+            toolbar.setTitle("Questioner Checker");
+            setSupportActionBar(toolbar);
+            String noSPM = intent.getStringExtra(ClsHardCode.txtNoSPM);
+            if (intent.getStringExtra(new ClsHardCode().txtMessage).equals(ClsHardCode.txtBundleKeyBarcode)){
+                FragmentTab fragmentTab = new FragmentTab();
+                Bundle bundle = new Bundle();
+                bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                fragmentTab.setArguments(bundle);
+                FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                fragmentTransactionTab.commit();
+            }else if(intent.getStringExtra(new ClsHardCode().txtMessage).equals(ClsHardCode.txtBundleKeyBarcodeLoad)){
+                FragmentTab fragmentTab = new FragmentTab();
+                Bundle bundle = new Bundle();
+                bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcodeLoad);
+                bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                int intStatus = intent.getIntExtra(ClsHardCode.txtStatusLoading,0);
+                bundle.putInt(ClsHardCode.txtStatusLoading,intStatus);
+                fragmentTab.setArguments(bundle);
+                FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                fragmentTransactionTab.commit();
+            }
+        }else if (intent.getStringExtra(i_View) != null) {
             if (intent.getStringExtra(i_View).equals("FragmentNotification")) {
                 toolbar.setTitle("Notification");
                 setSupportActionBar(toolbar);

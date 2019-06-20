@@ -57,7 +57,15 @@ public class ClsHardCode {
     public String linkGetListFormByOrg = new RepomConfig(context).API +"getListFormByOrg";
     public String linkSetTransactionList = new RepomConfig(context).API +"setTransaksiMobile";
     public String linkDownloadFilePDF = new RepomConfig(context).API + "filePDF?txtSPMNo=";
-    public String txtBundleKeyBarcode = "BarcodeScanner";
+
+    public static String txtMessage = "message";
+    public static String txtBundleKeyBarcode = "BarcodeScanner";
+    public static String txtBundleKeyBarcodeLoad = "BarcodeScannerLoad";
+    public static String txtNoSPM = "NoSPM";
+    public static String txtNoSPMActive = "NoSPMActive";
+    public static String txtStatusLoading = "statusLoading";
+    public static String StartTime = "StartTime";
+    public static String EndTime = "EndTime";
 
     public static int JenisPertanyaanTextView = 7;
     public static int JenisPertanyaanTextBox = 1;

@@ -63,7 +63,9 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         context = getActivity().getApplicationContext();
         //is there any way that I can stay in your eyes
         Bundle arguments = getArguments();
-        intStatus = arguments.getInt(ClsHardCode.TXT_STATUS_MENU);
+        if (arguments != null){
+            intStatus = arguments.getInt(ClsHardCode.TXT_STATUS_MENU);
+        }
         return v;
     }
 
@@ -168,6 +170,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
     private void scanBarcode(){
 //        IntentIntegrator.initiateScan(getActivity(), zxingLibConfig);
         Intent intent = new Intent(getActivity(), FullScannerFragmentActivity.class);
+        intent.putExtra(ClsHardCode.txtMessage,ClsHardCode.txtBundleKeyBarcode);
         startActivity(intent);
     }
     public void GenerateData(Context context, ResponseGetQuestion model){
