@@ -56,6 +56,7 @@ public class ClsHardCode {
     public String linkGetUpdateToken = new RepomConfig(context).API +"updateUserToken";
     public String linkGetListFormByOrg = new RepomConfig(context).API +"getListFormByOrg";
     public String linkSetTransactionList = new RepomConfig(context).API +"setTransaksiMobile";
+    public String linkDownloadFilePDF = new RepomConfig(context).API + "filePDF?txtSPMNo=";
     public String txtBundleKeyBarcode = "BarcodeScanner";
 
     public static int JenisPertanyaanTextView = 7;

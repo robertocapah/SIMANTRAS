@@ -42,7 +42,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Booking Code"
+                        android:text="No SPM"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_80" />
 
@@ -51,12 +51,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/spacing_large"
-                        android:text="CXDT2887A"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                        android:text="KNS17112519"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
                         android:textColor="@color/colorAccent" />
 
                     <ImageButton
-                        android:id="@+id/bt_copy_code"
+                        android:id="@+id/btn_download"
                         android:layout_width="?attr/actionBarSize"
                         android:layout_height="?attr/actionBarSize"
                         android:background="?attr/selectableItemBackgroundBorderless"

@@ -87,9 +87,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     Button btnValidate;
     boolean statusValid = false;
     boolean statusRejected = false;
-    static AdapterExpandableList mAdapterOptional;
-    static AdapterExpandableList mAdapterMandatory;
-    static AdapterExpandableList mAdapterFooter;
+    String txtMsg = "";
+    AdapterExpandableList mAdapterOptional;
+    AdapterExpandableList mAdapterMandatory;
+    AdapterExpandableList mAdapterFooter;
     List<VmListItemAdapterPertanyaan> items;
 
     public static int GLOBAL_PICK_PICTURE_ID = 1;
@@ -101,13 +102,13 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public static Uri uriImage;
     public static String imgName;
     public static int CAMERA_REQUEST_QUESTION = 1;
-     List<VmListItemAdapterPertanyaan> ltDataPertanyaanOptional = new ArrayList<>();
-     List<VmListItemAdapterPertanyaan> ltDataPertanyaanMandatory = new ArrayList<>();
-     List<VmListItemAdapterPertanyaan> ltDataPertanyaanFooter = new ArrayList<>();
-     List<VmListAnswerView> ListAnswerViewOptional = new ArrayList<>();
-     List<VmListAnswerView> ListAnswerViewMandatory = new ArrayList<>();
-     List<VmListAnswerView> ListAnswerViewFooter = new ArrayList<>();
-//    List<VmBasicListView> ltDataPIC = new ArrayList<>();
+    List<VmListItemAdapterPertanyaan> ltDataPertanyaanOptional = new ArrayList<>();
+    List<VmListItemAdapterPertanyaan> ltDataPertanyaanMandatory = new ArrayList<>();
+    List<VmListItemAdapterPertanyaan> ltDataPertanyaanFooter = new ArrayList<>();
+    List<VmListAnswerView> ListAnswerViewOptional = new ArrayList<>();
+    List<VmListAnswerView> ListAnswerViewMandatory = new ArrayList<>();
+    List<VmListAnswerView> ListAnswerViewFooter = new ArrayList<>();
+    //    List<VmBasicListView> ltDataPIC = new ArrayList<>();
     public List<VmAdapterBasic> ListRejection = new ArrayList<>();
     @BindView(R.id.rvFooter)
     RecyclerView rvFooter;
@@ -118,8 +119,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
     }
 
-    public static FragmentDetailInfoChecker newInstance() {
-        FragmentDetailInfoChecker fragment = new FragmentDetailInfoChecker();
+    public static FragmentDetailInfoCheckerBackup newInstance() {
+        FragmentDetailInfoCheckerBackup fragment = new FragmentDetailInfoCheckerBackup();
         return fragment;
     }
 
@@ -357,14 +358,436 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     }
     public List<VmTJawabanUser> validateAll(){
         jawabanListFinal = new ArrayList<>();
-        List<VmTJawabanUser> listHeader = validateAnswHeader();
-        jawabanListFinal.addAll(listHeader);
+//        boolean validOptional = validateOptionals();
+        boolean validMandatory = validateMandatory();
+        boolean validFooter =validateFooter();
+        if (validMandatory&&validFooter) {
+            statusRejected = ValidasiMandatoryStatus();
+            statusValid = true;
+            jawabanListFinal = saveData();
+            mAdapterMandatory.notifyDataSetChanged();
+            rvMandatory.setAdapter(mAdapterMandatory);
+
+//            mAdapterOptional.notifyDataSetChanged();
+//            rvOptional.setAdapter(mAdapterOptional);
+
+            mAdapterFooter.notifyDataSetChanged();
+            rvFooter.setAdapter(mAdapterFooter);
+//            Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!validMandatory){
+                txtMsg = "Please take all picture at mandatory conditions !";
+            }else if (!validateFooter()){
+                txtMsg = "Mandatory Question must be filled out !";
+            }
+            statusValid = false;
+            mAdapterMandatory.notifyDataSetChanged();
+            rvMandatory.setAdapter(mAdapterMandatory);
+
+//            mAdapterOptional.notifyDataSetChanged();
+//            rvOptional.setAdapter(mAdapterOptional);
+
+            mAdapterFooter.notifyDataSetChanged();
+            rvFooter.setAdapter(mAdapterFooter);
+        }
+
+
+//        if (validateMandatory()) {
+//            statusRejected = ValidasiMandatoryStatus();
+//            statusValid = true;
+//            jawabanListFinal = saveData();
+//            mAdapterMandatory.notifyDataSetChanged();
+//            rvMandatory.setAdapter(mAdapterMandatory);
+//
+////            mAdapterOptional.notifyDataSetChanged();
+////            rvOptional.setAdapter(mAdapterOptional);
+////
+////            mAdapterFooter.notifyDataSetChanged();
+////            rvFooter.setAdapter(mAdapterFooter);
+//            Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+//        } else {
+//            statusValid = false;
+//            mAdapterMandatory.notifyDataSetChanged();
+//            rvMandatory.setAdapter(mAdapterMandatory);
+//
+////            mAdapterOptional.notifyDataSetChanged();
+////            rvOptional.setAdapter(mAdapterOptional);
+////
+////            mAdapterFooter.notifyDataSetChanged();
+////            rvFooter.setAdapter(mAdapterFooter);
+//        }
+
+//        jawabanListFinal = new ArrayList<>();
+//        List<VmTJawabanUser> listHeader = validateAnswHeader();
+//        jawabanListFinal.addAll(listHeader);
         /*List<VmTJawabanUser> listFooter = validateAnswFooter();
         jawabanListFinal.addAll(listFooter);
         List<VmTJawabanUser> listMandatory = validateAnswMandatory();
         jawabanListFinal.addAll(listMandatory);*/
         return jawabanListFinal;
     }
+
+    private boolean validateOptionals(){
+        boolean bolValid = true;
+        for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
+            List<Jawaban> jawabans = new ArrayList<>();
+            int intPertanyaanId = ListAnswerViewOptional.get(i).getIntPertanyaanId();
+            int position = ListAnswerViewOptional.get(i).getIntPosition();
+            if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 21);
+            }
+
+            int count = 0;
+            for (int x = 0; x < ln.getChildCount(); x++) {
+                View nextChild = ln.getChildAt(x);
+                int intNextChildId = nextChild.getId();
+                if (nextChild instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) nextChild;
+                    if (checkBox.isChecked()) {
+                        ltDataPertanyaanOptional.get(position).jawabans.get(x).bitChoosen = true;
+                        count++;
+                    } else {
+                        ltDataPertanyaanOptional.get(position).jawabans.get(x).bitChoosen = false;
+                    }
+                }
+                if (count == 0 && ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    bolValid = false;
+//                    ltDataPertanyaanOptional.get(position).bitValid = false;
+//                    ltDataPertanyaanOptional.get(position).message = "Checkbox at least 1 option";
+                } else if (count > 0 && ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    bolValid = true;
+                    ltDataPertanyaanOptional.get(position).bitValid = true;
+                    ltDataPertanyaanOptional.get(position).message = "";
+                }
+                if (nextChild instanceof RadioGroup) {
+                    RadioGroup radioGroup = (RadioGroup) nextChild;
+                    if ((radioGroup.getCheckedRadioButtonId() == -1)) {
+                        bolValid = false;
+//                        ltDataPertanyaanOptional.get(position).bitValid = false;
+//                        ltDataPertanyaanOptional.get(position).message = "Choose 1 option";
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaanOptional.get(position).jawabans) {
+                            ltDataPertanyaanOptional.get(position).jawabans.get(index).bitChoosen = false;
+                            index++;
+                        }
+                    } else {
+                        bolValid = true;
+                        ltDataPertanyaanOptional.get(position).bitValid = true;
+                        ltDataPertanyaanOptional.get(position).message = "";
+                        int posisi = radioGroup.getCheckedRadioButtonId();
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaanOptional.get(position).jawabans) {
+                            if (jwb.idJawaban == posisi) {
+                                ltDataPertanyaanOptional.get(position).jawabans.get(index).bitChoosen = true;
+                            } else {
+                                ltDataPertanyaanOptional.get(position).jawabans.get(index).bitChoosen = false;
+                            }
+                            index++;
+                        }
+//                        ltDataPertanyaanOptional.get(position).jawabans.get(x).idJawaban = radioGroup.getCheckedRadioButtonId();
+                    }
+                }
+                if (nextChild instanceof EditText) {
+                    EditText editText = (EditText) nextChild;
+                    if (editText.getText().toString().trim().equals("")) {
+                        bolValid = false;
+//                        ltDataPertanyaanOptional.get(position).bitValid = false;
+//                        ltDataPertanyaanOptional.get(position).message = "Please fill this text";
+
+                    } else {
+                        bolValid = true;
+                        ltDataPertanyaanOptional.get(position).bitValid = true;
+                        ltDataPertanyaanOptional.get(position).message = "";
+                    }
+                    Jawaban jwbn = new Jawaban();
+                    jwbn.idPertanyaan = ltDataPertanyaanOptional.get(position).id;
+                    jwbn.idJawaban = 0;
+                    jwbn.jawaban = editText.getText().toString();
+                    jwbn.bitChoosen = false;
+                    jawabans.add(jwbn);
+                    ltDataPertanyaanOptional.get(position).jawabans = jawabans;
+                }
+                if (nextChild instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) nextChild;
+                    boolean bolValidImg = true;
+                    for (VmImageContainer data : ltDataPertanyaanOptional.get(position).listImage) {
+                        if (data.getPath() == null) {
+                            bolValid = false;
+                            bolValidImg = false;
+                        }
+                    }
+
+                    if (bolValidImg == false) {
+                        ltDataPertanyaanOptional.get(position).bitValid = false;
+                        ltDataPertanyaanOptional.get(position).message = "Please take all picture...";
+                    }
+                    else {
+                        ltDataPertanyaanOptional.get(position).bitValid = true;
+                        ltDataPertanyaanOptional.get(position).message = "";
+                        bolValid = true;
+                    }
+                }
+
+                if (nextChild instanceof ImageView) {
+                    ImageView imageView = (ImageView) nextChild;
+                    if (ltDataPertanyaanOptional.get(position).path == null) {
+                        bolValid = false;
+                    }
+                    if (bolValid == false) {
+                        ltDataPertanyaanOptional.get(position).bitValid = false;
+                        ltDataPertanyaanOptional.get(position).message = "Please take all picture...";
+                    }
+                    else {
+                        ltDataPertanyaanOptional.get(position).bitValid = true;
+                        ltDataPertanyaanOptional.get(position).message = "";
+                        bolValid = true;
+                    }
+                }
+            }
+        }
+        return bolValid;
+    }
+
+    private boolean validateMandatory(){
+        boolean bolValid = true;
+        ListRejection = new ArrayList<>();
+        for (int i = 0; i < ListAnswerViewMandatory.size(); i++) {
+            List<Jawaban> jawabans = new ArrayList<>();
+            int intPertanyaanId = ListAnswerViewMandatory.get(i).getIntPertanyaanId();
+            int position = ListAnswerViewMandatory.get(i).getIntPosition();
+            if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 21);
+            }
+
+            int count = 0;
+            int countAll = 0;
+            for (int x = 0; x < ln.getChildCount(); x++) {
+                View nextChild = ln.getChildAt(x);
+                int intNextChildId = nextChild.getId();
+                if (nextChild instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) nextChild;
+                    countAll++;
+                    if (checkBox.isChecked()) {
+                        ltDataPertanyaanMandatory.get(position).jawabans.get(x).bitChoosen = true;
+                        count++;
+                    } else {
+                        ltDataPertanyaanMandatory.get(position).jawabans.get(x).bitChoosen = false;
+                        jawabanCheckbox = jawabanCheckbox+ ltDataPertanyaanMandatory.get(position).jawabans.get(x).jawaban+", ";
+                    }
+                }
+
+                if (nextChild instanceof RadioGroup) {
+                    RadioGroup radioGroup = (RadioGroup) nextChild;
+                    if ((radioGroup.getCheckedRadioButtonId() == -1)) {
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaanMandatory.get(position).jawabans) {
+                            ltDataPertanyaanMandatory.get(position).jawabans.get(index).bitChoosen = false;
+                            index++;
+                        }
+                    } else {
+                        int posisi = radioGroup.getCheckedRadioButtonId();
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaanMandatory.get(position).jawabans) {
+                            if (jwb.idJawaban == posisi) {
+                                ltDataPertanyaanMandatory.get(position).jawabans.get(index).bitChoosen = true;
+                            } else {
+                                ltDataPertanyaanMandatory.get(position).jawabans.get(index).bitChoosen = false;
+                            }
+                            index++;
+                        }
+                    }
+                }
+                if (nextChild instanceof EditText) {
+                    EditText editText = (EditText) nextChild;
+//                    if (editText.getText().toString().trim().equals("")) {
+//                        bolValid = false;
+////                        ltDataPertanyaanMandatory.get(position).bitValid = false;
+//                        ltDataPertanyaanMandatory.get(position).message = "Please fill this text";
+//
+//                    } else {
+//                        bolValid = true;
+//                        ltDataPertanyaanMandatory.get(position).bitValid = true;
+//                        ltDataPertanyaanMandatory.get(position).message = "";
+//                    }
+                    Jawaban jwbn = new Jawaban();
+                    jwbn.idPertanyaan = ltDataPertanyaanMandatory.get(position).id;
+                    jwbn.idJawaban = 0;
+                    jwbn.jawaban = editText.getText().toString();
+                    jwbn.bitChoosen = false;
+                    jawabans.add(jwbn);
+                    ltDataPertanyaanMandatory.get(position).jawabans = jawabans;
+                }
+                if (nextChild instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) nextChild;
+                    boolean bolValidImg = true;
+                    for (VmImageContainer data : ltDataPertanyaanMandatory.get(position).listImage) {
+                        if (data.getPath() == null) {
+                            bolValidImg = false;
+                        }
+                    }
+
+                    if (bolValidImg == false) {
+                        bolValid = false;
+                        ltDataPertanyaanMandatory.get(position).bitValid = false;
+                        ltDataPertanyaanMandatory.get(position).message = " Please take all picture...";
+                    }
+                    else {
+                        ltDataPertanyaanMandatory.get(position).bitValid = true;
+                        ltDataPertanyaanMandatory.get(position).message = "";
+                        bolValid = true;
+                    }
+                }
+
+
+            }
+
+        }
+        return bolValid;
+    }
+
+    private boolean validateFooter(){
+        boolean bolValid = true;
+        for (int i = 0; i < ListAnswerViewFooter.size(); i++) {
+            List<Jawaban> jawabans = new ArrayList<>();
+            int intPertanyaanId = ListAnswerViewFooter.get(i).getIntPertanyaanId();
+            int position = ListAnswerViewFooter.get(i).getIntPosition();
+            if (ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvFooter.getChildAt(i).findViewById(ListAnswerViewFooter.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvFooter.getChildAt(i).findViewById(ListAnswerViewFooter.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvFooter.getChildAt(i).findViewById(ListAnswerViewFooter.get(i).getIntPertanyaanId() * 21);
+            }
+
+            int count = 0;
+            for (int x = 0; x < ln.getChildCount(); x++) {
+                View nextChild = ln.getChildAt(x);
+                int intNextChildId = nextChild.getId();
+                if (nextChild instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) nextChild;
+                    if (checkBox.isChecked()) {
+                        ltDataPertanyaanFooter.get(position).jawabans.get(x).bitChoosen = true;
+                        count++;
+                    } else {
+                        ltDataPertanyaanFooter.get(position).jawabans.get(x).bitChoosen = false;
+                    }
+                }
+                if (count == 0 && ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    bolValid = false;
+                    ltDataPertanyaanFooter.get(position).bitValid = false;
+                    ltDataPertanyaanFooter.get(position).message = "Checkbox at least 1 option";
+                } else if (count > 0 && ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    bolValid = true;
+                    ltDataPertanyaanFooter.get(position).bitValid = true;
+                    ltDataPertanyaanFooter.get(position).message = "";
+                }
+                if (nextChild instanceof RadioGroup) {
+                    RadioGroup radioGroup = (RadioGroup) nextChild;
+                    if ((radioGroup.getCheckedRadioButtonId() == -1)) {
+                        bolValid = false;
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = "Choose 1 option";
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaanFooter.get(position).jawabans) {
+                            ltDataPertanyaanFooter.get(position).jawabans.get(index).bitChoosen = false;
+                            index++;
+                        }
+                    } else {
+                        bolValid = true;
+                        ltDataPertanyaanFooter.get(position).bitValid = true;
+                        ltDataPertanyaanFooter.get(position).message = "";
+                        int posisi = radioGroup.getCheckedRadioButtonId();
+                        int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaanFooter.get(position).jawabans) {
+                            if (jwb.idJawaban == posisi) {
+                                ltDataPertanyaanFooter.get(position).jawabans.get(index).bitChoosen = true;
+                            } else {
+                                ltDataPertanyaanFooter.get(position).jawabans.get(index).bitChoosen = false;
+                            }
+                            index++;
+                        }
+//                        ltDataPertanyaanFooter.get(position).jawabans.get(x).idJawaban = radioGroup.getCheckedRadioButtonId();
+                    }
+                }
+                if (nextChild instanceof EditText) {
+                    EditText editText = (EditText) nextChild;
+                    if (editText.getText().toString().trim().equals("")) {
+                        bolValid = false;
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = "Please fill this text";
+
+                    } else {
+                        bolValid = true;
+                        ltDataPertanyaanFooter.get(position).bitValid = true;
+                        ltDataPertanyaanFooter.get(position).message = "";
+                    }
+                    Jawaban jwbn = new Jawaban();
+                    jwbn.idPertanyaan = ltDataPertanyaanFooter.get(position).id;
+                    jwbn.idJawaban = 0;
+                    jwbn.jawaban = editText.getText().toString();
+                    jwbn.bitChoosen = false;
+                    jawabans.add(jwbn);
+                    ltDataPertanyaanFooter.get(position).jawabans = jawabans;
+                }
+                if (nextChild instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) nextChild;
+                    boolean bolValidImg = true;
+                    for (VmImageContainer data : ltDataPertanyaanFooter.get(position).listImage) {
+                        if (data.getPath() == null) {
+                            bolValid = false;
+                            bolValidImg = false;
+                        }
+                    }
+
+                    if (bolValidImg == false && ltDataPertanyaanFooter.get(position).bitValid == false) {
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = ltDataPertanyaanFooter.get(position).message + " and take all picture...";
+                    } else if (bolValidImg == false && ltDataPertanyaanFooter.get(position).bitValid == true) {
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = "Please take all picture...";
+                    } else if (bolValidImg == true && ltDataPertanyaanFooter.get(position).bitValid == false) {
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = ltDataPertanyaanFooter.get(position).message + "...";
+                    } else {
+                        ltDataPertanyaanFooter.get(position).bitValid = true;
+                        ltDataPertanyaanFooter.get(position).message = "";
+                        bolValid = true;
+                    }
+                }
+
+                if (nextChild instanceof ImageView) {
+                    ImageView imageView = (ImageView) nextChild;
+                    if (ltDataPertanyaanFooter.get(position).path == null) {
+                        bolValid = false;
+                    }
+                    if (ltDataPertanyaanFooter.get(position).path == null && ltDataPertanyaanFooter.get(position).bitValid == false) {
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = ltDataPertanyaanFooter.get(position).message + " and take a picture...";
+                    } else if (ltDataPertanyaanFooter.get(position).path == null && ltDataPertanyaanFooter.get(position).bitValid == true) {
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = "Please take a picture...";
+                    } else if (ltDataPertanyaanFooter.get(position).path != null && ltDataPertanyaanFooter.get(position).bitValid == false) {
+                        ltDataPertanyaanFooter.get(position).bitValid = false;
+                        ltDataPertanyaanFooter.get(position).message = ltDataPertanyaanFooter.get(position).message + "...";
+                    } else {
+                        ltDataPertanyaanFooter.get(position).bitValid = true;
+                        ltDataPertanyaanFooter.get(position).message = "";
+                        bolValid = true;
+                    }
+                }
+            }
+        }
+        return bolValid;
+    }
+
     public List<VmTJawabanUser> validateAnswHeader() {
         boolean bolValid = true;
         for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
@@ -505,11 +928,19 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
             statusValid = false;
-
+//            List<VmListItemAdapterPertanyaan> ltDataPertanyaanOptionalnew = new ArrayList<>();
+//            ltDataPertanyaanOptionalnew.addAll(ltDataPertanyaanOptional);
+//            ltDataPertanyaanOptional.clear();
+//            for (VmListItemAdapterPertanyaan data : ltDataPertanyaanOptionalnew){
+//                ltDataPertanyaanOptional.add(data);
+//            }
+////            ltDataPertanyaanOptional = ltDataPertanyaanOptionalnew;
             mAdapterOptional.notifyDataSetChanged();
             rvOptional.setAdapter(mAdapterOptional);
         }
 
+//        rvOptional.invalidate();
+        int a = rvOptional.getChildCount();
 
         return tJawabanList;
     }
@@ -892,7 +1323,6 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanOptional.get(position).listImage.size(); x++) {
-//                        listImage.add(ltDataPertanyaanOptional.get(position).listImage.get(x).getPath().getPath());
                         if (ltDataPertanyaanOptional.get(position).listImage.get(x).getPath()!= null){
 
                             String dirA =ltDataPertanyaanOptional.get(position).listImage.get(x).getPath().getPath();
@@ -900,23 +1330,18 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
                             File file = new File(dir);
                             String imageName = ltDataPertanyaanOptional.get(position).listImage.get(x).getImgName();
-//                            BitmapFactory.Options options = new BitmapFactory.Options();
-//                            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//                            Bitmap bitmap = BitmapFactory.decodeFile(dir, options);
                             VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
 
                             listImage.add(dtImage);
                         }
                     }
-//                    tJawaban.setTxtPathImage(ltDataPertanyaanOptional.get(position).path.getPath());
                 }
-// else {
-//
-//                    tJawaban.setTxtPathImage("");
-//                }
+
                 tJawaban.setDtImageModels(listImage);
 
                 if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                    int a= ListAnswerViewOptional.get(i).getIntPertanyaanId();
+                    int b = rvOptional.getChildCount();
                     ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 24);
                 } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
                     ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 22);
@@ -980,19 +1405,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
                             File file = new File(dir);
                             String imageName = ltDataPertanyaanMandatory.get(position).listImage.get(x).getImgName();
-//                            BitmapFactory.Options options = new BitmapFactory.Options();
-//                            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//                            Bitmap bitmap = BitmapFactory.decodeFile(dir, options);
                             VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
                             listImage.add(dtImage);
                         }
                     }
-//                    tJawaban.setTxtPathImage(ltDataPertanyaanMandatory.get(position).path.getPath());
                 }
-// else {
-//
-//                    tJawaban.setTxtPathImage("");
-//                }
                 tJawaban.setDtImageModels(listImage);
 
                 if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
@@ -1003,6 +1420,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 21);
                 }
                 int count = 0;
+                String jawabanFinal = "";
                 for (int x = 0; x < ln.getChildCount(); x++) {
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
@@ -1010,6 +1428,13 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         if (checkBox.isChecked()) {
                             tJawaban.setIntmJawabanId(checkBox.getId());
                             tJawaban.setTxtJawaban(checkBox.getText().toString());
+                        }else {
+                            count ++;
+                            if (jawabanFinal.equals("")){
+                                jawabanFinal = String.valueOf(count) + ". " + checkBox.getText().toString();
+                            }else {
+                                jawabanFinal += "\n" + String.valueOf(count) + ". " + checkBox.getText().toString();
+                            }
                         }
                     }
 
@@ -1029,14 +1454,21 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         tJawaban.setIntmJawabanId(0);
                         tJawaban.setTxtJawaban(editText.getText().toString());
                     }
+                    tJawabanList.add(tJawaban);
+                }
+                if (!jawabanFinal.equals("")){
+                    VmAdapterBasic data = new VmAdapterBasic();
+                    data.setTitle(ltDataPertanyaanMandatory.get(position).txtPertanyaan);
+                    data.setSubtitle(jawabanFinal);
+                    ListRejection.add(data);
                 }
 
-                tJawabanList.add(tJawaban);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
         }
+
         for (int i = 0; i < ListAnswerViewFooter.size(); i++) {
             try {
                 int intPertanyaanId = ListAnswerViewFooter.get(i).getIntPertanyaanId();

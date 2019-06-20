@@ -630,6 +630,12 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
     public int getItemCount() {
         return items.size();
     }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     public interface updateMainClass{
 
     }

@@ -107,12 +107,13 @@ public class FragmentQuestionTab extends Fragment {
                     if (array_state[idx_state].name().equalsIgnoreCase(State.CHECKING.name())) {
                         FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 //                        boolean validBody = myFragment.validateAnswHeader();
+                        btnNext.setClickable(false);
                         List<VmTJawabanUser> validMandatoryList = myFragment.validateAll();
 //                        boolean validFooter = myFragment.validateAnswFooter();
-                        List<VmTJawabanUser> tJawabanList = myFragment.saveData();
+//                        List<VmTJawabanUser> tJawabanList = myFragment.saveData();
 
                         for (VmTJawabanUser jawab :
-                                tJawabanList) {
+                                validMandatoryList) {
                             if (jawab.isBolHavePhoto()) {
                                 List<VmTJawabanUser.imageModel> models = jawab.getDtImageModels();
                                 for (VmTJawabanUser.imageModel model :
@@ -138,7 +139,7 @@ public class FragmentQuestionTab extends Fragment {
 //                        isRejected = false;
                         boolean validFooter = true;
 //                        validMandatory = true;
-                        if (validFooter) {
+                        if (validFooter&&validMandatoryList.size()>0) {
                             final Dialog dialog = new Dialog(getActivity());
                             dialog.setContentView(R.layout.alert_validation);
                             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -150,10 +151,11 @@ public class FragmentQuestionTab extends Fragment {
                             Button btnProceed = (Button) dialog.findViewById(R.id.btnProceed);
                             TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitleAlert);
                             RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
-                            if (!true) {
-
-                                List<VmAdapterBasic> basic = myFragment.ListRejection;
-                                basic.addAll(basic);
+                            List<VmAdapterBasic> basic = myFragment.ListRejection;
+                            if (basic.size()>0) {
+//                                dialog.setTitle("Are yo");
+                                tvTitle.setText("Are you sure these item not qualified?");
+//                                basic.addAll(basic);
                                 AdapterListBasic lv = new AdapterListBasic(getActivity(), basic);
                                 rvView.setAdapter(lv);
                                 rvView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -199,9 +201,11 @@ public class FragmentQuestionTab extends Fragment {
 //                                displayFragment(array_state[idx_state]);
 //                                btnNext.setClickable(false);
                             }
+                            btnNext.setClickable(true);
                         } else {
 //                            Toast.makeText(getActivity().getApplicationContext(),"Mandatory Question must be filled out !",Toast.LENGTH_SHORT).show();
-                            new ToastCustom().showToasty(context, "Mandatory Question must be filled out !", 2);
+                            new ToastCustom().showToasty(context, myFragment.txtMsg, 2);
+                            btnNext.setClickable(true);
                         }
                     } else if (array_state[idx_state].name().equalsIgnoreCase(State.LOADING.name())) {
                         FragmentLoading myFragment = (FragmentLoading) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
