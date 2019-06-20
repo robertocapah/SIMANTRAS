@@ -110,7 +110,7 @@ public class FragmentTransactionDetail extends Fragment {
                     String txtMessage = model.getResult().getMessage();
                     String txtMethode_name = model.getResult().getMethodName();
 
-                    if (model.getData()!=null){ 
+                    if (model.getData()!=null){
                         String txtLink = model.getData().getLinkFile();
                         final String fileName = model.getData().getFileName();
                         final String txtPathUserData = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DOWNLOADS;

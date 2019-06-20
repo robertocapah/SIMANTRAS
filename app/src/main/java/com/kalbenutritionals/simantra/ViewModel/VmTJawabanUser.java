@@ -10,10 +10,9 @@ public class VmTJawabanUser {
     private String txtNoSPM;
     private int intPertanyaanId;
     private int intFillHeaderId;
-    private int intmJawabanId;
     private int intTypePertanyaanId;
-    private String txtJawaban;
     private List<imageModel> dtImageModels;
+    private List<VmTJawabanUserDetail> jawabanUserDetailList;
     private boolean bolHavePhoto;
     private boolean bolHaveAnswer;
 
@@ -33,6 +32,14 @@ public class VmTJawabanUser {
         this.txtTransJawabanId = txtTransJawabanId;
     }
 
+    public List<VmTJawabanUserDetail> getJawabanUserDetailList() {
+        return jawabanUserDetailList;
+    }
+
+    public void setJawabanUserDetailList(List<VmTJawabanUserDetail> jawabanUserDetailList) {
+        this.jawabanUserDetailList = jawabanUserDetailList;
+    }
+
     public String getTxtNoSPM() {
         return txtNoSPM;
     }
@@ -49,14 +56,6 @@ public class VmTJawabanUser {
         this.intPertanyaanId = intPertanyaanId;
     }
 
-    public int getIntmJawabanId() {
-        return intmJawabanId;
-    }
-
-    public void setIntmJawabanId(int intmJawabanId) {
-        this.intmJawabanId = intmJawabanId;
-    }
-
     public int getIntTypePertanyaanId() {
         return intTypePertanyaanId;
     }
@@ -64,15 +63,6 @@ public class VmTJawabanUser {
     public void setIntTypePertanyaanId(int intTypePertanyaanId) {
         this.intTypePertanyaanId = intTypePertanyaanId;
     }
-
-    public String getTxtJawaban() {
-        return txtJawaban;
-    }
-
-    public void setTxtJawaban(String txtJawaban) {
-        this.txtJawaban = txtJawaban;
-    }
-
     public boolean isBolHavePhoto() {
         return bolHavePhoto;
     }

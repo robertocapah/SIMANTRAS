@@ -44,6 +44,7 @@ import com.kalbenutritionals.simantra.ViewModel.VmImageContainer;
 import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
+import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserDetail;
 
 import org.json.JSONArray;
 
@@ -764,7 +765,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         List<VmTJawabanUser> tJawabanList = new ArrayList<>();
         for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
             try {
-                int intPertanyaanId = ListAnswerViewOptional.get(i).getIntPertanyaanId();
+                int intPertanyaanId = ListAnswerViewOptional.get(i).getIntPertanyaanId(); 
                 int position = ListAnswerViewOptional.get(i).getIntPosition();
                 ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
                 VmTJawabanUser tJawaban = new VmTJawabanUser();
@@ -804,14 +805,18 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 21);
                 }
                 int count = 0;
+                List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
+                    VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
                         CheckBox checkBox = (CheckBox) nextChild;
-                        if (checkBox.isChecked()) {
-                            tJawaban.setIntmJawabanId(checkBox.getId());
-                            tJawaban.setTxtJawaban(checkBox.getText().toString());
-                        }
+//                        if (checkBox.isChecked()) {
+//
+//                        }
+                        dtJawaban.setIntmJawabanId(checkBox.getId());
+                        dtJawaban.setTxtJawaban(checkBox.getText().toString());
+                        dtJawaban.setQualified(checkBox.isChecked());
                     }
 
                     if (nextChild instanceof RadioGroup) {
@@ -820,18 +825,19 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         RadioButton rb = (RadioButton) rvOptional.getChildAt(i).findViewById(posisi);
                         if(posisi>-1){
                             String txtJawaban = rb.getText().toString();
-                            tJawaban.setIntmJawabanId(posisi);
-                            tJawaban.setTxtJawaban(txtJawaban);
+                            dtJawaban.setIntmJawabanId(posisi);
+                            dtJawaban.setTxtJawaban(txtJawaban);
                         }
 
                     }
                     if (nextChild instanceof EditText) {
                         EditText editText = (EditText) nextChild;
-                        tJawaban.setIntmJawabanId(0);
-                        tJawaban.setTxtJawaban(editText.getText().toString());
+                        dtJawaban.setIntmJawabanId(0);
+                        dtJawaban.setTxtJawaban(editText.getText().toString());
                     }
+                    listJawaban.add(dtJawaban);
                 }
-
+                tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -876,13 +882,15 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 }
                 int count = 0;
                 String jawabanFinal = "";
+                List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
+                    VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
                         CheckBox checkBox = (CheckBox) nextChild;
                         if (checkBox.isChecked()) {
-                            tJawaban.setIntmJawabanId(checkBox.getId());
-                            tJawaban.setTxtJawaban(checkBox.getText().toString());
+                            dtJawaban.setIntmJawabanId(checkBox.getId());
+                            dtJawaban.setTxtJawaban(checkBox.getText().toString());
                         }else {
                             count ++;
                             if (jawabanFinal.equals("")){
@@ -899,18 +907,20 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         RadioButton rb = (RadioButton) rvMandatory.getChildAt(i).findViewById(posisi);
                         if(posisi>-1){
                             String txtJawaban = rb.getText().toString();
-                            tJawaban.setIntmJawabanId(posisi);
-                            tJawaban.setTxtJawaban(txtJawaban);
+                            dtJawaban.setIntmJawabanId(posisi);
+                            dtJawaban.setTxtJawaban(txtJawaban);
                         }
 
                     }
                     if (nextChild instanceof EditText) {
                         EditText editText = (EditText) nextChild;
-                        tJawaban.setIntmJawabanId(0);
-                        tJawaban.setTxtJawaban(editText.getText().toString());
+                        dtJawaban.setIntmJawabanId(0);
+                        dtJawaban.setTxtJawaban(editText.getText().toString());
                     }
-                    tJawabanList.add(tJawaban);
+                    listJawaban.add(dtJawaban);
                 }
+                tJawaban.setJawabanUserDetailList(listJawaban);
+                tJawabanList.add(tJawaban);
                 if (!jawabanFinal.equals("")){
                     VmAdapterBasic data = new VmAdapterBasic();
                     data.setTitle(ltDataPertanyaanMandatory.get(position).txtPertanyaan);
@@ -940,27 +950,17 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanFooter.get(position).listImage.size(); x++) {
-//                        listImage.add(ltDataPertanyaanFooter.get(position).listImage.get(x).getPath().getPath());
                         if (ltDataPertanyaanFooter.get(position).listImage.get(x).getPath()!= null){
-
                             String dirA =ltDataPertanyaanFooter.get(position).listImage.get(x).getPath().getPath();
                             dirA = dirA.replaceAll(".+Android", "");
                             String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
-                            File file = new File(dir);
                             String imageName = ltDataPertanyaanFooter.get(position).listImage.get(x).getImgName();
-//                            BitmapFactory.Options options = new BitmapFactory.Options();
-//                            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//                            Bitmap bitmap = BitmapFactory.decodeFile(dir, options);
                             VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
                             listImage.add(dtImage);
                         }
                     }
-//                    tJawaban.setTxtPathImage(ltDataPertanyaanOptional.get(position).path.getPath());
                 }
-// else {
-//
-//                    tJawaban.setTxtPathImage("");
-//                }
+
                 tJawaban.setDtImageModels(listImage);
 
                 if (ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
@@ -970,14 +970,16 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 } else if (ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
                     ln = (LinearLayout) rvFooter.getChildAt(i).findViewById(ListAnswerViewFooter.get(i).getIntPertanyaanId() * 21);
                 }
-                int count = 0;
+
+                List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
+                    VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
                         CheckBox checkBox = (CheckBox) nextChild;
                         if (checkBox.isChecked()) {
-                            tJawaban.setIntmJawabanId(checkBox.getId());
-                            tJawaban.setTxtJawaban(checkBox.getText().toString());
+                            dtJawaban.setIntmJawabanId(checkBox.getId());
+                            dtJawaban.setTxtJawaban(checkBox.getText().toString());
                         }
                     }
 
@@ -987,17 +989,18 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         RadioButton rb = (RadioButton) rvFooter.getChildAt(i).findViewById(posisi);
                         if(rb != null){
                             String txtJawaban = rb.getText().toString();
-                            tJawaban.setIntmJawabanId(posisi);
-                            tJawaban.setTxtJawaban(txtJawaban);
+                            dtJawaban.setIntmJawabanId(posisi);
+                            dtJawaban.setTxtJawaban(txtJawaban);
                         }
                     }
                     if (nextChild instanceof EditText) {
                         EditText editText = (EditText) nextChild;
-                        tJawaban.setIntmJawabanId(0);
-                        tJawaban.setTxtJawaban(editText.getText().toString());
+                        dtJawaban.setIntmJawabanId(0);
+                        dtJawaban.setTxtJawaban(editText.getText().toString());
                     }
+                    listJawaban.add(dtJawaban);
                 }
-
+                tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
             } catch (SQLException e) {
                 e.printStackTrace();

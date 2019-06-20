@@ -125,12 +125,14 @@ public class FragmentQuestionTab extends Fragment {
                                 validMandatoryList) {
                             if (jawab.isBolHavePhoto()) {
                                 List<VmTJawabanUser.imageModel> models = jawab.getDtImageModels();
+                                int index = 1;
                                 for (VmTJawabanUser.imageModel model :
                                         models) {
 
                                     File file = new File(model.imgPath);
                                     if (file.exists()){
-                                        listMap.put(String.valueOf(jawab.getIntmJawabanId()),file);
+                                        listMap.put(String.valueOf(jawab.getIntPertanyaanId())+ "-" + model.imgName + String.valueOf(index)+ "-" ,file);
+                                        index++;
                                     }
 
                                     /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
