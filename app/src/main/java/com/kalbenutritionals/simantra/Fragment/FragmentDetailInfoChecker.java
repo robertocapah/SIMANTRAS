@@ -35,6 +35,7 @@ import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
+import com.kalbenutritionals.simantra.Database.EnumStatusDisposisi;
 import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.R;
@@ -45,8 +46,10 @@ import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserDetail;
+import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserHeader;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -115,7 +118,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     RecyclerView rvFooter;
     private LinearLayout linearLayout;
     Context context;
-    List<VmTJawabanUser> jawabanListFinal = new ArrayList<>();
+    VmTJawabanUserHeader jawabanListFinal = new VmTJawabanUserHeader();
     public FragmentDetailInfoChecker() {
 
     }
@@ -357,8 +360,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public void onViewClicked() {
 
     }
-    public List<VmTJawabanUser> validateAll(){
-        jawabanListFinal = new ArrayList<>();
+    public VmTJawabanUserHeader validateAll(){
+        jawabanListFinal = new VmTJawabanUserHeader();
 //        boolean validOptional = validateOptionals();
         boolean validMandatory = validateMandatory();
         boolean validFooter =validateFooter();
@@ -757,15 +760,16 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
     String jawabanCheckbox = "";
 
-    public JSONArray getDataTransaction() {
-        JSONArray json = new BLHelper().getDataTransaksiJsonArrayCommon(context,jawabanListFinal);
+    public JSONObject getDataTransaction() {
+        JSONObject json = new BLHelper().getDataTransaksiJsonObjCommon(context,jawabanListFinal);
         return json;
     }
-    public List<VmTJawabanUser> saveData() {
+    public VmTJawabanUserHeader saveData() {
+        VmTJawabanUserHeader tJawabanUserHeader = new VmTJawabanUserHeader();
         List<VmTJawabanUser> tJawabanList = new ArrayList<>();
         for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
             try {
-                int intPertanyaanId = ListAnswerViewOptional.get(i).getIntPertanyaanId(); 
+                int intPertanyaanId = ListAnswerViewOptional.get(i).getIntPertanyaanId();
                 int position = ListAnswerViewOptional.get(i).getIntPosition();
                 ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
                 VmTJawabanUser tJawaban = new VmTJawabanUser();
@@ -775,7 +779,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-                tJawaban.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
+                tJawabanUserHeader.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
+
 
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanOptional.get(position).listImage.size(); x++) {
@@ -856,7 +861,6 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-                tJawaban.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanMandatory.get(position).listImage.size(); x++) {
                         if (ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath()!= null){
@@ -946,7 +950,6 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-                tJawaban.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
 
                 if (pertanyaans.isBolHavePhoto()) {
                     for (int x = 0; x < ltDataPertanyaanFooter.get(position).listImage.size(); x++) {
@@ -1007,7 +1010,14 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             }
 
         }
-        return tJawabanList;
+
+        if (ListRejection.size()==0){
+            tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.Accept.getIdStatus());
+        }else if (ListRejection.size()>0){
+            tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.Excalated.getIdStatus());
+        }
+        tJawabanUserHeader.setListJawabanUser(tJawabanList);
+        return tJawabanUserHeader; 
     }
 
     @Override

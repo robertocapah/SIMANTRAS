@@ -34,6 +34,7 @@ import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
+import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserHeader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,12 +118,12 @@ public class FragmentQuestionTab extends Fragment {
                         FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 //                        boolean validBody = myFragment.validateAnswHeader();
                         btnNext.setClickable(false);
-                        List<VmTJawabanUser> validMandatoryList = myFragment.validateAll();
+                        VmTJawabanUserHeader validMandatoryList = myFragment.validateAll();
 //                        boolean validFooter = myFragment.validateAnswFooter();
 //                        List<VmTJawabanUser> tJawabanList = myFragment.saveData();
 
                         for (VmTJawabanUser jawab :
-                                validMandatoryList) {
+                                validMandatoryList.getListJawabanUser()) {
                             if (jawab.isBolHavePhoto()) {
                                 List<VmTJawabanUser.imageModel> models = jawab.getDtImageModels();
                                 int index = 1;
@@ -150,7 +151,7 @@ public class FragmentQuestionTab extends Fragment {
 //                        isRejected = false;
                         boolean validFooter = true;
 //                        validMandatory = true;
-                        if (validFooter&&validMandatoryList.size()>0) {
+                        if (validFooter&&validMandatoryList.getListJawabanUser().size()>0) {
                             final Dialog dialog = new Dialog(getActivity());
                             dialog.setContentView(R.layout.alert_validation);
                             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -250,7 +251,7 @@ public class FragmentQuestionTab extends Fragment {
     private void pushTransaction(final Dialog dialog) {
         FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         String txtLink = new ClsHardCode().linkSetTransactionList;
-        JSONArray data = myFragment.getDataTransaction();
+        JSONObject data = myFragment.getDataTransaction();
         JSONObject object = new JSONObject();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
         JSONObject deviceInfo = new BLHelper().getDataTransaksiJsonObjCommon(context,dataDevice);

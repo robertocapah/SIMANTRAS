@@ -9,20 +9,11 @@ public class VmTJawabanUser {
     private String txtTransJawabanId;
     private String txtNoSPM;
     private int intPertanyaanId;
-    private int intFillHeaderId;
     private int intTypePertanyaanId;
     private List<imageModel> dtImageModels;
     private List<VmTJawabanUserDetail> jawabanUserDetailList;
     private boolean bolHavePhoto;
     private boolean bolHaveAnswer;
-
-    public int getIntFillHeaderId() {
-        return intFillHeaderId;
-    }
-
-    public void setIntFillHeaderId(int intFillHeaderId) {
-        this.intFillHeaderId = intFillHeaderId;
-    }
 
     public String getTxtTransJawabanId() {
         return txtTransJawabanId;
