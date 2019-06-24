@@ -149,80 +149,83 @@ public class FragmentQuestionTab extends Fragment {
 
                                 }
                             }
+
+
+                            boolean validFooter = true;
+//                        validMandatory = true;
+                            if (validFooter&&validMandatoryList.getListJawabanUser().size()>0) {
+                                final Dialog dialog = new Dialog(getActivity());
+                                dialog.setContentView(R.layout.alert_validation);
+                                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                lp.copyFrom(dialog.getWindow().getAttributes());
+                                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                dialog.setTitle("Warning");
+                                Button btnSave = (Button) dialog.findViewById(R.id.btnSaveToDraft);
+                                Button btnProceed = (Button) dialog.findViewById(R.id.btnProceed);
+                                TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitleAlert);
+                                RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
+                                List<VmAdapterBasic> basic = myFragment.ListRejection;
+                                if (basic.size()>0) {
+//                                dialog.setTitle("Are yo");
+                                    tvTitle.setText("Are you sure these item not qualified?");
+//                                basic.addAll(basic);
+                                    AdapterListBasic lv = new AdapterListBasic(getActivity(), basic);
+                                    rvView.setAdapter(lv);
+                                    rvView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                    // if button is clicked, close the custom dialog
+                                    btnSave.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    btnProceed.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            idx_state++;
+                                            displayFragment(array_state[idx_state]);
+                                            dialog.dismiss();
+                                            btnNext.setClickable(false);
+                                        }
+                                    });
+
+                                    dialog.show();
+                                    dialog.getWindow().setAttributes(lp);
+                                } else {
+                                    //disini dialog alert kalo semua terpenuhi
+                                    tvTitle.setText("All mandatory conditions have been fulfilled");
+                                    dialog.show();
+                                    rvView.setVisibility(View.GONE);
+                                    dialog.getWindow().setAttributes(lp);
+                                    btnSave.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    btnProceed.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            pushTransaction(dialog);
+                                        }
+                                    });
+//                                idx_state++;
+//                                displayFragment(array_state[idx_state]);
+//                                btnNext.setClickable(false);
+                                }
+                                btnNext.setClickable(true);
+                            } else {
+//                            Toast.makeText(getActivity().getApplicationContext(),"Mandatory Question must be filled out !",Toast.LENGTH_SHORT).show();
+                                new ToastCustom().showToasty(context, myFragment.txtMsg, 2);
+                                btnNext.setClickable(true);
+                            }
                         }
 
 //                        boolean isRejected = myFragment.statusRejected;
 //                        isRejected = false;
-                        boolean validFooter = true;
-//                        validMandatory = true;
-                        if (validFooter&&validMandatoryList.getListJawabanUser().size()>0) {
-                            final Dialog dialog = new Dialog(getActivity());
-                            dialog.setContentView(R.layout.alert_validation);
-                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                            lp.copyFrom(dialog.getWindow().getAttributes());
-                            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                            dialog.setTitle("Warning");
-                            Button btnSave = (Button) dialog.findViewById(R.id.btnSaveToDraft);
-                            Button btnProceed = (Button) dialog.findViewById(R.id.btnProceed);
-                            TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitleAlert);
-                            RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
-                            List<VmAdapterBasic> basic = myFragment.ListRejection;
-                            if (basic.size()>0) {
-//                                dialog.setTitle("Are yo");
-                                tvTitle.setText("Are you sure these item not qualified?");
-//                                basic.addAll(basic);
-                                AdapterListBasic lv = new AdapterListBasic(getActivity(), basic);
-                                rvView.setAdapter(lv);
-                                rvView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                // if button is clicked, close the custom dialog
-                                btnSave.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                btnProceed.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
 
-                                        idx_state++;
-                                        displayFragment(array_state[idx_state]);
-                                        dialog.dismiss();
-                                        btnNext.setClickable(false);
-                                    }
-                                });
-
-                                dialog.show();
-                                dialog.getWindow().setAttributes(lp);
-                            } else {
-                                //disini dialog alert kalo semua terpenuhi
-                                tvTitle.setText("All mandatory conditions have been fulfilled");
-                                dialog.show();
-                                rvView.setVisibility(View.GONE);
-                                dialog.getWindow().setAttributes(lp);
-                                btnSave.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                btnProceed.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        pushTransaction(dialog);
-                                    }
-                                });
-//                                idx_state++;
-//                                displayFragment(array_state[idx_state]);
-//                                btnNext.setClickable(false);
-                            }
-                            btnNext.setClickable(true);
-                        } else {
-//                            Toast.makeText(getActivity().getApplicationContext(),"Mandatory Question must be filled out !",Toast.LENGTH_SHORT).show();
-                            new ToastCustom().showToasty(context, myFragment.txtMsg, 2);
-                            btnNext.setClickable(true);
-                        }
                     } else if (array_state[idx_state].name().equalsIgnoreCase(State.LOADING.name())) {
                         FragmentLoading myFragment = (FragmentLoading) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
                         if (!myFragment.isFinished) {
