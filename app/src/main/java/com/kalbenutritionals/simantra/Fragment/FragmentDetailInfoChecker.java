@@ -792,10 +792,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 int count = 0;
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
+                    boolean isImage = true;
                     List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
+                        isImage = false;
                         CheckBox checkBox = (CheckBox) nextChild;
 //                        if (checkBox.isChecked()) {
 //
@@ -806,6 +808,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     }
 
                     if (nextChild instanceof RadioGroup) {
+                        isImage = false;
                         RadioGroup radioGroup = (RadioGroup) nextChild;
                         int posisi = radioGroup.getCheckedRadioButtonId();
                         RadioButton rb = (RadioButton) rvOptional.getChildAt(i).findViewById(posisi);
@@ -822,6 +825,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                     }
                     if (nextChild instanceof EditText) {
+                        isImage = false;
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
@@ -850,7 +854,9 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                         dtJawaban.setDtImageModels(listImage);
                     }
-                    listJawaban.add(dtJawaban);
+                    if (!isImage){
+                        listJawaban.add(dtJawaban);
+                    }
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
@@ -899,8 +905,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 for (int x = 0; x < ln.getChildCount(); x++) {
                     List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
+                    boolean isImage= true;
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
+                        isImage = false;
                         CheckBox checkBox = (CheckBox) nextChild;
                         dtJawaban.setIntmJawabanId(checkBox.getId());
                         dtJawaban.setTxtJawaban(checkBox.getText().toString());
@@ -916,6 +924,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     }
 
                     if (nextChild instanceof RadioGroup) {
+                        isImage = false;
                         RadioGroup radioGroup = (RadioGroup) nextChild;
                         int posisi = radioGroup.getCheckedRadioButtonId();
                         RadioButton rb = (RadioButton) rvMandatory.getChildAt(i).findViewById(posisi);
@@ -932,6 +941,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                     }
                     if (nextChild instanceof EditText) {
+                        isImage = false;
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
@@ -961,7 +971,9 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                         dtJawaban.setDtImageModels(listImage);
                     }
-                    listJawaban.add(dtJawaban);
+                    if (!isImage){
+                        listJawaban.add(dtJawaban);
+                    }
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
@@ -1002,8 +1014,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 for (int x = 0; x < ln.getChildCount(); x++) {
                     List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
+                    boolean isImage = true;
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
+                        isImage = false;
                         CheckBox checkBox = (CheckBox) nextChild;
 //                        if (checkBox.isChecked()) {
 //
@@ -1014,6 +1028,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     }
 
                     if (nextChild instanceof RadioGroup) {
+                        isImage = false;
                         RadioGroup radioGroup = (RadioGroup) nextChild;
                         int posisi = radioGroup.getCheckedRadioButtonId();
                         RadioButton rb = (RadioButton) rvFooter.getChildAt(i).findViewById(posisi);
@@ -1029,6 +1044,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         }
                     }
                     if (nextChild instanceof EditText) {
+                        isImage = false;
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
@@ -1058,7 +1074,9 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         dtJawaban.setDtImageModels(listImage);
                     }
 
-                    listJawaban.add(dtJawaban);
+                    if (!isImage){
+                        listJawaban.add(dtJawaban); 
+                    }
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
