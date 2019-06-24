@@ -832,6 +832,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             String txtJawaban = rb.getText().toString();
                             dtJawaban.setIntmJawabanId(posisi);
                             dtJawaban.setTxtJawaban(txtJawaban);
+                            dtJawaban.setQualified(true);
+                        }else {
+                            dtJawaban.setIntmJawabanId(0);
+                            dtJawaban.setTxtJawaban(null);
+                            dtJawaban.setQualified(false);
                         }
 
                     }
@@ -839,6 +844,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
+                        if (editText.getText().toString().length()>0){
+                            dtJawaban.setQualified(true);
+                        }else {
+                            dtJawaban.setQualified(false);
+                        }
                     }
                     listJawaban.add(dtJawaban);
                 }
@@ -892,10 +902,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
                         CheckBox checkBox = (CheckBox) nextChild;
-                        if (checkBox.isChecked()) {
-                            dtJawaban.setIntmJawabanId(checkBox.getId());
-                            dtJawaban.setTxtJawaban(checkBox.getText().toString());
-                        }else {
+                        dtJawaban.setIntmJawabanId(checkBox.getId());
+                        dtJawaban.setTxtJawaban(checkBox.getText().toString());
+                        dtJawaban.setQualified(checkBox.isChecked());
+                        if (!checkBox.isChecked()) {
                             count ++;
                             if (jawabanFinal.equals("")){
                                 jawabanFinal = String.valueOf(count) + ". " + checkBox.getText().toString();
@@ -913,6 +923,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             String txtJawaban = rb.getText().toString();
                             dtJawaban.setIntmJawabanId(posisi);
                             dtJawaban.setTxtJawaban(txtJawaban);
+                            dtJawaban.setQualified(true);
+                        }else {
+                            dtJawaban.setIntmJawabanId(0);
+                            dtJawaban.setTxtJawaban(null);
+                            dtJawaban.setQualified(false);
                         }
 
                     }
@@ -920,7 +935,13 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
+                        if (editText.getText().toString().length()>0){
+                            dtJawaban.setQualified(true);
+                        }else {
+                            dtJawaban.setQualified(false);
+                        }
                     }
+
                     listJawaban.add(dtJawaban);
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
@@ -980,10 +1001,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
                         CheckBox checkBox = (CheckBox) nextChild;
-                        if (checkBox.isChecked()) {
-                            dtJawaban.setIntmJawabanId(checkBox.getId());
-                            dtJawaban.setTxtJawaban(checkBox.getText().toString());
-                        }
+//                        if (checkBox.isChecked()) {
+//
+//                        }
+                        dtJawaban.setIntmJawabanId(checkBox.getId());
+                        dtJawaban.setTxtJawaban(checkBox.getText().toString());
+                        dtJawaban.setQualified(checkBox.isChecked());
                     }
 
                     if (nextChild instanceof RadioGroup) {
@@ -994,12 +1017,22 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             String txtJawaban = rb.getText().toString();
                             dtJawaban.setIntmJawabanId(posisi);
                             dtJawaban.setTxtJawaban(txtJawaban);
+                            dtJawaban.setQualified(true);
+                        }else {
+                            dtJawaban.setIntmJawabanId(0);
+                            dtJawaban.setTxtJawaban(null);
+                            dtJawaban.setQualified(false);
                         }
                     }
                     if (nextChild instanceof EditText) {
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
+                        if (editText.getText().toString().length()>0){
+                            dtJawaban.setQualified(true);
+                        }else {
+                            dtJawaban.setQualified(false);
+                        }
                     }
                     listJawaban.add(dtJawaban);
                 }
@@ -1017,7 +1050,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.Excalated.getIdStatus());
         }
         tJawabanUserHeader.setListJawabanUser(tJawabanList);
-        return tJawabanUserHeader; 
+        return tJawabanUserHeader;
     }
 
     @Override

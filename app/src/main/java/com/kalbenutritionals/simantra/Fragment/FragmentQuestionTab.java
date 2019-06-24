@@ -122,31 +122,34 @@ public class FragmentQuestionTab extends Fragment {
 //                        boolean validFooter = myFragment.validateAnswFooter();
 //                        List<VmTJawabanUser> tJawabanList = myFragment.saveData();
 
-                        for (VmTJawabanUser jawab :
-                                validMandatoryList.getListJawabanUser()) {
-                            if (jawab.isBolHavePhoto()) {
-                                List<VmTJawabanUser.imageModel> models = jawab.getDtImageModels();
-                                int index = 1;
-                                for (VmTJawabanUser.imageModel model :
-                                        models) {
+                        if (validMandatoryList.getListJawabanUser()!=null){
+                            for (VmTJawabanUser jawab :
+                                    validMandatoryList.getListJawabanUser()) {
+                                if (jawab.isBolHavePhoto()) {
+                                    List<VmTJawabanUser.imageModel> models = jawab.getDtImageModels();
+                                    int index = 1;
+                                    for (VmTJawabanUser.imageModel model :
+                                            models) {
 
-                                    File file = new File(model.imgPath);
-                                    if (file.exists()){
-                                        listMap.put(String.valueOf(jawab.getIntPertanyaanId())+ "-" + model.imgName + String.valueOf(index)+ "-" ,file);
-                                        index++;
-                                    }
+                                        File file = new File(model.imgPath);
+                                        if (file.exists()){
+                                            listMap.put(String.valueOf(jawab.getIntPertanyaanId())+ "-" + model.imgName + String.valueOf(index)+ "-" ,file);
+                                            index++;
+                                        }
 
                                     /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
                                     bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
                                     byte[] b = baos.toByteArray();
                                     String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
                                     String a = encodedImage;*/
+                                    }
+
+
+
                                 }
-
-
-
                             }
-                            }
+                        }
+
 //                        boolean isRejected = myFragment.statusRejected;
 //                        isRejected = false;
                         boolean validFooter = true;
