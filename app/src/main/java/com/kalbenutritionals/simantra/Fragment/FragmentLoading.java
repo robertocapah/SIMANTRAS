@@ -195,7 +195,7 @@ public class FragmentLoading extends Fragment {
 
     public void startingTime() {
 
-        final SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy hh:mm:ss a");
+        final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
         spinKit.setVisibility(View.VISIBLE);
 //        handler.postDelayed(runnable, 0);
         Date date = new Date(System.currentTimeMillis());
@@ -209,7 +209,7 @@ public class FragmentLoading extends Fragment {
     }
 
     public void finishingTime() {
-        final SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy hh:mm:ss a");
+        final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
         Date dateFinish = new Date(System.currentTimeMillis());
         String timeFinish = format.format(dateFinish);
         BLHelper.savePreference(context, ClsHardCode.EndTime, timeFinish);

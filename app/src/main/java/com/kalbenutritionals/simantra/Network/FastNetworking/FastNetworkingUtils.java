@@ -130,6 +130,7 @@ public class FastNetworkingUtils {
                 .addHeaders("Authorization", "Bearer " + access_token)
                 .setTag("test")
                 .setPriority(Priority.LOW)
+                .doNotCacheResponse()
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override

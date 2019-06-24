@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:src="@drawable/profil" />
+        android:src="@drawable/ic_simantra" />
 
     <TextView
         android:id="@+id/tvUsername"

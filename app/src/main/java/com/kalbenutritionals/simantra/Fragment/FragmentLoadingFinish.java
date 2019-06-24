@@ -1,5 +1,6 @@
 package com.kalbenutritionals.simantra.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.kalbenutritionals.simantra.BL.BLHelper;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.R;
 
 import butterknife.BindView;
@@ -18,24 +21,28 @@ import butterknife.Unbinder;
 public class FragmentLoadingFinish extends Fragment {
     View v;
     Unbinder unbinder;
-    @BindView(R.id.tvStartTime)
-    TextView tvStartTime;
-    @BindView(R.id.tvExcalationTime)
-    TextView tvExcalationTime;
-    @BindView(R.id.tvLoadingTime)
-    TextView tvLoadingTime;
-    @BindView(R.id.tvDurationStart)
-    TextView tvDurationStart;
-    @BindView(R.id.tvDurationExca)
-    TextView tvDurationExca;
-    @BindView(R.id.tvDurationLoading)
-    TextView tvDurationLoading;
+    Context context;
+    @BindView(R.id.tvScanTime)
+    TextView tvScanTime;
+    @BindView(R.id.tvLoadingStart)
+    TextView tvLoadingStart;
+    @BindView(R.id.tvLoadingEnd)
+    TextView tvLoadingEnd;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_loading_finish, container, false);
         unbinder = ButterKnife.bind(this, v);
+        context = getActivity().getApplicationContext();
+        String scanTime = BLHelper.getPreference(context, ClsHardCode.ScanTime);
+        String loadTimeStart = BLHelper.getPreference(context, ClsHardCode.StartTime);
+        String LoadTimeFinish = BLHelper.getPreference(context, ClsHardCode.EndTime);
+
+        tvScanTime.setText(scanTime);
+        tvLoadingStart.setText(loadTimeStart);
+        tvLoadingEnd.setText(LoadTimeFinish);
+
         return v;
     }
 

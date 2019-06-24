@@ -66,6 +66,8 @@ public class ClsHardCode {
     public static String txtStatusLoading = "statusLoading";
     public static String StartTime = "StartTime";
     public static String EndTime = "EndTime";
+    public static String ScanTime = "ScanTime";
+    public static String FormatTime = "MMM dd,yyyy hh:mm a";
 
     public static int JenisPertanyaanTextView = 7;
     public static int JenisPertanyaanTextBox = 1;

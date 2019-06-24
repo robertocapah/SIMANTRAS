@@ -266,7 +266,11 @@ public class FullScannerFragment extends Fragment implements
                     clsmJawaban.setIdPertanyaan(data.getINTFORMDTLID());
                     clsmJawaban.setBitChoosen(false);
                     clsmJawaban.setTxtMapCol(jwb.getTXTMAPCOL());
-                    clsmJawaban.setTxtJawaban(jwb.getTXTVALUE());
+                    if(jwb.getTXTVALUE().equals("null")){
+                        clsmJawaban.setTxtJawaban("");
+                    }else{
+                        clsmJawaban.setTxtJawaban(jwb.getTXTVALUE());
+                    }
                     try{
                         new RepomJawaban(context).createOrUpdate(clsmJawaban);
                     }catch (Exception ex){

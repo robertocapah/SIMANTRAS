@@ -35,6 +35,8 @@ import com.kalbenutritionals.simantra.R;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -118,6 +120,10 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                     if ( model.getResult().isStatus()){
                         new RepomPertanyaan(context).deleteAllData();
                         BLHelper.savePreference(context,"spm",noQr);
+                        final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
+                        Date dateScan = new Date(System.currentTimeMillis());
+                        String timeScan = format.format(dateScan);
+                        BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan);
                         GenerateData(getActivity().getApplicationContext(),model);
                         FragmentTab fragmentTab = new FragmentTab();
                         FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
@@ -206,7 +212,12 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                     clsmJawaban.setIdPertanyaan(data.getINTFORMDTLID());
                     clsmJawaban.setBitChoosen(false);
                     clsmJawaban.setTxtMapCol(jwb.getTXTMAPCOL());
-                    clsmJawaban.setTxtJawaban(jwb.getTXTVALUE());
+                    if(jwb.getTXTVALUE().equals("null")){
+                        clsmJawaban.setTxtJawaban("");
+                    }else{
+                        clsmJawaban.setTxtJawaban(jwb.getTXTVALUE());
+                    }
+
                     try{
                         new RepomJawaban(context).createOrUpdate(clsmJawaban);
                     }catch (Exception ex){
