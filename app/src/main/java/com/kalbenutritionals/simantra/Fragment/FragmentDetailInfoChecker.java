@@ -773,32 +773,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 int position = ListAnswerViewOptional.get(i).getIntPosition();
                 ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
                 VmTJawabanUser tJawaban = new VmTJawabanUser();
-                List<VmTJawabanUser.imageModel> listImage = new ArrayList<>();
                 tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
                 tJawaban.setIntPertanyaanId(intPertanyaanId);
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
                 tJawabanUserHeader.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
-
-
-                if (pertanyaans.isBolHavePhoto()) {
-                    for (int x = 0; x < ltDataPertanyaanOptional.get(position).listImage.size(); x++) {
-                        if (ltDataPertanyaanOptional.get(position).listImage.get(x).getPath()!= null){
-
-                            String dirA =ltDataPertanyaanOptional.get(position).listImage.get(x).getPath().getPath();
-                            dirA = dirA.replaceAll(".+Android", "");
-                            String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
-                            File file = new File(dir);
-                            String imageName = ltDataPertanyaanOptional.get(position).listImage.get(x).getImgName();
-                            VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
-
-                            listImage.add(dtImage);
-                        }
-                    }
-                }
-
-                tJawaban.setDtImageModels(listImage);
 
                 if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
                     int a= ListAnswerViewOptional.get(i).getIntPertanyaanId();
@@ -812,6 +792,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 int count = 0;
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
+                    List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
@@ -850,6 +831,25 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             dtJawaban.setQualified(false);
                         }
                     }
+                    if (listJawaban.size()==0){
+                        if (pertanyaans.isBolHavePhoto()) {
+                            for (int z = 0; z < ltDataPertanyaanOptional.get(position).listImage.size(); z++) {
+                                if (ltDataPertanyaanOptional.get(position).listImage.get(z).getPath()!= null){
+
+                                    String dirA =ltDataPertanyaanOptional.get(position).listImage.get(z).getPath().getPath();
+                                    dirA = dirA.replaceAll(".+Android", "");
+                                    String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
+                                    File file = new File(dir);
+                                    String imageName = ltDataPertanyaanOptional.get(position).listImage.get(z).getImgName();
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName,dir);
+
+                                    listImage.add(dtImage);
+                                }
+                            }
+                        }
+
+                        dtJawaban.setDtImageModels(listImage);
+                    }
                     listJawaban.add(dtJawaban);
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
@@ -865,27 +865,26 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 int position = ListAnswerViewMandatory.get(i).getIntPosition();
                 ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
                 VmTJawabanUser tJawaban = new VmTJawabanUser();
-                List<VmTJawabanUser.imageModel> listImage = new ArrayList<>();
                 tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
                 tJawaban.setIntPertanyaanId(intPertanyaanId);
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-                if (pertanyaans.isBolHavePhoto()) {
-                    for (int x = 0; x < ltDataPertanyaanMandatory.get(position).listImage.size(); x++) {
-                        if (ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath()!= null){
-
-                            String dirA =ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath().getPath();
-                            dirA = dirA.replaceAll(".+Android", "");
-                            String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
-                            File file = new File(dir);
-                            String imageName = ltDataPertanyaanMandatory.get(position).listImage.get(x).getImgName();
-                            VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
-                            listImage.add(dtImage);
-                        }
-                    }
-                }
-                tJawaban.setDtImageModels(listImage);
+//                if (pertanyaans.isBolHavePhoto()) {
+//                    for (int x = 0; x < ltDataPertanyaanMandatory.get(position).listImage.size(); x++) {
+//                        if (ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath()!= null){
+//
+//                            String dirA =ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath().getPath();
+//                            dirA = dirA.replaceAll(".+Android", "");
+//                            String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
+//                            File file = new File(dir);
+//                            String imageName = ltDataPertanyaanMandatory.get(position).listImage.get(x).getImgName();
+//                            VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
+//                            listImage.add(dtImage);
+//                        }
+//                    }
+//                }
+//                tJawaban.setDtImageModels(listImage);
 
                 if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
                     ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 24);
@@ -898,6 +897,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 String jawabanFinal = "";
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
+                    List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
@@ -942,6 +942,25 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         }
                     }
 
+                    if (listJawaban.size()==0){
+                        if (pertanyaans.isBolHavePhoto()) {
+                            for (int z = 0; z < ltDataPertanyaanMandatory.get(position).listImage.size(); z++) {
+                                if (ltDataPertanyaanMandatory.get(position).listImage.get(z).getPath()!= null){
+
+                                    String dirA =ltDataPertanyaanMandatory.get(position).listImage.get(z).getPath().getPath();
+                                    dirA = dirA.replaceAll(".+Android", "");
+                                    String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
+                                    File file = new File(dir);
+                                    String imageName = ltDataPertanyaanMandatory.get(position).listImage.get(z).getImgName();
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName,dir);
+
+                                    listImage.add(dtImage);
+                                }
+                            }
+                        }
+
+                        dtJawaban.setDtImageModels(listImage);
+                    }
                     listJawaban.add(dtJawaban);
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
@@ -965,27 +984,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 int position = ListAnswerViewFooter.get(i).getIntPosition();
                 ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
                 VmTJawabanUser tJawaban = new VmTJawabanUser();
-                List<VmTJawabanUser.imageModel> listImage = new ArrayList<>();
                 tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
                 tJawaban.setIntPertanyaanId(intPertanyaanId);
                 tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
                 tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-
-                if (pertanyaans.isBolHavePhoto()) {
-                    for (int x = 0; x < ltDataPertanyaanFooter.get(position).listImage.size(); x++) {
-                        if (ltDataPertanyaanFooter.get(position).listImage.get(x).getPath()!= null){
-                            String dirA =ltDataPertanyaanFooter.get(position).listImage.get(x).getPath().getPath();
-                            dirA = dirA.replaceAll(".+Android", "");
-                            String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
-                            String imageName = ltDataPertanyaanFooter.get(position).listImage.get(x).getImgName();
-                            VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
-                            listImage.add(dtImage);
-                        }
-                    }
-                }
-
-                tJawaban.setDtImageModels(listImage);
 
                 if (ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
                     ln = (LinearLayout) rvFooter.getChildAt(i).findViewById(ListAnswerViewFooter.get(i).getIntPertanyaanId() * 24);
@@ -997,6 +1000,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
+                    List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
@@ -1034,6 +1038,26 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                             dtJawaban.setQualified(false);
                         }
                     }
+                    if (listJawaban.size()==0){
+                        if (pertanyaans.isBolHavePhoto()) {
+                            for (int z = 0; z < ltDataPertanyaanFooter.get(position).listImage.size(); z++) {
+                                if (ltDataPertanyaanFooter.get(position).listImage.get(z).getPath()!= null){
+
+                                    String dirA =ltDataPertanyaanFooter.get(position).listImage.get(z).getPath().getPath();
+                                    dirA = dirA.replaceAll(".+Android", "");
+                                    String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
+                                    File file = new File(dir);
+                                    String imageName = ltDataPertanyaanFooter.get(position).listImage.get(z).getImgName();
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName,dir);
+
+                                    listImage.add(dtImage);
+                                }
+                            }
+                        }
+
+                        dtJawaban.setDtImageModels(listImage);
+                    }
+
                     listJawaban.add(dtJawaban);
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);

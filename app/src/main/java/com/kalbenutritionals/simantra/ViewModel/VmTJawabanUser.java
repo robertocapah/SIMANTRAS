@@ -10,7 +10,6 @@ public class VmTJawabanUser {
     private String txtNoSPM;
     private int intPertanyaanId;
     private int intTypePertanyaanId;
-    private List<imageModel> dtImageModels;
     private List<VmTJawabanUserDetail> jawabanUserDetailList;
     private boolean bolHavePhoto;
     private boolean bolHaveAnswer;
@@ -68,23 +67,5 @@ public class VmTJawabanUser {
 
     public void setBolHaveAnswer(boolean bolHaveAnswer) {
         this.bolHaveAnswer = bolHaveAnswer;
-    }
-
-    public List<imageModel> getDtImageModels() {
-        return dtImageModels;
-    }
-
-    public void setDtImageModels(List<imageModel> dtImageModels) {
-        this.dtImageModels = dtImageModels;
-    }
-
-    public class imageModel{
-        public String imgName;
-        public String imgPath;
-
-        public imageModel(String imgName, String imgPath) {
-            this.imgName = imgName;
-            this.imgPath = imgPath;
-        }
     }
 }

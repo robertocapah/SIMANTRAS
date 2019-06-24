@@ -34,6 +34,7 @@ import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
+import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserDetail;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserHeader;
 
 import org.json.JSONArray;
@@ -126,9 +127,9 @@ public class FragmentQuestionTab extends Fragment {
                             for (VmTJawabanUser jawab :
                                     validMandatoryList.getListJawabanUser()) {
                                 if (jawab.isBolHavePhoto()) {
-                                    List<VmTJawabanUser.imageModel> models = jawab.getDtImageModels();
+                                    List<VmTJawabanUserDetail.imageModel> models = jawab.getJawabanUserDetailList().get(0).getDtImageModels();
                                     int index = 1;
-                                    for (VmTJawabanUser.imageModel model :
+                                    for (VmTJawabanUserDetail.imageModel model :
                                             models) {
 
                                         File file = new File(model.imgPath);
