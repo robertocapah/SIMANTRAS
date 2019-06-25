@@ -380,8 +380,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         } else {
             if (!validMandatory){
                 txtMsg = "Please take all picture at mandatory conditions !";
+                Toast.makeText(context,txtMsg,Toast.LENGTH_SHORT).show();
             }else if (!validateFooter()){
                 txtMsg = "Mandatory Question must be filled out !";
+                Toast.makeText(context,txtMsg,Toast.LENGTH_SHORT).show();
             }
             statusValid = false;
             mAdapterMandatory.notifyDataSetChanged();

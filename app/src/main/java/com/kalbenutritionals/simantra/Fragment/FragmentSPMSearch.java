@@ -119,11 +119,11 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                 if(model.getResult()!=null){
                     if ( model.getResult().isStatus()){
                         new RepomPertanyaan(context).deleteAllData();
-                        BLHelper.savePreference(context,"spm",noQr);
+                        BLHelper.savePreference(context,"spm",noQr);// simpen spm yang lagi aktif
                         final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
                         Date dateScan = new Date(System.currentTimeMillis());
                         String timeScan = format.format(dateScan);
-                        BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan);
+                        BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan); //save waktu scan
                         GenerateData(getActivity().getApplicationContext(),model);
                         FragmentTab fragmentTab = new FragmentTab();
                         FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
@@ -180,6 +180,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         startActivity(intent);
     }
     public void GenerateData(Context context, ResponseGetQuestion model){
+        BLHelper.savePreference(context,ClsHardCode.INT_HEADER_ID,String.valueOf(model.getINTFILLHDRID()));
         List<DataItem> datas =  model.getData();
         for (DataItem data :
                 datas) {

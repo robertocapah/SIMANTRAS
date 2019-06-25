@@ -22,10 +22,19 @@ public class VMRequestDataSPM {
 
     public class UserRequestSPM{
         public String username;
+        public int intUserId;
         public int intRoleId;
         public String txtNameApp;
         public String intOrgID;
         public String txtNoSPM;
+
+        public int getIntUserId() {
+            return intUserId;
+        }
+
+        public void setIntUserId(int intUserId) {
+            this.intUserId = intUserId;
+        }
 
         public String getTxtNoSPM() {
             return txtNoSPM;

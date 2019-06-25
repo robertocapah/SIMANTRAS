@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidnetworking.error.ANError;
 import com.balysv.materialripple.MaterialRippleLayout;
@@ -183,11 +184,11 @@ public class FragmentQuestionTab extends Fragment {
                                     btnProceed.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-
-                                            idx_state++;
+                                            pushTransaction(dialog);
+                                            /*idx_state++;
                                             displayFragment(array_state[idx_state]);
                                             dialog.dismiss();
-                                            btnNext.setClickable(false);
+                                            btnNext.setClickable(false);*/
                                         }
                                     });
 
@@ -262,9 +263,11 @@ public class FragmentQuestionTab extends Fragment {
         JSONObject object = new JSONObject();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
         JSONObject deviceInfo = new BLHelper().getDataTransaksiJsonObjCommon(context,dataDevice);
+        JSONObject dataUserLogin = new BLHelper().getUserLoginDataJson(context);
         try {
             object.put("dataJawaban",data);
             object.put("deviceInfo",deviceInfo);
+            object.put("dataUser",dataUserLogin);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -275,10 +278,14 @@ public class FragmentQuestionTab extends Fragment {
             public void onResponse(JSONObject response) {
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
                 if (model.getResult() != null) {
-                    idx_state++;
-                    displayFragment(array_state[idx_state]);
-                    dialog.dismiss();
-                    btnNext.setClickable(false);
+                    if (model.getResult().isStatus()){
+                        idx_state++;
+                        displayFragment(array_state[idx_state]);
+                        dialog.dismiss();
+                        btnNext.setClickable(false);
+                    }else{
+                        Toast.makeText(context,"server problem",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -331,7 +338,6 @@ public class FragmentQuestionTab extends Fragment {
         } else if (state.name().equalsIgnoreCase(State.LOADING.name())) {
             FRAGMENT_TAG = "Loading";
             fragment = new FragmentLoading();
-
             if (this.getArguments()!=null){
                 String myValue = this.getArguments().getString(ClsHardCode.txtMessage);
                 String noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);

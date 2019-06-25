@@ -10,23 +10,39 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
 import com.github.ybq.android.spinkit.SpinKitView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
+import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
+import com.kalbenutritionals.simantra.Database.Repo.EnumTime;
+import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 import com.kalbenutritionals.simantra.FullScannerFragmentActivity;
+import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
+import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,18 +74,37 @@ public class FragmentLoading extends Fragment {
     TextView tvFinishTime;
     @BindView(R.id.tv_label_result)
     TextView tvLabelResult;
+    @BindView(R.id.btnSkip)
+    Button btnSkip;
+    private Gson gson;
+    List<ClsmUserLogin> dataLogin = null;
+    RepomUserLogin loginRepo;
+    String txtUser = "";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_loading, container, false);
         unbinder = ButterKnife.bind(this, v);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gson = gsonBuilder.create();
         handler = new Handler();
         spinKit.setVisibility(View.GONE);
         btnFinish.setVisibility(View.GONE);
         context = getActivity().getApplicationContext();
         tvResultTime.setVisibility(View.GONE);
         tvLabelResult.setVisibility(View.GONE);
+        try {
+            loginRepo = new RepomUserLogin(context);
+            dataLogin = (List<ClsmUserLogin>) loginRepo.findAll();
+            if (dataLogin.size() > 0) {
+                txtUser = dataLogin.get(0).getTxtUserName();
+            }
+        } catch (Exception ex) {
+
+        }
+
+
         /*viewTicktockCountup = (TickTockView) v.findViewById(R.id.view_ticktock_countup);
         if (viewTicktockCountup != null) {
             viewTicktockCountup.setOnTickListener(new TickTockView.OnTickListener() {
@@ -135,6 +170,41 @@ public class FragmentLoading extends Fragment {
 
     };
 
+    private void TransactionClosed() {
+        final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
+        String strLinkAPI = new ClsHardCode().linksetUnlockTransaksi;
+        Date date = new Date(System.currentTimeMillis());
+        final String time = format.format(date);
+        JSONObject resJson = getJsonParam(time);
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Switching Transaction, please wait", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
+                if (model.getResult() != null) {
+                    tvStartTime.setText(time);
+                    BLHelper.savePreference(context, ClsHardCode.StartTime, time);
+                    btnStart.setText("Processing ...");
+                    btnStart.setClickable(false);
+                    StartTime = SystemClock.uptimeMillis();
+                    btnFinish.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                Toast.makeText(context, error.getErrorBody().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Bundle arguments2 = new Bundle();
+        arguments2.putInt( ClsHardCode.TXT_STATUS_MENU , ClsHardCode.INT_VALIDATOR);
+        FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
+        fragmentSPMSearch.setArguments(arguments2);
+        FragmentTransaction fragmentTransactionSPMSearch = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
+        fragmentTransactionSPMSearch.commit();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -192,77 +262,159 @@ public class FragmentLoading extends Fragment {
         alertD.show();
 
     }
+    public JSONObject getJsonParam(String time){
+        JSONObject jData = new JSONObject();
+        JSONObject resJson = new JSONObject();
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        int intHeaderId = Integer.parseInt(txtHeaderId);
+        int intStatus = EnumTime.StartLoading.getIdStatus();
+        String txtStatus = EnumTime.StartLoading.name();
+        try {
+            jData.put("intHeaderId", intHeaderId);
+            jData.put("txtTime", time);
+            jData.put("intStatus", intStatus);
+            jData.put("txtStatus", txtStatus);
+            jData.put("txtUserId", txtUser);
+
+            resJson.put("data", jData);
+            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return resJson;
+    }
+
 
     public void startingTime() {
-
         final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
         spinKit.setVisibility(View.VISIBLE);
 //        handler.postDelayed(runnable, 0);
         Date date = new Date(System.currentTimeMillis());
-        String time = format.format(date);
-        tvStartTime.setText(time);
-        BLHelper.savePreference(context, ClsHardCode.StartTime, time);
-        btnStart.setText("Processing ...");
-        btnStart.setClickable(false);
-        StartTime = SystemClock.uptimeMillis();
-        btnFinish.setVisibility(View.VISIBLE);
+        final String time = format.format(date);
+
+        String strLinkAPI = new ClsHardCode().linksetTimeStatusTransaksiMobile;
+        JSONObject resJson = getJsonParam(time);
+
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Changing status, please wait", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
+                if (model.getResult() != null) {
+                    tvStartTime.setText(time);
+                    BLHelper.savePreference(context, ClsHardCode.StartTime, time);
+                    btnStart.setText("Processing ...");
+                    btnStart.setClickable(false);
+                    StartTime = SystemClock.uptimeMillis();
+                    btnFinish.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                Toast.makeText(context, error.getErrorBody().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     public void finishingTime() {
         final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
-        Date dateFinish = new Date(System.currentTimeMillis());
-        String timeFinish = format.format(dateFinish);
-        BLHelper.savePreference(context, ClsHardCode.EndTime, timeFinish);
-//        handler.removeCallbacks(runnable);
-        String startT = BLHelper.getPreference(context, ClsHardCode.StartTime);
-        tvLabelResult.setVisibility(View.VISIBLE);
-        try {
-            Date dateStart = format.parse(startT);
-            long mills = dateFinish.getTime() - dateStart.getTime();
-            int days = (int) (mills / (1000*60*60*24));
-            int hours = (int) ((mills - (1000*60*60*24*days)) / (1000*60*60));
-            int min = (int) (mills - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
+        final Date dateFinish = new Date(System.currentTimeMillis());
+        final String timeFinish = format.format(dateFinish);
 
-            int hours2 =(int) mills/(1000 * 60 * 60);
-            int mins = (int) (mills/(1000*60)) % 60;
-            String selisih = hours +" hours : " +mins+" minutes";
-            tvResultTime.setText(selisih);
-            tvResultTime.setVisibility(View.VISIBLE);
-            tvLabelResult.setVisibility(View.VISIBLE);
-        } catch (ParseException e) {
+        String strLinkAPI = new ClsHardCode().linksetTimeStatusTransaksiMobile;
+        JSONObject jData = new JSONObject();
+        JSONObject resJson = new JSONObject();
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        int intHeaderId = Integer.parseInt(txtHeaderId);
+        int intStatus = EnumTime.FinishLoading.getIdStatus();
+        String txtStatus = EnumTime.FinishLoading.name();
+        try {
+            jData.put("intHeaderId", intHeaderId);
+            jData.put("txtTime", timeFinish);
+            jData.put("intStatus", intStatus);
+            jData.put("txtStatus", txtStatus);
+            jData.put("txtUserId", txtUser);
+
+            resJson.put("data", jData);
+            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        tvStartTime.setText(startT);
-        tvFinishTime.setText(timeFinish);
-        btnFinish.setText("Finished");
-        ivDone.setVisibility(View.VISIBLE);
-        spinKit.setVisibility(View.GONE);
-        btnStart.setVisibility(View.GONE);
-        btnFinish.setClickable(false);
-        isFinished = true;
+
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Changing status, please wait", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
+                if (model.getResult() != null) {
+                    BLHelper.savePreference(context, ClsHardCode.EndTime, timeFinish);
+//        handler.removeCallbacks(runnable);
+                    String startT = BLHelper.getPreference(context, ClsHardCode.StartTime);
+                    tvLabelResult.setVisibility(View.VISIBLE);
+                    try {
+                        Date dateStart = format.parse(startT);
+                        long mills = dateFinish.getTime() - dateStart.getTime();
+                        int days = (int) (mills / (1000 * 60 * 60 * 24));
+                        int hours = (int) ((mills - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+                        int min = (int) (mills - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
+
+                        int hours2 = (int) mills / (1000 * 60 * 60);
+                        int mins = (int) (mills / (1000 * 60)) % 60;
+                        String selisih = hours + " hours : " + mins + " minutes";
+                        tvResultTime.setText(selisih);
+                        tvResultTime.setVisibility(View.VISIBLE);
+                        tvLabelResult.setVisibility(View.VISIBLE);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    tvStartTime.setText(startT);
+                    tvFinishTime.setText(timeFinish);
+                    btnFinish.setText("Finished");
+                    ivDone.setVisibility(View.VISIBLE);
+                    spinKit.setVisibility(View.GONE);
+                    btnStart.setVisibility(View.GONE);
+                    btnFinish.setClickable(false);
+                    isFinished = true;
+                }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                Toast.makeText(context, error.getErrorBody().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
-    @OnClick(R.id.btnFinish)
-    public void onViewBtnFinishClicked() {
+    @OnClick({R.id.btnFinish, R.id.btnSkip})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btnFinish:
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setMessage("Are sure to finish loading process ?")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                intStatusLoading = 1;
+                                scanBarcode();
+                            }
+                        })
+                        .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
 
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder
-                .setCancelable(false)
-                .setMessage("Are sure to finish loading process ?")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        intStatusLoading = 1;
-                        scanBarcode();
-                    }
-                })
-                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        final AlertDialog alertD = alertDialogBuilder.create();
-        alertD.show();
+                final AlertDialog alertD = alertDialogBuilder.create();
+                alertD.show();
+                break;
+            case R.id.btnSkip:
+                TransactionClosed();
+                break;
+        }
     }
 }

@@ -235,6 +235,7 @@ public class FullScannerFragment extends Fragment implements
     }
     public void GenerateData(Context context, ResponseGetQuestion model){
         List<DataItem> datas =  model.getData();
+        BLHelper.savePreference(context,ClsHardCode.INT_HEADER_ID,String.valueOf(model.getINTFILLHDRID()));
         for (DataItem data :
                 datas) {
             ClsmPertanyaan pertanyaan = new ClsmPertanyaan();

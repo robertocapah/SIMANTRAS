@@ -117,14 +117,14 @@ public class FastNetworkingUtils {
                     }
                 });
     }
-    public void FNRequestPostData(final Context context, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener) {
+    public void FNRequestPostData(final Activity activity, String txtLink, JSONObject JObject, final String progressBarType, final InterfaceFastNetworking listener) {
         String access_token = "";
         List<ClsToken> dataToken = null;
-        final ProgressDialog Dialog = new ProgressDialog(context);
+        final ProgressDialog Dialog = new ProgressDialog(activity);
         Dialog.setMessage(progressBarType);
         Dialog.setCancelable(false);
         Dialog.show();
-        access_token = getToken(context);
+        access_token = getToken(activity);
         AndroidNetworking.post(txtLink)
                 .addJSONObjectBody(JObject)
                 .addHeaders("Authorization", "Bearer " + access_token)
@@ -143,7 +143,7 @@ public class FastNetworkingUtils {
                     public void onError(ANError error) {
                         listener.onError(error);
                         Dialog.dismiss();
-                        ErrorHandlerFN(context, error, TAG);
+                        ErrorHandlerFN(activity, error, TAG);
                     }
                 });
     }

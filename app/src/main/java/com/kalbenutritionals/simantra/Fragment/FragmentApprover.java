@@ -35,18 +35,28 @@ import android.widget.Toast;
 
 import com.androidnetworking.error.ANError;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterImageSlider;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasic;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getDataApprover.DataItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getDataApprover.ResponseGetApprover;
+import com.kalbenutritionals.simantra.Database.Common.ClsToken;
+import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
+import com.kalbenutritionals.simantra.Database.Repo.RepoclsToken;
+import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.Images;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +87,12 @@ public class FragmentApprover extends Fragment {
             R.drawable.img_social_android,
             R.drawable.img_social_behance
     };
+    private Gson gson;
+    RepoclsToken tokenRepo;
+    ClsmUserLogin dtLogin;
     List<Images> itemsImagePu;
+    String txtUsername, txtPassword;
+    List<ClsToken> dataToken;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,16 +102,24 @@ public class FragmentApprover extends Fragment {
         context = getActivity().getApplicationContext();
         listData.clear();
         listData.clear();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gson = gsonBuilder.create();
+        try {
+            dtLogin = new RepomUserLogin(getContext()).getUserLogin(getContext());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        getDataList();
         List<String> imgLink = new ArrayList<>();
         imgLink.add("http://www.livescience.com/images/i/000/065/149/original/bananas.jpg");
         imgLink.add("http://www.livescience.com/images/i/000/065/149/original/bananas.jpg");
-        for (int i = 0; i < 5; i++) {
+       /* for (int i = 0; i < 5; i++) {
             VmAdapterBasic adapterData = new VmAdapterBasic();
             adapterData.setTxtLinkImage("http://www.livescience.com/images/i/000/065/149/original/bananas.jpg");
             adapterData.setTitle("NO SPM KN1231231231231 " + i);
             adapterData.setSubtitle("Dari/Tujuan " + i +" sanghiang perkasa/ KLB");
             listData.add(adapterData);
-        }
+        }*/
         if (0 > 0) {
             coordinatorLytNoItem.setVisibility(View.GONE);
             recyclerViewListBasic.setVisibility(View.VISIBLE);
@@ -104,22 +127,99 @@ public class FragmentApprover extends Fragment {
             recyclerViewListBasic.setVisibility(View.VISIBLE);
             coordinatorLytNoItem.setVisibility(View.GONE);
         }
-        adapterBasic = new AdapterListBasic(context, listData);
-        recyclerViewListBasic.setAdapter(adapterBasic);
-        recyclerViewListBasic.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapterBasic.setOnItemClickListener(new AdapterListBasic.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, VmAdapterBasic obj, int position) {
-                Snackbar.make(parent_view, "Item " + obj.getTitle() + " clicked", Snackbar.LENGTH_SHORT).show();
-                ViewDialog(view, obj, position);
 
-            }
-        });
         return v;
     }
-    private void ViewDialog(View view, final VmAdapterBasic obj, final int position){
-        String link = new ClsHardCode().linkLogin;
+    private void getDataList(){
+        String link = new ClsHardCode().linkGetDataApproval;
         JSONObject jsonObject = new JSONObject();
+        JSONObject resJson = new JSONObject();
+        JSONObject jData = new JSONObject();
+
+        try {
+            jData.put("username", dtLogin.getTxtUserName());
+            jData.put("intRoleId", dtLogin.getIntRoleID());
+            jData.put("password", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            tokenRepo = new RepoclsToken(context);
+            dataToken = (List<ClsToken>) tokenRepo.findAll();
+            resJson.put("data", jData);
+            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
+            resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), link, jsonObject, "getData", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                ResponseGetApprover model = gson.fromJson(response.toString(), ResponseGetApprover.class);
+
+                List<DataItem> datas = model.getData();
+                for (DataItem data: datas) {
+                    VmAdapterBasic adapterData = new VmAdapterBasic();
+                    adapterData.setTxtLinkImage("http://www.livescience.com/images/i/000/065/149/original/bananas.jpg");
+                    adapterData.setTitle(data.getTXTSPMNO());
+                    adapterData.setSubtitle(data.getTXTORGCODE());
+                    listData.add(adapterData);
+                }
+                adapterBasic = new AdapterListBasic(context, listData);
+                recyclerViewListBasic.setAdapter(adapterBasic);
+                recyclerViewListBasic.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapterBasic.setOnItemClickListener(new AdapterListBasic.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, VmAdapterBasic obj, int position) {
+                        Snackbar.make(parent_view, "Item " + obj.getTitle() + " clicked", Snackbar.LENGTH_SHORT).show();
+                        ViewDialog(view, obj, position);
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(ANError error) {
+                List<VmAdapterBasic> objList = new ArrayList<>();
+                for (int i=0;i<5;i++){
+                    VmAdapterBasic ob = new VmAdapterBasic();
+                    ob.setSubtitle("Bersih, tidak berlubang, tidak bau, tidak bocor"+i);
+                    ob.setTitle("Truck Bagian Dalam"+i);
+                    ob.setTxtLinkImage("https://afdanisasyahroza.files.wordpress.com/2011/05/images.jpeg");
+                    objList.add(ob);
+                }
+            }
+        });
+    }
+    private void ViewDialog(View view, final VmAdapterBasic obj, final int position){
+        String link = new ClsHardCode().linkGetDataApproval;
+        JSONObject jsonObject = new JSONObject();
+        JSONObject resJson = new JSONObject();
+        JSONObject jData = new JSONObject();
+
+        try {
+            jData.put("username", dtLogin.getTxtUserName());
+            jData.put("intRoleId", dtLogin.getIntRoleID());
+            jData.put("password", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            tokenRepo = new RepoclsToken(context);
+            dataToken = (List<ClsToken>) tokenRepo.findAll();
+            resJson.put("data", jData);
+            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
+            resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         new FastNetworkingUtils().FNRequestPostData(getActivity(), link, jsonObject, "getData", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {

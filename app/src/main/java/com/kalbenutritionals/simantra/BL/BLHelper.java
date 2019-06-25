@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -80,56 +81,77 @@ import static android.content.Context.MODE_PRIVATE;
 public class BLHelper {
     private static SharedPreferences mSharedPreferences;
     private static SharedPreferences.Editor editor;
-    String access_token,clientId = "";
+    String access_token, clientId = "";
     List<ClsToken> dataToken;
-    public static void savePreference(Context context,String key,String value){
+
+    public JSONObject getUserLoginDataJson(Context context) {
+        UserRequest userRequest = new UserRequest();
+        userRequest = getUserInfo(context);
+        JSONObject obj = null;
+        if (userRequest != null) {
+            Gson gson = new Gson();
+            String json = gson.toJson(userRequest);
+            try {
+                obj = new JSONObject(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return obj;
+    }
+
+    public static void savePreference(Context context, String key, String value) {
         editor = context.getSharedPreferences(ClsHardCode.TXT_SHARED_PREF_KEY, MODE_PRIVATE).edit();
         editor.putString(key, value);
         editor.commit();
     }
-    public static String getPreference(Context context,String key) {
+
+    public static String getPreference(Context context, String key) {
         String result = "";
         mSharedPreferences = context.getSharedPreferences(ClsHardCode.TXT_SHARED_PREF_KEY,
                 Context.MODE_PRIVATE);
         result = mSharedPreferences.getString(key, "");
         return result;
     }
-    public void setupFormats(ArrayList<Integer> mSelectedIndices,ZXingScannerView mScannerView) {
+
+    public void setupFormats(ArrayList<Integer> mSelectedIndices, ZXingScannerView mScannerView) {
         List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();
-        if(mSelectedIndices == null || mSelectedIndices.isEmpty()) {
+        if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
             mSelectedIndices = new ArrayList<Integer>();
-            for(int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
+            for (int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
                 mSelectedIndices.add(i);
             }
         }
 
-        for(int index : mSelectedIndices) {
+        for (int index : mSelectedIndices) {
             formats.add(ZXingScannerView.ALL_FORMATS.get(index));
         }
-        if(mScannerView != null) {
+        if (mScannerView != null) {
             mScannerView.setFormats(formats);
         }
     }
-    public String getGreetings(String name){
+
+    public String getGreetings(String name) {
         Calendar c = Calendar.getInstance();
         int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
         String greetings = "";
-        if(timeOfDay >= 0 && timeOfDay < 12){
+        if (timeOfDay >= 0 && timeOfDay < 12) {
             greetings = "Good Morning ";
-        }else if(timeOfDay >= 12 && timeOfDay < 16){
+        } else if (timeOfDay >= 12 && timeOfDay < 16) {
             greetings = "Good Afternoon ";
-        }else if(timeOfDay >= 16 && timeOfDay < 21){
+        } else if (timeOfDay >= 16 && timeOfDay < 21) {
             greetings = "Good Evening ";
-        }else if(timeOfDay >= 21 && timeOfDay < 24){
+        } else if (timeOfDay >= 21 && timeOfDay < 24) {
             greetings = "Good Night ";
         }
         return greetings;
     }
+
     /**
      * Used to scroll to the given view.
      *
      * @param scrollViewParent Parent ScrollView
-     * @param view View to which we need to scroll.
+     * @param view             View to which we need to scroll.
      */
     public void scrollToView(final NestedScrollView scrollViewParent, final View view) {
         // Get deepChild Offset
@@ -159,20 +181,22 @@ public class BLHelper {
         }
         getDeepChildOffset(mainParent, parentGroup.getParent(), parentGroup, accumulatedOffset);
     }
-    public DeviceInfo getDeviceInfo(){
+
+    public DeviceInfo getDeviceInfo() {
         DeviceInfo data = new DeviceInfo();
-        try{
+        try {
             ModelDevice model = DeviceInformation.getDeviceInformation();
             data.setDevice(model.getDevice());
             data.setModel(model.getModel());
             data.setOs_version(model.getOsVersion());
             data.setProduct(model.getProduct());
             data.setVersion_sdk(model.getVersionSDK());
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         return data;
     }
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -183,7 +207,8 @@ public class BLHelper {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
-    public JSONObject getDataRequestCommon(Context context){
+
+    public JSONObject getDataRequestCommon(Context context) {
         VMRequestData data = new VMRequestData();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
         UserRequest userData = new BLHelper().getUserInfo(context);
@@ -199,10 +224,11 @@ public class BLHelper {
         }
         return obj;
     }
-    public JSONObject getDataRequestDataSPM(Context context, String SPMNumber){
+
+    public JSONObject getDataRequestDataSPM(Context context, String SPMNumber) {
         VMRequestDataSPM data = new VMRequestDataSPM();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
-        VMRequestDataSPM.UserRequestSPM userData = new BLHelper().getUserInfoSPM(context,SPMNumber);
+        VMRequestDataSPM.UserRequestSPM userData = new BLHelper().getUserInfoSPM(context, SPMNumber);
         data.setData(userData);
         data.setDevice_info(dataDevice);
         Gson gson = new Gson();
@@ -215,7 +241,8 @@ public class BLHelper {
         }
         return obj;
     }
-    public JSONObject getDataTransaksiJson(Context context, VMTransaksiChecker.DatatTransaksi transaksiData){
+
+    public JSONObject getDataTransaksiJson(Context context, VMTransaksiChecker.DatatTransaksi transaksiData) {
         VMTransaksiChecker data = new VMTransaksiChecker();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
         data.setDatatTransaksi(transaksiData);
@@ -230,7 +257,8 @@ public class BLHelper {
         }
         return obj;
     }
-    public JSONArray getDataTransaksiJsonArrayCommon(Context context, Object transaksiData){
+
+    public JSONArray getDataTransaksiJsonArrayCommon(Context context, Object transaksiData) {
         Gson gson = new Gson();
         String json = gson.toJson(transaksiData);
         JSONArray obj = null;
@@ -241,7 +269,8 @@ public class BLHelper {
         }
         return obj;
     }
-    public JSONObject getDataTransaksiJsonObjCommon(Context context, Object transaksiData){
+
+    public JSONObject getDataTransaksiJsonObjCommon(Context context, Object transaksiData) {
         Gson gson = new Gson();
         String json = gson.toJson(transaksiData);
         JSONObject obj = null;
@@ -252,27 +281,29 @@ public class BLHelper {
         }
         return obj;
     }
-    public void updateTokenFirebase(final Context context){
+
+    public void updateTokenFirebase(final Context context) {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         FirebaseMessaging.getInstance().subscribeToTopic("KNMobileDev");
         String txtLink = new ClsHardCode().linkGetUpdateToken;
         JSONObject obj = getDataRequestCommon(context);
-        new FastNetworkingUtils().FNRequestPostDataUpdateToken(context,txtLink,obj,"",new InterfaceFastNetworking(){
+        new FastNetworkingUtils().FNRequestPostDataUpdateToken(context, txtLink, obj, "", new InterfaceFastNetworking() {
 
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(context,"success",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "success", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(ANError error) {
-                Toast.makeText(context,"refresh token failed",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "refresh token failed", Toast.LENGTH_SHORT).show();
             }
         });
     }
-    public UserRequest getUserInfo(Context context){
+
+    public UserRequest getUserInfo(Context context) {
         UserRequest data = new UserRequest();
-        try{
+        try {
             ClsmUserLogin userLogin = new RepomUserLogin(context).getUserLogin(context);
             data.setIntOrgID(userLogin.getOrgId());
             data.setIntRoleId(userLogin.getIntRoleID());
@@ -280,90 +311,94 @@ public class BLHelper {
             data.setTxtNameApp(ClsHardCode.nameApp);
             data.setUsername(userLogin.getTxtUserName());
             data.setTxtUserToken(userLogin.getToken());
-        }catch (Exception ex){
+            data.setIntUserId(userLogin.getIntUserID());
+        } catch (Exception ex) {
 
         }
         return data;
     }
-    public VMRequestDataSPM.UserRequestSPM getUserInfoSPM(Context context, String SPMNumber){
+
+    public VMRequestDataSPM.UserRequestSPM getUserInfoSPM(Context context, String SPMNumber) {
         VMRequestDataSPM.UserRequestSPM data = new VMRequestDataSPM().new UserRequestSPM();
-        try{
+        try {
             ClsmUserLogin userLogin = new RepomUserLogin(context).getUserLogin(context);
             data.setIntOrgID(userLogin.getOrgId());
             data.setIntRoleId(userLogin.getIntRoleID());
             data.setTxtNameApp(ClsHardCode.nameApp);
             data.setUsername(userLogin.getTxtUserName());
+            data.setIntUserId(userLogin.getIntUserID());
             data.setTxtNoSPM(SPMNumber);
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         return data;
     }
-    public String getNestedInfo(Context context, String txtCode){
+
+    public String getNestedInfo(Context context, String txtCode) {
         String noDoc = "";
 
         try {
-            if (txtCode.equals(ClsHardCode.TXT_DEFAULT)){
+            if (txtCode.equals(ClsHardCode.TXT_DEFAULT)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_DEFAULT);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
-            }else if (txtCode.equals(ClsHardCode.TXT_CREATION_DATE)){
+            } else if (txtCode.equals(ClsHardCode.TXT_CREATION_DATE)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_CREATION_DATE);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
-            }else if (txtCode.equals(ClsHardCode.TXT_VEHICLE_TYPE)){
+            } else if (txtCode.equals(ClsHardCode.TXT_VEHICLE_TYPE)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_VEHICLE_TYPE);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
-            }else if (txtCode.equals(ClsHardCode.TXT_SPM_NO)){
+            } else if (txtCode.equals(ClsHardCode.TXT_SPM_NO)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_SPM_NO);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
-            }else if (txtCode.equals(ClsHardCode.TXT_ITEM_TYPE)){
+            } else if (txtCode.equals(ClsHardCode.TXT_ITEM_TYPE)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_ITEM_TYPE);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
-            }else if (txtCode.equals(ClsHardCode.TXT_FIND_DETAIL_HCD)){
+            } else if (txtCode.equals(ClsHardCode.TXT_FIND_DETAIL_HCD)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_FIND_DETAIL_HCD);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
-            }else if (txtCode.equals(ClsHardCode.TXT_EXPEDITION_NAME)){
+            } else if (txtCode.equals(ClsHardCode.TXT_EXPEDITION_NAME)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_EXPEDITION_NAME);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
-            }else if (txtCode.equals(ClsHardCode.TXT_PLAN_DELIVERY_DATE)){
+            } else if (txtCode.equals(ClsHardCode.TXT_PLAN_DELIVERY_DATE)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_PLAN_DELIVERY_DATE);
-                if (pert.size()>0){
+                if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
-                    if (jawabans.size()>0){
+                    if (jawabans.size() > 0) {
                         noDoc = jawabans.get(0).getTxtJawaban();
                     }
                 }
@@ -375,14 +410,15 @@ public class BLHelper {
         }
         return noDoc;
     }
-    public String getNestedInfoDetail(Context context, String txtCode, String txtChildCode){
+
+    public String getNestedInfoDetail(Context context, String txtCode, String txtChildCode) {
         String noDoc = "";
         List<ClsmPertanyaan> pert = null;
         try {
             pert = new RepomPertanyaan(context).findQuestionGeneralInfo(txtCode);
-            if (pert.size()>0){
-                List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeadertoFindDetail(pert.get(0).getIntPertanyaanId(),txtChildCode);
-                if (jawabans.size()>0){
+            if (pert.size() > 0) {
+                List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeadertoFindDetail(pert.get(0).getIntPertanyaanId(), txtChildCode);
+                if (jawabans.size() > 0) {
                     noDoc = jawabans.get(0).getTxtJawaban();
                 }
             }
@@ -391,14 +427,15 @@ public class BLHelper {
         }
         return noDoc;
     }
-    public ClsPushData pushData(String versionName, Context context){
+
+    public ClsPushData pushData(String versionName, Context context) {
         ClsPushData dtclsPushData = new ClsPushData();
         ClsDataJson dtPush = new ClsDataJson();
         RepomUserLogin loginRepo = new RepomUserLogin(context);
         List<Boolean> isDataNull = new ArrayList<>();
         HashMap<String, byte[]> FileUpload = null;
         List<String> FileName = new ArrayList<>();
-        if (loginRepo.getContactCount(context)>0){
+        if (loginRepo.getContactCount(context) > 0) {
             ClsmUserLogin dataLogin = null;
             try {
                 dataLogin = new RepomUserLogin(context).getUserLogin(context);
@@ -423,14 +460,13 @@ public class BLHelper {
             }
 
 
-
 //            List<ClstLogError>
 
             FileUpload = new HashMap<>();
             dtPush.setFromUnplan(false);
 
 //            if ()
-        }else {
+        } else {
             dtPush = null;
         }
         dtclsPushData.setDataJson(dtPush);
@@ -439,7 +475,7 @@ public class BLHelper {
         return dtclsPushData;
     }
 
-    public boolean printPDF(Context context){
+    public boolean printPDF(Context context) {
         // open a new document
         Document document = new Document();
 
@@ -459,14 +495,15 @@ public class BLHelper {
             document.add(new Paragraph("A Hello World PDF document."));
 
             document.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
     }
-    public void createPDF(View view){
+
+    public void createPDF(View view) {
 //output file path
-        String outpath=Environment.getExternalStorageDirectory()+"/mypdf.pdf";
+        String outpath = Environment.getExternalStorageDirectory() + "/mypdf.pdf";
 //reference to EditText
 //create document object
         PdfDocument pdfDoc = new PdfDocument();
@@ -499,13 +536,13 @@ public class BLHelper {
         }
     }
 
-    public ClsPushData pushDataError(String versionName, Context context){
+    public ClsPushData pushDataError(String versionName, Context context) {
         ClsPushData dtclsPushData = new ClsPushData();
         ClsDataError dtPush = new ClsDataError();
         RepomUserLogin loginRepo = new RepomUserLogin(context);
         HashMap<String, byte[]> FileUpload = null;
         List<String> FileName = new ArrayList<>();
-        if (loginRepo.getContactCount(context)>0){
+        if (loginRepo.getContactCount(context) > 0) {
             ClsmUserLogin dataLogin = null;
             try {
                 dataLogin = new RepomUserLogin(context).getUserLogin(context);
@@ -542,7 +579,7 @@ public class BLHelper {
                 }
             }*/
 
-        }else {
+        } else {
             dtPush = null;
         }
         dtclsPushData.setDataError(dtPush);
@@ -550,9 +587,6 @@ public class BLHelper {
         dtclsPushData.setFileUpload(FileUpload);
         return dtclsPushData;
     }
-
-
-
 
 
 }

@@ -1,12 +1,21 @@
 package com.kalbenutritionals.simantra.ViewModel;
 
 public class UserRequest {
+    public int intUserId;
     public String username;
     public String password;
     public int intRoleId;
     public String txtNameApp;
     public String txtUserToken;
     public String intOrgID;
+
+    public int getIntUserId() {
+        return intUserId;
+    }
+
+    public void setIntUserId(int intUserId) {
+        this.intUserId = intUserId;
+    }
 
     public String getUsername() {
         return username;
