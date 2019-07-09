@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center_horizontal">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
         <Button
@@ -68,7 +68,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvStartTime"
-                android:text="00h:00m:00s"
+                android:text="-"
+                android:textColor="@color/back_splash" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Finish Time : "
+                android:textColor="@color/blue_800" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvFinishTime"
+                android:text="-"
                 android:textColor="@color/back_splash" />
         </LinearLayout>
 
@@ -77,9 +96,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_medium"
+            android:id="@+id/tv_label_result"
             android:gravity="center|center_vertical"
-            android:text="LOADING TIMER"
-            android:textColor="@color/blue_800" />
+            android:text="RESULT"
+            android:textColor="@color/blue_800"
+            android:visibility="visible"/>
 
         <TextView
             android:id="@+id/tvResultTime"
@@ -103,8 +124,24 @@
             android:textColorHint="@color/colorAccent"
             android:textColor="@color/white"
             android:backgroundTint="@color/colorAccent"/>
+
+
+
     </LinearLayout>
-
-
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:layout_gravity="bottom">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:id="@+id/btnSkip"
+            android:layout_gravity="center_horizontal"
+            android:text="Do Other\n Transaction"
+            android:textColorHint="@color/blue_800"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/blue_800"/>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

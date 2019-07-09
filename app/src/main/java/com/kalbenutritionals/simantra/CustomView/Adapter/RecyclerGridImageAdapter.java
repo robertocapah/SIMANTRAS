@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.VmListImageAdapter;
 
@@ -50,6 +51,9 @@ public class RecyclerGridImageAdapter extends RecyclerView.Adapter<RecyclerView.
         if (holder instanceof ViewHolder) {
             ViewHolder viewHolder = (ViewHolder) holder;
             final VmListImageAdapter item = mAppList.get(position);
+            if (item.getTxtLinkImage() != null){
+                BLHelper.displayImageOriginalUrlThumnail(mContext,viewHolder.imageView,item.getTxtLinkImage());
+            }
             if (item.getBmpImage() != null) {
                 Bitmap mybitmap = Bitmap.createScaledBitmap(item.getBmpImage(), 400, 500, true);
                 viewHolder.imageView.setImageBitmap(mybitmap);

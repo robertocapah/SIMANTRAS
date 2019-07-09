@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,6 @@ import com.androidnetworking.error.ANError;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
@@ -121,11 +121,17 @@ public class FragmentLoading extends Fragment {
         if (this.getArguments() != null) {
             myValue = this.getArguments().getString(ClsHardCode.txtMessage);
             String noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);
+            int intDesc = this.getArguments().getInt(ClsHardCode.intDesc, 99);
+            if (intDesc == 2){
+
+            }else if(intDesc ==3){
+                timeContinue();
+            }
             if (myValue != null && myValue.equals(ClsHardCode.txtBundleKeyBarcodeLoad)) {
                 String spmActive = BLHelper.getPreference(context, ClsHardCode.txtNoSPMActive);
                 if (spmActive.equals(noSPM)) {
                     int status = this.getArguments().getInt(ClsHardCode.txtStatusLoading);
-                    if (status == 0) {
+                    if (status == 0) {//status buat baca barcode untuk mengarahkan ke halaman load
                         startingTime();
                     } else if (status == 1) {
                         finishingTime();
@@ -142,20 +148,13 @@ public class FragmentLoading extends Fragment {
         public void run() {
 
             MillisecondTime = SystemClock.uptimeMillis() - StartTime;
-
             UpdateTime = TimeBuff + MillisecondTime;
-
             Seconds = (int) (UpdateTime / 1000);
-
             Minutes = Seconds / 60;
             MinutesTime = Seconds / 60;
-
             Minutes = Minutes % 60;
-
             Seconds = Seconds % 60;
-
             Hours = MinutesTime / 60;
-
             MilliSeconds = (int) (UpdateTime % 1000);
             if (tvResultTime != null) {
                 tvResultTime.setText(String.format("%d", Hours) + ":" + String.format("%d", Minutes) + ":"
@@ -175,18 +174,25 @@ public class FragmentLoading extends Fragment {
         String strLinkAPI = new ClsHardCode().linksetUnlockTransaksi;
         Date date = new Date(System.currentTimeMillis());
         final String time = format.format(date);
-        JSONObject resJson = getJsonParam(time);
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        int intHeaderId = Integer.parseInt(txtHeaderId);
+        int intStatus = EnumTime.FinishLoading.getIdStatus();
+        String txtStatus = EnumTime.FinishLoading.name();
+        JSONObject resJson = new BLHelper().getJsonParamSetTime(time, context, dataLogin.get(0).getIntUserID(), intHeaderId, intStatus, txtStatus,1,"");
         new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Switching Transaction, please wait", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
                 if (model.getResult() != null) {
-                    tvStartTime.setText(time);
-                    BLHelper.savePreference(context, ClsHardCode.StartTime, time);
-                    btnStart.setText("Processing ...");
-                    btnStart.setClickable(false);
-                    StartTime = SystemClock.uptimeMillis();
-                    btnFinish.setVisibility(View.VISIBLE);
+                    if (model.getResult().isStatus()) {
+                        Bundle arguments2 = new Bundle();
+                        arguments2.putInt(ClsHardCode.TXT_STATUS_MENU, ClsHardCode.INT_CHECKER);
+                        FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
+                        fragmentSPMSearch.setArguments(arguments2);
+                        FragmentTransaction fragmentTransactionSPMSearch = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
+                        fragmentTransactionSPMSearch.commit();
+                    }
                 }
             }
 
@@ -196,13 +202,7 @@ public class FragmentLoading extends Fragment {
             }
         });
 
-        Bundle arguments2 = new Bundle();
-        arguments2.putInt( ClsHardCode.TXT_STATUS_MENU , ClsHardCode.INT_VALIDATOR);
-        FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
-        fragmentSPMSearch.setArguments(arguments2);
-        FragmentTransaction fragmentTransactionSPMSearch = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
-        fragmentTransactionSPMSearch.commit();
+
     }
 
     @Override
@@ -262,28 +262,16 @@ public class FragmentLoading extends Fragment {
         alertD.show();
 
     }
-    public JSONObject getJsonParam(String time){
-        JSONObject jData = new JSONObject();
-        JSONObject resJson = new JSONObject();
-        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
-        int intHeaderId = Integer.parseInt(txtHeaderId);
-        int intStatus = EnumTime.StartLoading.getIdStatus();
-        String txtStatus = EnumTime.StartLoading.name();
-        try {
-            jData.put("intHeaderId", intHeaderId);
-            jData.put("txtTime", time);
-            jData.put("intStatus", intStatus);
-            jData.put("txtStatus", txtStatus);
-            jData.put("txtUserId", txtUser);
 
-            resJson.put("data", jData);
-            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return resJson;
+    public void timeContinue() {
+        String startT = BLHelper.getPreference(context, ClsHardCode.StartTime);
+        tvStartTime.setText(startT);
+        btnStart.setText("Processing ...");
+        spinKit.setVisibility(View.VISIBLE);
+        btnStart.setClickable(false);
+        StartTime = SystemClock.uptimeMillis();
+        btnFinish.setVisibility(View.VISIBLE);
     }
-
 
     public void startingTime() {
         final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
@@ -291,9 +279,13 @@ public class FragmentLoading extends Fragment {
 //        handler.postDelayed(runnable, 0);
         Date date = new Date(System.currentTimeMillis());
         final String time = format.format(date);
-
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        int intHeaderId = Integer.parseInt(txtHeaderId);
+        int intStatus = EnumTime.StartLoading.getIdStatus();
+        String txtStatus = EnumTime.StartLoading.name();
         String strLinkAPI = new ClsHardCode().linksetTimeStatusTransaksiMobile;
-        JSONObject resJson = getJsonParam(time);
+
+        JSONObject resJson = new BLHelper().getJsonParamSetTime(time, context, dataLogin.get(0).getIntUserID(), intHeaderId, intStatus, txtStatus,1,"");
 
         new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Changing status, please wait", new InterfaceFastNetworking() {
             @Override
@@ -325,23 +317,11 @@ public class FragmentLoading extends Fragment {
 
         String strLinkAPI = new ClsHardCode().linksetTimeStatusTransaksiMobile;
         JSONObject jData = new JSONObject();
-        JSONObject resJson = new JSONObject();
         String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
         int intHeaderId = Integer.parseInt(txtHeaderId);
         int intStatus = EnumTime.FinishLoading.getIdStatus();
         String txtStatus = EnumTime.FinishLoading.name();
-        try {
-            jData.put("intHeaderId", intHeaderId);
-            jData.put("txtTime", timeFinish);
-            jData.put("intStatus", intStatus);
-            jData.put("txtStatus", txtStatus);
-            jData.put("txtUserId", txtUser);
-
-            resJson.put("data", jData);
-            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JSONObject resJson = new BLHelper().getJsonParamSetTime(timeFinish, context, dataLogin.get(0).getIntUserID(), intHeaderId, intStatus, txtStatus,1,"");
 
         new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Changing status, please wait", new InterfaceFastNetworking() {
             @Override
@@ -351,23 +331,10 @@ public class FragmentLoading extends Fragment {
                     BLHelper.savePreference(context, ClsHardCode.EndTime, timeFinish);
 //        handler.removeCallbacks(runnable);
                     String startT = BLHelper.getPreference(context, ClsHardCode.StartTime);
+                    String selisih = new BLHelper().getDataDurationString(startT,timeFinish);
+                    tvResultTime.setText(selisih);
+                    tvResultTime.setVisibility(View.VISIBLE);
                     tvLabelResult.setVisibility(View.VISIBLE);
-                    try {
-                        Date dateStart = format.parse(startT);
-                        long mills = dateFinish.getTime() - dateStart.getTime();
-                        int days = (int) (mills / (1000 * 60 * 60 * 24));
-                        int hours = (int) ((mills - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
-                        int min = (int) (mills - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
-
-                        int hours2 = (int) mills / (1000 * 60 * 60);
-                        int mins = (int) (mills / (1000 * 60)) % 60;
-                        String selisih = hours + " hours : " + mins + " minutes";
-                        tvResultTime.setText(selisih);
-                        tvResultTime.setVisibility(View.VISIBLE);
-                        tvLabelResult.setVisibility(View.VISIBLE);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
                     tvStartTime.setText(startT);
                     tvFinishTime.setText(timeFinish);
                     btnFinish.setText("Finished");
@@ -376,6 +343,7 @@ public class FragmentLoading extends Fragment {
                     btnStart.setVisibility(View.GONE);
                     btnFinish.setClickable(false);
                     isFinished = true;
+                    btnSkip.setVisibility(View.GONE);
                 }
             }
 
@@ -413,7 +381,25 @@ public class FragmentLoading extends Fragment {
                 alertD.show();
                 break;
             case R.id.btnSkip:
-                TransactionClosed();
+                final AlertDialog.Builder alertDialogBuilderSkp = new AlertDialog.Builder(getActivity());
+                alertDialogBuilderSkp
+                        .setCancelable(false)
+                        .setMessage("Are you sure want to switch transaction ?")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                TransactionClosed();
+                            }
+                        })
+                        .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                final AlertDialog alertDSkp = alertDialogBuilderSkp.create();
+                alertDSkp.show();
+
                 break;
         }
     }

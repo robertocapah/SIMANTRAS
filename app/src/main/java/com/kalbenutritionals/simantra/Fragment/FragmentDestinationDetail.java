@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,25 +42,21 @@ public class FragmentDestinationDetail extends Fragment {
     TextView tvTransporterNam;
     @BindView(R.id.tv_no_pol)
     TextView tvNoPol;
-//    @BindView(R.id.tvDriverName)
-//    TextView tvDriverName;
-//    @BindView(R.id.tvKeraniName)
-//    TextView tvKeraniName;
     @BindView(R.id.tvTimeFrom)
 //    TextView tvTimeFrom;
 //    @BindView(R.id.tvDateFrom)
-    TextView tvDateFrom;
+            TextView tvDateFrom;
     @BindView(R.id.tvTimeTo)
 //    TextView tvTimeTo;
 //    @BindView(R.id.tvDateTo)
-    TextView tvDateTo;
+            TextView tvDateTo;
     @BindView(R.id.tvOutletFrom)
     TextView tvOutletFrom;
-//    @BindView(R.id.tvAddressFrom)
+    //    @BindView(R.id.tvAddressFrom)
 //    TextView tvAddressFrom;
     @BindView(R.id.tvOutletTo)
     TextView tvOutletTo;
-//    @BindView(R.id.tvAddressTo)
+    //    @BindView(R.id.tvAddressTo)
 //    TextView tvAddressTo;
     @BindView(R.id.rvGeneralInformation)
     RecyclerView rvGeneralInformation;
@@ -75,6 +70,10 @@ public class FragmentDestinationDetail extends Fragment {
     TextView tvTanggal;
     @BindView(R.id.tv_no_doc)
     TextView tvNoDoc;
+    @BindView(R.id.tvDriverName)
+    TextView tvDriverName;
+    @BindView(R.id.tvKeraniName)
+    TextView tvKeraniName;
 
     public FragmentDestinationDetail() {
 
@@ -101,18 +100,23 @@ public class FragmentDestinationDetail extends Fragment {
         rvGeneralInformation.setHasFixedSize(true);
         ltDataPertanyaan = getData();
         //set data and list adapter
-//        CustomAdapter mAdapterOptional = new CustomAdapter(getActivity(), mItems);
-        String noDoc = new BLHelper().getNestedInfo(context,ClsHardCode.TXT_SPM_NO);
+//        CustomAdapter mAdapterHeader = new CustomAdapter(getActivity(), mItems);
+        String noDoc = new BLHelper().getNestedInfo(context, ClsHardCode.TXT_SPM_NO);
         tvNoDoc.setText(noDoc);
-        String tanggal = new BLHelper().getNestedInfo(context,ClsHardCode.TXT_PLAN_DELIVERY_DATE);
+        String tanggal = new BLHelper().getNestedInfo(context, ClsHardCode.TXT_PLAN_DELIVERY_DATE);
         tvTanggal.setText(tanggal);
-        String transporter = new BLHelper().getNestedInfo(context,ClsHardCode.TXT_EXPEDITION_NAME);
+        String transporter = new BLHelper().getNestedInfo(context, ClsHardCode.TXT_EXPEDITION_NAME);
         tvTransporterNam.setText(transporter);
-        String OutletFrom = new BLHelper().getNestedInfoDetail(context,ClsHardCode.TXT_FIND_DETAIL_HCD,ClsHardCode.TXT_SHIP_FROM);
+        String OutletFrom = new BLHelper().getNestedInfoDetail(context, ClsHardCode.TXT_FIND_DETAIL_HCD, ClsHardCode.TXT_SHIP_FROM);
         tvOutletFrom.setText(OutletFrom);
-        String OutletTo = new BLHelper().getNestedInfoDetail(context,ClsHardCode.TXT_FIND_DETAIL_HCD,ClsHardCode.TXT_SHIP_TO);
+        String OutletTo = new BLHelper().getNestedInfoDetail(context, ClsHardCode.TXT_FIND_DETAIL_HCD, ClsHardCode.TXT_SHIP_TO);
         tvOutletTo.setText(OutletTo);
-
+        String noPol = new BLHelper().getNestedInfo(context, ClsHardCode.VEHICLE_NUMBER);
+        tvNoPol.setText(noPol);
+        String driverName = new BLHelper().getNestedInfo(context, ClsHardCode.DRIVER_NAME);
+        tvDriverName.setText(driverName);
+        String keraniName = new BLHelper().getNestedInfo(context, ClsHardCode.KERANI_NAME);
+        tvKeraniName.setText(keraniName);
         mAdapter = new AdapterExpandableListDestination(getActivity(), ltDataPertanyaan);
         rvGeneralInformation.setAdapter(mAdapter);
     }

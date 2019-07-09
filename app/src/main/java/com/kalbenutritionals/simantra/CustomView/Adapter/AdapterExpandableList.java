@@ -1,7 +1,9 @@
 package com.kalbenutritionals.simantra.CustomView.Adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -67,12 +69,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
     private final String TAG_UPLOAD_FOTO_PROFILE = "UPLOAD_FOTO";
     List<View> listAnswer = new ArrayList<View>();
     View v;
-    TextView textView;
-    CheckBox checkBox;
-    RadioButton radioButton;
     LinearLayout linearLayout;
-    RadioGroup radioGroup;
-    ImageView imageView;
     OnReceivedData receivedData;
 
     HashMap<Integer, View> HMPertanyaan1 = new HashMap<Integer, View>();
@@ -108,6 +105,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         public LinearLayout lyt_parent, ln_error_msg;
         private LinearLayout lyt_pertayaan, ll_jawaban1;
         public TextView tvErrorMesage;
+        public TextView tvBtnInformation;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -117,6 +115,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             lyt_expand = (View) v.findViewById(R.id.lyt_expand);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
             tvErrorMesage = (TextView) v.findViewById(R.id.warning_text);
+            tvBtnInformation = (TextView) v.findViewById(R.id.tvBtnInformation);
             ln_error_msg = (LinearLayout) v.findViewById(R.id.ln_error_msg);
             if(lyt_pertayaan== null)lyt_pertayaan = (LinearLayout) v.findViewById(R.id.ll_pertanyaan1);
 
@@ -200,6 +199,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             vmListAnswerView.setIntPertanyaanId(pa.id);
 //            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
+            vmListAnswerView.setType(pa.intValidateId);
             ListAnswerView.add(vmListAnswerView);
         }else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanRadioButton){
             int size = holder.ll_jawaban1.getChildCount();
@@ -215,6 +215,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             vmListAnswerView.setIntPertanyaanId(pa.id);
 //            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
+            vmListAnswerView.setType(pa.intValidateId);
             ListAnswerView.add(vmListAnswerView);
         }/*else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanTextBox){
             int size = holder.ll_jawaban1.getChildCount();
@@ -250,12 +251,33 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             vmListAnswerView.setIntPertanyaanId(pa.id);
 //            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
+            vmListAnswerView.setType(pa.intValidateId);
             ListAnswerView.add(vmListAnswerView);
 
         }
 //        listAnswer.add();
     }
-    private  void generateQ(VmListItemAdapterPertanyaan pa, OriginalViewHolder holder,final int position){
+    private  void generateQ(final VmListItemAdapterPertanyaan pa, OriginalViewHolder holder,final int position){
+        holder.tvBtnInformation.setVisibility(View.VISIBLE);
+        holder.tvBtnInformation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+
+                builder.setTitle("Metode Pemeriksaan");
+                builder.setMessage(pa.txtMetodePemeriksaan);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
         if (pa.bitValid){
             holder.ln_error_msg.setVisibility(View.GONE);
         }else{
@@ -329,6 +351,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     imageAdapter.setIntId((pa.id*15)+pa.listImage.get(i).getPosition());
                     imageAdapter.setBmpImage(pa.listImage.get(i).getBitmap());
                     imageAdapter.setIntPosition(pa.listImage.get(i).getPosition());
+                    imageAdapter.setTxtLinkImage(pa.listImage.get(i).getTxtLink());
                     listImage.add(imageAdapter);
                 }
 
@@ -361,7 +384,9 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 List<Jawaban> jawabans  = pa.jawabans;
 //                    List<ClsmJawaban> jawabans = new RepomJawaban(ctx).findByHeader(pa.id);
                 RadioGroup rg = new RadioGroup(ctx); //create the RadioGroup
-                rg.setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
+                rg.setOrientation(RadioGroup.HORIZONTAL);//or RadioGroup.VERTICAL
+                rg.setGravity(Gravity.CENTER);
+
                 rg.setId(pa.id*12);
                 rg.clearCheck();
 
@@ -371,11 +396,19 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     rb = new RadioButton(ctx);
                     rb.setText(j.jawaban);
                     rb.setId(j.idJawaban);
+
+                    RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(
+                            RadioGroup.LayoutParams.WRAP_CONTENT,
+                            RadioGroup.LayoutParams.WRAP_CONTENT
+                    );
+                    params.setMargins(10, 10, 100, 15);
+                    rb.setLayoutParams(params);
                     rb.setChecked(j.bitChoosen);
                     rg.addView(rb);
-                    ClsTools.setMargins(rg,5,10,5,10);
+                    ClsTools.setMargins(rg,5,20,5,20);
                 }
 
+                ClsTools.setMargins(linearLayout,5,20,5,20);
                 linearLayout.addView(rg);
             }
 
@@ -542,6 +575,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             TextView tvPertanyaan = new TextView(ctx);
             tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
+
 
             List<Jawaban> jawabans  = pa.jawabans;
             LinearLayout linearLayout = new LinearLayout(ctx);

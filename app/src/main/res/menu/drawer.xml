@@ -18,6 +18,7 @@
             android:checked="true"
             android:icon="@drawable/ic_info_black_24dp"
             android:orderInCategory="0"
+            android:visible="false"
             android:title="Approver"
             app:actionLayout="@layout/menu_counter"/>
         <item
@@ -79,21 +80,25 @@
             android:icon="@drawable/ic_person_pin_black_24dp"
             android:orderInCategory="0"
             android:title="Profile"
+            android:visible="false"
             app:actionLayout="@layout/badge_navigation_plain"/>
         <item
             android:id="@+id/mnNotification"
             android:icon="@mipmap/ic_notification"
             android:orderInCategory="0"
             android:title="Notification"
+            android:visible="false"
             app:actionLayout="@layout/badge_navigation_plain"/>
         <item
             android:id="@+id/mnSetting"
             android:icon="@mipmap/ic_setting"
             android:orderInCategory="0"
+            android:visible="false"
             android:title="Setting" />
         <item
             android:id="@+id/mntestMenu"
             android:icon="@mipmap/ic_setting"
+            android:visible="false"
             android:orderInCategory="0"
             android:title="Test Menu" />
         <item

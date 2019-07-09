@@ -1,9 +1,8 @@
 package com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion;
 
+import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 @Generated("com.robohorse.robopojogenerator")
 public class DataItem{
@@ -29,6 +28,9 @@ public class DataItem{
 	@SerializedName("BIT_IMG")
 	private String bITIMG;
 
+	@SerializedName("BIT_RESULT")
+	private int bITRESULT;
+
 	@SerializedName("TXT_POSITION_NAME")
 	private String tXTPOSITIONNAME;
 
@@ -47,6 +49,9 @@ public class DataItem{
 	@SerializedName("INT_IMG_NEED")
 	private String iNTIMGNEED;
 
+	@SerializedName("INT_VALUE_ID")
+	private int iNTVALUEID;
+
 	@SerializedName("INT_FORM_VERS_ID")
 	private int iNTFORMVERSID;
 
@@ -56,8 +61,17 @@ public class DataItem{
 	@SerializedName("INT_VALIDATE_ID")
 	private int iNTVALIDATEID;
 
+	@SerializedName("listDatImage")
+	private List<ListDatImageItem> listDatImage;
+
 	@SerializedName("BIT_DATA")
 	private String bITDATA;
+
+	@SerializedName("INT_FILL_DTL_ID")
+	private int iNTFILLDTLID;
+
+	@SerializedName("TXT_VALUE")
+	private String tXTVALUE;
 
 	@SerializedName("INT_TYPE_ID")
 	private int iNTTYPEID;
@@ -118,6 +132,14 @@ public class DataItem{
 		return bITIMG;
 	}
 
+	public void setBITRESULT(int bITRESULT){
+		this.bITRESULT = bITRESULT;
+	}
+
+	public int getBITRESULT(){
+		return bITRESULT;
+	}
+
 	public void setTXTPOSITIONNAME(String tXTPOSITIONNAME){
 		this.tXTPOSITIONNAME = tXTPOSITIONNAME;
 	}
@@ -166,6 +188,14 @@ public class DataItem{
 		return iNTIMGNEED;
 	}
 
+	public void setINTVALUEID(int iNTVALUEID){
+		this.iNTVALUEID = iNTVALUEID;
+	}
+
+	public int getINTVALUEID(){
+		return iNTVALUEID;
+	}
+
 	public void setINTFORMVERSID(int iNTFORMVERSID){
 		this.iNTFORMVERSID = iNTFORMVERSID;
 	}
@@ -190,12 +220,36 @@ public class DataItem{
 		return iNTVALIDATEID;
 	}
 
+	public void setListDatImage(List<ListDatImageItem> listDatImage){
+		this.listDatImage = listDatImage;
+	}
+
+	public List<ListDatImageItem> getListDatImage(){
+		return listDatImage;
+	}
+
 	public void setBITDATA(String bITDATA){
 		this.bITDATA = bITDATA;
 	}
 
 	public String getBITDATA(){
 		return bITDATA;
+	}
+
+	public void setINTFILLDTLID(int iNTFILLDTLID){
+		this.iNTFILLDTLID = iNTFILLDTLID;
+	}
+
+	public int getINTFILLDTLID(){
+		return iNTFILLDTLID;
+	}
+
+	public void setTXTVALUE(String tXTVALUE){
+		this.tXTVALUE = tXTVALUE;
+	}
+
+	public Object getTXTVALUE(){
+		return tXTVALUE;
 	}
 
 	public void setINTTYPEID(int iNTTYPEID){
@@ -217,16 +271,21 @@ public class DataItem{
 			",tXT_FORM_NAME = '" + tXTFORMNAME + '\'' + 
 			",iNT_DATA_VERS_ID = '" + iNTDATAVERSID + '\'' + 
 			",bIT_IMG = '" + bITIMG + '\'' + 
+			",bIT_RESULT = '" + bITRESULT + '\'' + 
 			",tXT_POSITION_NAME = '" + tXTPOSITIONNAME + '\'' + 
 			",listDatIsian = '" + listDatIsian + '\'' + 
 			",iNT_FORM_DTL_ID = '" + iNTFORMDTLID + '\'' + 
 			",tXT_FORM_DESC = '" + tXTFORMDESC + '\'' + 
 			",iNT_POSITION_ID = '" + iNTPOSITIONID + '\'' + 
 			",iNT_IMG_NEED = '" + iNTIMGNEED + '\'' + 
+			",iNT_VALUE_ID = '" + iNTVALUEID + '\'' + 
 			",iNT_FORM_VERS_ID = '" + iNTFORMVERSID + '\'' + 
 			",iNT_SEQ_POSITION = '" + iNTSEQPOSITION + '\'' + 
 			",iNT_VALIDATE_ID = '" + iNTVALIDATEID + '\'' + 
+			",listDatImage = '" + listDatImage + '\'' + 
 			",bIT_DATA = '" + bITDATA + '\'' + 
+			",iNT_FILL_DTL_ID = '" + iNTFILLDTLID + '\'' + 
+			",tXT_VALUE = '" + tXTVALUE + '\'' + 
 			",iNT_TYPE_ID = '" + iNTTYPEID + '\'' + 
 			"}";
 		}

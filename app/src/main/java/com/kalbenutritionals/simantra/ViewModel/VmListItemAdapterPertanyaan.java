@@ -24,13 +24,15 @@ public class VmListItemAdapterPertanyaan {
     public List<Jawaban> jawabans;
     public int intValidateId;
     public int intPositionId;
+    public int intFillDtlId;
+    public String txtMetodePemeriksaan;
     // flag when item swiped
     public boolean swiped = false;
 
     public VmListItemAdapterPertanyaan() {
     }
 
-    public VmListItemAdapterPertanyaan(int image, String txtPertanyaan, int id, int jenisPertanyaan, boolean bitImage, List<Jawaban> jawabans, boolean bitValid, String msg, Bitmap bitmap, Uri uri, boolean bolHaveAnswer, int intValidateId, int intPositionId) {
+    public VmListItemAdapterPertanyaan(int image, String txtPertanyaan, int id, int jenisPertanyaan, boolean bitImage, List<Jawaban> jawabans, boolean bitValid, String msg, Bitmap bitmap, Uri uri, boolean bolHaveAnswer, int intValidateId, int intPositionId, String txtMetodePemeriksaan, int intFillDtlId) {
         this.id = id;
         this.image = image;
         this.txtPertanyaan = txtPertanyaan;
@@ -44,5 +46,7 @@ public class VmListItemAdapterPertanyaan {
         this.bolHaveAnswer = bolHaveAnswer;
         this.intValidateId = intValidateId;
         this.intPositionId = intPositionId;
+        this.txtMetodePemeriksaan = txtMetodePemeriksaan;
+        this.intFillDtlId = intFillDtlId;
     }
 }

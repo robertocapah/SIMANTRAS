@@ -28,6 +28,19 @@ public class FragmentLoadingFinish extends Fragment {
     TextView tvLoadingStart;
     @BindView(R.id.tvLoadingEnd)
     TextView tvLoadingEnd;
+    @BindView(R.id.tvDurationStart)
+    TextView tvDurationStart;
+    @BindView(R.id.tvDurationFinish)
+    TextView tvDurationFinish;
+    int intIsValidator;
+    @BindView(R.id.tvLabelLoadStart2)
+    TextView tvLabelLoadStart2;
+    @BindView(R.id.tvLabelLoadFinish2)
+    TextView tvLabelLoadFinish2;
+    @BindView(R.id.tvLabelloadStart)
+    TextView tvLabelloadStart;
+    @BindView(R.id.tvLabelloadFinish)
+    TextView tvLabelloadFinish;
 
     @Nullable
     @Override
@@ -37,11 +50,39 @@ public class FragmentLoadingFinish extends Fragment {
         context = getActivity().getApplicationContext();
         String scanTime = BLHelper.getPreference(context, ClsHardCode.ScanTime);
         String loadTimeStart = BLHelper.getPreference(context, ClsHardCode.StartTime);
-        String LoadTimeFinish = BLHelper.getPreference(context, ClsHardCode.EndTime);
+        String loadTimeFinish = BLHelper.getPreference(context, ClsHardCode.EndTime);
+        String txtDurationStart = new BLHelper().getDataDurationString(scanTime, loadTimeStart);
+        String txtDurationFinish = new BLHelper().getDataDurationString(loadTimeStart, loadTimeFinish);
 
-        tvScanTime.setText(scanTime);
-        tvLoadingStart.setText(loadTimeStart);
-        tvLoadingEnd.setText(LoadTimeFinish);
+        String scanTimeUnloading = BLHelper.getPreference(context, ClsHardCode.ScanTimeUnloading);
+        String loadTimeStartUnloading = BLHelper.getPreference(context, ClsHardCode.StartTimeUnloading);
+        String loadTimeFinishUnloading = BLHelper.getPreference(context, ClsHardCode.EndTimeUnloading);
+        String txtDurationStartUnloading = new BLHelper().getDataDurationString(scanTimeUnloading, loadTimeStartUnloading);
+        String txtDurationFinishUnloading = new BLHelper().getDataDurationString(loadTimeStartUnloading, loadTimeFinishUnloading);
+
+
+        if (this.getArguments() != null) {
+            intIsValidator = this.getArguments().getInt(ClsHardCode.intIsValidator, 88);
+        }
+        if (intIsValidator == ClsHardCode.INT_VALIDATOR) {
+            tvScanTime.setText(scanTimeUnloading);
+            tvLoadingStart.setText(loadTimeStartUnloading);
+            tvLoadingEnd.setText(loadTimeFinishUnloading);
+            tvDurationStart.setText(txtDurationStartUnloading);
+            tvDurationFinish.setText(txtDurationFinishUnloading);
+
+            tvLabelLoadFinish2.setText("Unloading Finish");
+            tvLabelloadFinish.setText("Unloading Finish");
+            tvLabelloadStart.setText("Unload Start");
+            tvLabelLoadStart2.setText("Unload Start");
+        } else {
+            tvScanTime.setText(scanTime);
+            tvLoadingStart.setText(loadTimeStart);
+            tvLoadingEnd.setText(loadTimeFinish);
+            tvDurationStart.setText(txtDurationStart);
+            tvDurationFinish.setText(txtDurationFinish);
+        }
+
 
         return v;
     }

@@ -12,6 +12,15 @@ public class VmImageContainer {
     private Uri path;
     private String imgName;
     private int position;
+    private String txtLink;
+
+    public String getTxtLink() {
+        return txtLink;
+    }
+
+    public void setTxtLink(String txtLink) {
+        this.txtLink = txtLink;
+    }
 
     public String getImgName() {
         return imgName;

@@ -7,13 +7,17 @@ import android.graphics.Point;
 import android.graphics.pdf.PdfDocument;
 import android.os.Environment;
 import android.support.v4.widget.NestedScrollView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.androidnetworking.error.ANError;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
@@ -28,15 +32,25 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.kalbe.mobiledevknlibs.DeviceInformation.DeviceInformation;
 import com.kalbe.mobiledevknlibs.DeviceInformation.ModelDevice;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.DataItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ListDatImageItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ListDatIsianItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.TimeDataItem;
 import com.kalbenutritionals.simantra.Database.Common.ClsDataError;
 import com.kalbenutritionals.simantra.Database.Common.ClsDataJson;
+import com.kalbenutritionals.simantra.Database.Common.ClsImages;
 import com.kalbenutritionals.simantra.Database.Common.ClsPushData;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
 import com.kalbenutritionals.simantra.Database.Common.ClsmCounterData;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
+import com.kalbenutritionals.simantra.Database.DatabaseHelper;
+import com.kalbenutritionals.simantra.Database.DatabaseManager;
 import com.kalbenutritionals.simantra.Database.EnumCounterData;
+import com.kalbenutritionals.simantra.Database.Repo.EnumTime;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsImages;
 import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
@@ -49,9 +63,11 @@ import java.net.URL;
 import java.sql.SQLException;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,6 +76,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
+import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
 import com.kalbenutritionals.simantra.ViewModel.UserRequest;
 import com.kalbenutritionals.simantra.ViewModel.VMRequestData;
@@ -225,10 +242,10 @@ public class BLHelper {
         return obj;
     }
 
-    public JSONObject getDataRequestDataSPM(Context context, String SPMNumber) {
+    public JSONObject getDataRequestDataSPM(Context context,int type, String SPMNumber, int intIsValidator, int intFillHdrId) {
         VMRequestDataSPM data = new VMRequestDataSPM();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
-        VMRequestDataSPM.UserRequestSPM userData = new BLHelper().getUserInfoSPM(context, SPMNumber);
+        VMRequestDataSPM.UserRequestSPM userData = new BLHelper().getUserInfoSPM(context,type, SPMNumber, intIsValidator, intFillHdrId);
         data.setData(userData);
         data.setDevice_info(dataDevice);
         Gson gson = new Gson();
@@ -317,8 +334,197 @@ public class BLHelper {
         }
         return data;
     }
+    public String getDataDurationString(String startTime, String finishTime){
+        final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
+        String selisih = "";
+        try {
+            Date dateStart = format.parse(startTime);
+            Date dateFinish = format.parse(finishTime);
+            long mills = dateFinish.getTime() - dateStart.getTime();
+            int days = (int) (mills / (1000 * 60 * 60 * 24));
+            int hours = (int) ((mills - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+            int min = (int) (mills - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
 
-    public VMRequestDataSPM.UserRequestSPM getUserInfoSPM(Context context, String SPMNumber) {
+            int hours2 = (int) mills / (1000 * 60 * 60);
+            int mins = (int) (mills / (1000 * 60)) % 60;
+            selisih = hours + " hours : " + mins + " minutes";
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return selisih;
+    }
+    public void GenerateData(Context context, ResponseGetQuestion model){
+        BLHelper.savePreference(context,ClsHardCode.INT_HEADER_ID,String.valueOf(model.getINTFILLHDRID()));
+        DatabaseHelper helper = DatabaseManager.getInstance().getHelper();
+        helper.clearDataPertanyaanJawaban();
+        List<DataItem> datas =  model.getData();
+        for (DataItem data :
+                datas) {
+            ClsmPertanyaan pertanyaan = new ClsmPertanyaan();
+            pertanyaan.setIntPertanyaanId(data.getINTFORMDTLID());
+            pertanyaan.setIntFillHeaderId(model.getINTFILLHDRID());
+            pertanyaan.setIntJenisPertanyaanId(data.getINTTYPEID());
+            pertanyaan.setTxtPertanyaan(data.getTXTFORMNAME());
+            pertanyaan.setIntLocationDocsId(data.getINTPOSITIONID());
+            pertanyaan.setIntSeq(Integer.parseInt(data.getINTSEQ()));
+            pertanyaan.setIntValidateID(data.getINTVALIDATEID());
+            pertanyaan.setIntFillDetailId(data.getINTFILLDTLID());
+            pertanyaan.setTxtMapCol(data.getTXTMAPCOL());
+            if (data.getBITIMG().equals("1")){
+                pertanyaan.setBolHavePhoto(true);
+                pertanyaan.setIntPhotoNeeded(Integer.parseInt(data.getINTIMGNEED()));
+            }else{
+                pertanyaan.setBolHavePhoto(false);
+            }
+            if(data.getBITDATA().equals("1")){
+                pertanyaan.setBolHaveAnswer(true);
+            }
+            if (data.getListDatIsian()!= null){
+                List<ListDatIsianItem> lisDataIsian = data.getListDatIsian();
+                for (ListDatIsianItem jwb :
+                        lisDataIsian) {
+                    ClsmJawaban clsmJawaban = new ClsmJawaban();
+                    clsmJawaban.setBitActive(true);
+                    clsmJawaban.setTxtIdJawaban(jwb.getTXTDATADTLID());
+                    clsmJawaban.setIdJawaban(jwb.getINTDATADTLID());
+                    clsmJawaban.setIdPertanyaan(data.getINTFORMDTLID());
+                    if(jwb.getTXTDATADTLID().equals(String.valueOf(data.getINTVALUEID()))){
+                        clsmJawaban.setBitChoosen(true);
+                    }else{
+                        clsmJawaban.setBitChoosen(false);
+                    }
+                    clsmJawaban.setTxtMapCol(jwb.getTXTMAPCOL());
+                    if(jwb.getTXTVALUE().equals("null")){
+                        clsmJawaban.setTxtJawaban("");
+                    }else{
+                        clsmJawaban.setTxtJawaban(jwb.getTXTVALUE());
+                    }
+
+                    try{
+                        new RepomJawaban(context).createOrUpdate(clsmJawaban);
+                    }catch (Exception ex){
+                        ex.getMessage();
+                    }
+                }
+
+            }else{
+                pertanyaan.setBolHaveAnswer(false);
+            }
+            if (data.getListDatImage()!=null){
+                List<ListDatImageItem> lisDataImage = data.getListDatImage();
+                for (ListDatImageItem imageItem :
+                        lisDataImage) {
+                    ClsImages images = new ClsImages();
+                    images.setIdPertanyaan(pertanyaan.getIntPertanyaanId());
+                    images.setIntFillDetailId(pertanyaan.getIntFillDetailId());
+                    images.setTxtLinkImages(imageItem.getTXTLINK());
+                    try {
+                        new RepoClsImages(context).createOrUpdate(images);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            try{
+                new RepomPertanyaan(context).createOrUpdate(pertanyaan);
+            }catch (Exception e){
+
+            }
+        }
+
+    }
+    public static void displayImageOriginalUrlThumnail(Context ctx, ImageView img, String url) {
+        try {
+            Glide.with(ctx).load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE).centerCrop()
+                    .placeholder(R.drawable.ic_file_upload_black_24dp)
+                    .into(img);
+        } catch (Exception e) {
+        }
+    }
+    public void saveDataTimeFromApi(ResponseGetQuestion model, Context context){
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        final SimpleDateFormat formatNew = new SimpleDateFormat(ClsHardCode.FormatTime);
+        for (TimeDataItem data :
+                model.getTimeData() ) {
+            if (data.getINTDESC() == 1){
+                String time = data.getDTTIME();
+                try {
+                    Date d = format.parse(time);
+                    time = formatNew.format(d);
+                } catch (ParseException ex) {
+                    Log.v("Exception", ex.getLocalizedMessage());
+                }
+                BLHelper.savePreference(context, ClsHardCode.ScanTime, time);
+            }else if (data.getINTDESC() == 2){
+                String time = data.getDTTIME();
+                try {
+                    Date d = format.parse(time);
+                    time = formatNew.format(d);
+                } catch (ParseException ex) {
+                    Log.v("Exception", ex.getLocalizedMessage());
+                }
+                BLHelper.savePreference(context, ClsHardCode.IdleTime, time);
+            }else if(data.getINTDESC() == 3){
+                String time = data.getDTTIME();
+                try {
+                    Date d = format.parse(time);
+                    time = formatNew.format(d);
+                } catch (ParseException ex) {
+                    Log.v("Exception", ex.getLocalizedMessage());
+                }
+                BLHelper.savePreference(context, ClsHardCode.StartTime, time);
+            }else if(data.getINTDESC() == 4){
+                String time = data.getDTTIME();
+                try {
+                    Date d = format.parse(time);
+                    time = formatNew.format(d);
+                } catch (ParseException ex) {
+                    Log.v("Exception", ex.getLocalizedMessage());
+                }
+                BLHelper.savePreference(context, ClsHardCode.ScanTimeUnloading, time);
+            }else if(data.getINTDESC() == 5){
+                String time = data.getDTTIME();
+                try {
+                    Date d = format.parse(time);
+                    time = formatNew.format(d);
+                } catch (ParseException ex) {
+                    Log.v("Exception", ex.getLocalizedMessage());
+                }
+                BLHelper.savePreference(context, ClsHardCode.StartTimeUnloading, time);
+            }else if(data.getINTDESC() == 6){
+                String time = data.getDTTIME();
+                try {
+                    Date d = format.parse(time);
+                    time = formatNew.format(d);
+                } catch (ParseException ex) {
+                    Log.v("Exception", ex.getLocalizedMessage());
+                }
+                BLHelper.savePreference(context, ClsHardCode.EndTimeUnloading, time);
+            }
+        }
+    }
+    public JSONObject getJsonParamSetTime(String time, Context context, int intUserId, int intHeaderId, int intStatus,String txtStatus, int intStatusProgress, String txtMessage){
+        JSONObject jData = new JSONObject();
+        JSONObject resJson = new JSONObject();
+
+        try {
+            jData.put("intHeaderId", intHeaderId);
+            jData.put("txtTime", time);
+            jData.put("intStatus", intStatus);
+            jData.put("txtStatus", txtStatus);
+            jData.put("intStatusProgress", intStatusProgress);
+            jData.put("txtUserId", intUserId);
+            jData.put("txtMessage", txtMessage);
+            resJson.put("data", jData);
+            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return resJson;
+    }
+    public VMRequestDataSPM.UserRequestSPM getUserInfoSPM(Context context,int type, String SPMNumber, int intIsValidator, int intFillHdrId) {
         VMRequestDataSPM.UserRequestSPM data = new VMRequestDataSPM().new UserRequestSPM();
         try {
             ClsmUserLogin userLogin = new RepomUserLogin(context).getUserLogin(context);
@@ -328,6 +534,9 @@ public class BLHelper {
             data.setUsername(userLogin.getTxtUserName());
             data.setIntUserId(userLogin.getIntUserID());
             data.setTxtNoSPM(SPMNumber);
+            data.setIntFillHdrID(intFillHdrId);
+            data.setIntIsValidator(intIsValidator);
+            data.setType(type);
         } catch (Exception ex) {
 
         }
@@ -396,6 +605,30 @@ public class BLHelper {
                 }
             } else if (txtCode.equals(ClsHardCode.TXT_PLAN_DELIVERY_DATE)) {
                 List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.TXT_PLAN_DELIVERY_DATE);
+                if (pert.size() > 0) {
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size() > 0) {
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.DRIVER_NAME)) {
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.DRIVER_NAME);
+                if (pert.size() > 0) {
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size() > 0) {
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.KERANI_NAME)) {
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.KERANI_NAME);
+                if (pert.size() > 0) {
+                    List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
+                    if (jawabans.size() > 0) {
+                        noDoc = jawabans.get(0).getTxtJawaban();
+                    }
+                }
+            }else if (txtCode.equals(ClsHardCode.VEHICLE_NUMBER)) {
+                List<ClsmPertanyaan> pert = new RepomPertanyaan(context).findQuestionGeneralInfo(ClsHardCode.VEHICLE_NUMBER);
                 if (pert.size() > 0) {
                     List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(pert.get(0).getIntPertanyaanId());
                     if (jawabans.size() > 0) {

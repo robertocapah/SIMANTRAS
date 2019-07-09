@@ -123,28 +123,67 @@ public class RepomPertanyaan implements CRUD {
 
         return items;
     }
+    public List<ClsmPertanyaan> findQuestionGeneralInfoAll() throws SQLException {
+        List<ClsmPertanyaan> items = null;
+        try {
+            QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
+            items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).query();
+        } catch (Exception ex) {
+
+        }
+        return items;
+    }
     public List<ClsmPertanyaan> findQuestionGeneralInfo(String txtInfoCode) throws SQLException {
         List<ClsmPertanyaan> items = null;
         try {
             QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
             if (txtInfoCode.equals(ClsHardCode.TXT_DEFAULT)){
-                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_PLAN_DELIVERY_DATE).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_EXPEDITION_NAME).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_FIND_DETAIL_HCD).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_ITEM_TYPE).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_SPM_NO).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_VEHICLE_TYPE).query();
+
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_PLAN_DELIVERY_DATE).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_EXPEDITION_NAME).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_FIND_DETAIL_HCD).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_ITEM_TYPE).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_SPM_NO).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_VEHICLE_TYPE).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.DRIVER_NAME).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.KERANI_NAME).and().ne(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.VEHICLE_NUMBER).query();
+
             }else if(txtInfoCode.equals(ClsHardCode.TXT_CREATION_DATE)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_CREATION_DATE).query();
+
             }else if(txtInfoCode.equals(ClsHardCode.TXT_EXPEDITION_NAME)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_EXPEDITION_NAME).query();
             }else if(txtInfoCode.equals(ClsHardCode.TXT_FIND_DETAIL)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_FIND_DETAIL).query();
+
             }else if(txtInfoCode.equals(ClsHardCode.TXT_FIND_DETAIL_HCD)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_FIND_DETAIL_HCD).query();
+
             }else if(txtInfoCode.equals(ClsHardCode.TXT_ITEM_TYPE)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_ITEM_TYPE).query();
+
             }else if(txtInfoCode.equals(ClsHardCode.TXT_SPM_NO)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_SPM_NO).query();
+
             }else if(txtInfoCode.equals(ClsHardCode.TXT_VEHICLE_TYPE)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_VEHICLE_TYPE).query();
+
             }else if(txtInfoCode.equals(ClsHardCode.TXT_PLAN_DELIVERY_DATE)){
+
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.TXT_PLAN_DELIVERY_DATE).query();
+
+            }else if(txtInfoCode.equals(ClsHardCode.DRIVER_NAME)){
+
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.DRIVER_NAME).query();
+
+            }else if(txtInfoCode.equals(ClsHardCode.KERANI_NAME)){
+
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.KERANI_NAME).query();
+
+            }else if(txtInfoCode.equals(ClsHardCode.VEHICLE_NUMBER)){
+
+                items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.BASIC).and().eq(ClsmPertanyaan.TXTMAPCOL,ClsHardCode.VEHICLE_NUMBER).query();
+
             }
 
         } catch (SQLException e) {

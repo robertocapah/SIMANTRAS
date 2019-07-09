@@ -10,6 +10,8 @@ public class ClsmPertanyaan {
     @DatabaseField
     private int intFillHeaderId;
     @DatabaseField
+    private int intFillDetailId;
+    @DatabaseField
     private String txtPertanyaan;
     @DatabaseField
     private String txtMapCol;
@@ -31,7 +33,16 @@ public class ClsmPertanyaan {
     public static String TXTINTLOCATIONID = "intLocationDocsId";
     public static String TXTJENISPERTANYAAN = "intJenisPertanyaanId";
     public static String INTVALIDATEID = "intValidateID";
+    public static String TXTFILLDTLID = "intFillDetailId";
     public static String TXTMAPCOL = "txtMapCol";
+
+    public int getIntFillDetailId() {
+        return intFillDetailId;
+    }
+
+    public void setIntFillDetailId(int intFillDetailId) {
+        this.intFillDetailId = intFillDetailId;
+    }
 
     public int getIntFillHeaderId() {
         return intFillHeaderId;

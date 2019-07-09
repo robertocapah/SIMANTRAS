@@ -12,6 +12,15 @@ public class VmListImageAdapter implements Serializable{
     private int intId;
     private int intPosition;
     private Bitmap bmpImage;
+    private String txtLinkImage;
+
+    public String getTxtLinkImage() {
+        return txtLinkImage;
+    }
+
+    public void setTxtLinkImage(String txtLinkImage) {
+        this.txtLinkImage = txtLinkImage;
+    }
 
     public int getIntId() {
         return intId;

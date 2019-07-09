@@ -49,13 +49,13 @@ public class FragmentTestUIS extends Fragment {
         v = inflater.inflate(R.layout.checker_step, container, false);
         line_first = (View) v.findViewById(R.id.line_first);
         line_second = (View) v.findViewById(R.id.line_second);
-        image_shipping = (ImageView) v.findViewById(R.id.image_shipping);
-        image_payment = (ImageView) v.findViewById(R.id.image_payment);
-        image_confirm = (ImageView) v.findViewById(R.id.image_confirm);
+        image_shipping = (ImageView) v.findViewById(R.id.image_left);
+        image_payment = (ImageView) v.findViewById(R.id.image_midle);
+        image_confirm = (ImageView) v.findViewById(R.id.image_right);
         tv_next = (TextView) v.findViewById(R.id.tvNext);
-        tv_shipping = (TextView) v.findViewById(R.id.tv_shipping);
-        tv_payment = (TextView) v.findViewById(R.id.tv_payment);
-        tv_confirm = (TextView) v.findViewById(R.id.tv_confirm);
+        tv_shipping = (TextView) v.findViewById(R.id.tvlineone);
+        tv_payment = (TextView) v.findViewById(R.id.tvlinetwo);
+        tv_confirm = (TextView) v.findViewById(R.id.tvlinethree);
 
         image_payment.setColorFilter(getResources().getColor(R.color.grey_10), PorterDuff.Mode.SRC_ATOP);
         image_confirm.setColorFilter(getResources().getColor(R.color.grey_10), PorterDuff.Mode.SRC_ATOP);
@@ -77,14 +77,14 @@ public class FragmentTestUIS extends Fragment {
                                 final Dialog dialog = new Dialog(getActivity());
                                 dialog.setContentView(R.layout.alert_validation);
                                 dialog.setTitle("Warning");
-                                Button btnSave = (Button) dialog.findViewById(R.id.btnSaveToDraft);
+                                /*Button btnSave = (Button) dialog.findViewById(R.id.btnSaveToDraft);
                                 // if button is clicked, close the custom dialog
                                 btnSave.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         dialog.dismiss();
                                     }
-                                });
+                                });*/
 
                                 dialog.show();
                             }else{
@@ -102,7 +102,7 @@ public class FragmentTestUIS extends Fragment {
             }
         });
 
-        (v.findViewById(R.id.lyt_previous)).setOnClickListener(new View.OnClickListener() {
+        (v.findViewById(R.id.lyt_save)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (idx_state < 1) return;

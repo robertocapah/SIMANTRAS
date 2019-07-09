@@ -63,15 +63,26 @@ public class ClsHardCode {
     public String linksetUnlockTransaksi = new RepomConfig(context).API +"setUnlockTransaksi";
 
     public static String txtMessage = "message";
+    public static String txtMessageUnload = "message";
     public static String txtBundleKeyBarcode = "BarcodeScanner";
-    public static String txtBundleKeyBarcodeLoad = "BarcodeScannerLoad";
+    public static String txtBundleKeyBarcodeLoad = "BarcodeScannerLoad";// yang ini untuk yang sudah check slsai
+    public static String txtBundleKeyBarcodeCancel = "BarcodeScannerCancel";// cancel
     public static String txtNoSPM = "NoSPM";
     public static String txtNoSPMActive = "NoSPMActive";
     public static String txtStatusLoading = "statusLoading";
-    public static String StartTime = "StartTime";
-    public static String EndTime = "EndTime";
-    public static String ScanTime = "ScanTime";
+    public static String txtStatusUnloading = "statusLoading";
+    public static String ScanTime = "ScanTime";//awal scan
+    public static String IdleTime = "IdleTime";//setelah selesai isi form
+    public static String StartTime = "StartTime";//mulai timer
+    public static String EndTime = "EndTime";//selesai timer
+    public static String ScanTimeUnloading = "ScanTimeUnloading";//scan unloading
+    public static String StartTimeUnloading = "IdleTimeUnloading";//scan unloading
+    public static String EndTimeUnloading = "IdleTimeUnloading";//scan unloading
+
+
     public static String FormatTime = "MMM dd,yyyy hh:mm a";
+    public static String intDesc = "intDesc";
+    public static String intIsValidator = "IsValidator";
 
     public static int JenisPertanyaanTextView = 7;
     public static int JenisPertanyaanTextBox = 1;
@@ -84,11 +95,17 @@ public class ClsHardCode {
     public static int OPTIONAL = 2;
     public static int MANDATORY = 3;
 
+    public static int SAVE = 0;
+    public static int PUSHDATA = 1;
+
     public static int BASIC = 1;
     public static int HEADER = 2;
     public static int BODY = 3;
     public static int FOOTER = 4;
     public static String nameApp = "SIMANTRAMOBILE";
+
+    public static int INT_QRCODE = 0;
+    public static int INT_DOCNUMB= 1;
 
     public static int INT_CHECKER = 1;
     public static int INT_VALIDATOR = 2;
@@ -103,6 +120,9 @@ public class ClsHardCode {
     public static String TXT_VEHICLE_TYPE = "VEHICLE_TYPE";
     public static String TXT_ITEM_TYPE = "ITEM_TYPE";
     public static String TXT_FIND_DETAIL = "FIND_DETAIL";
+    public static String VEHICLE_NUMBER = "VEHICLE_NUMBER";
+    public static String DRIVER_NAME = "DRIVER_NAME";
+    public static String KERANI_NAME = "KERANI_NAME";
 
     public static String TXT_SHIP_FROM = "SHIP_FROM";
     public static String TXT_SHIP_TO = "SHIP_TO";

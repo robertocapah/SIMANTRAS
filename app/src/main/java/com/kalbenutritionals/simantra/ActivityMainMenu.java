@@ -67,6 +67,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import me.leolin.shortcutbadger.ShortcutBadgeException;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.BL.BLMain;
 import com.kalbenutritionals.simantra.CustomView.Utils.AuthenticatorUtil;
 import com.kalbenutritionals.simantra.CustomView.Utils.IOBackPressed;
@@ -213,27 +214,92 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             toolbar.setTitle("Questioner Checker");
             setSupportActionBar(toolbar);
             String noSPM = intent.getStringExtra(ClsHardCode.txtNoSPM);
-            if (intent.getStringExtra(new ClsHardCode().txtMessage).equals(ClsHardCode.txtBundleKeyBarcode)){
-                FragmentTab fragmentTab = new FragmentTab();
-                Bundle bundle = new Bundle();
-                bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
-                bundle.putString(ClsHardCode.txtNoSPM, noSPM);
-                fragmentTab.setArguments(bundle);
-                FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
-                fragmentTransactionTab.replace(R.id.frame, fragmentTab);
-                fragmentTransactionTab.commit();
-            }else if(intent.getStringExtra(new ClsHardCode().txtMessage).equals(ClsHardCode.txtBundleKeyBarcodeLoad)){
-                FragmentTab fragmentTab = new FragmentTab();
-                Bundle bundle = new Bundle();
-                bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcodeLoad);
-                bundle.putString(ClsHardCode.txtNoSPM, noSPM);
-                int intStatus = intent.getIntExtra(ClsHardCode.txtStatusLoading,0);
-                bundle.putInt(ClsHardCode.txtStatusLoading,intStatus);
-                fragmentTab.setArguments(bundle);
-                FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
-                fragmentTransactionTab.replace(R.id.frame, fragmentTab);
-                fragmentTransactionTab.commit();
+            int intIsValidator = intent.getIntExtra(ClsHardCode.intIsValidator,88);
+            int intDesc = intent.getIntExtra(ClsHardCode.intDesc,99);
+            if(intDesc<1 || intDesc == 99){
+                if (intent.getStringExtra(new ClsHardCode().txtMessage).equals(ClsHardCode.txtBundleKeyBarcode)){
+                    FragmentTab fragmentTab = new FragmentTab();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                    bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                    bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+                    fragmentTab.setArguments(bundle);
+                    FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                    fragmentTransactionTab.commit();
+                }else if(intent.getStringExtra(new ClsHardCode().txtMessage).equals(ClsHardCode.txtBundleKeyBarcodeLoad)){
+                    FragmentTab fragmentTab = new FragmentTab();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcodeLoad);
+                    bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                    bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+                    int intStatus = intent.getIntExtra(ClsHardCode.txtStatusLoading,0);
+                    bundle.putInt(ClsHardCode.txtStatusLoading,intStatus);
+                    fragmentTab.setArguments(bundle);
+                    FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                    fragmentTransactionTab.commit();
+                }
+            }else{
+                switch (intDesc){
+                    case 1: //ini jika sudah scan blm validate lalu scan lagi
+
+                        FragmentTab fragmentTab = new FragmentTab();
+                        FragmentTransaction fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                        fragmentTransactionTab.commit();
+                        break;
+                    case 2: // ini jika sudah scan dan validasi
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                        bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                        bundle.putInt(ClsHardCode.intDesc,intDesc);
+                        bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+                        fragmentTab = new FragmentTab();
+                        fragmentTab.setArguments(bundle);
+                        fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                        fragmentTransactionTab.commit();
+                        break;
+                    case 3: // ini jika sudah scan dan validasi dan start timer
+                        bundle = new Bundle();
+                        bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                        bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                        bundle.putInt(ClsHardCode.intDesc,intDesc);
+                        bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+                        fragmentTab = new FragmentTab();
+                        fragmentTab.setArguments(bundle);
+                        fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                        fragmentTransactionTab.commit();
+                        break;
+                    case 4:
+                        bundle = new Bundle();
+                        bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                        bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                        bundle.putInt(ClsHardCode.intDesc,intDesc);
+                        bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+                        fragmentTab = new FragmentTab();
+                        fragmentTab.setArguments(bundle);
+                        fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                        fragmentTransactionTab.commit();
+                        break;
+                    case 5:
+                        bundle = new Bundle();
+                        bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                        bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                        bundle.putInt(ClsHardCode.intDesc,intDesc);
+                        bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+                        fragmentTab = new FragmentTab();
+                        fragmentTab.setArguments(bundle);
+                        fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                        fragmentTransactionTab.commit();
+                        break;
+                }
             }
+
         }else if (intent.getStringExtra(i_View) != null) {
             if (intent.getStringExtra(i_View).equals("FragmentNotification")) {
                 toolbar.setTitle("Notification");
@@ -521,6 +587,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             // fragment yang dituju
                             Bundle arguments2 = new Bundle();
                             arguments2.putInt( ClsHardCode.TXT_STATUS_MENU , ClsHardCode.INT_VALIDATOR);
+
                             FragmentSPMSearch fragmentSPMSearch2 = new FragmentSPMSearch();
                             fragmentSPMSearch2.setArguments(arguments2);
                             FragmentTransaction fragmentTransactionSPMSearch2 = getSupportFragmentManager().beginTransaction();

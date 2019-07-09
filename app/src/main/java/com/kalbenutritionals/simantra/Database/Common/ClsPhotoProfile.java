@@ -6,9 +6,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.Serializable;
 
-/**
- * Created by Rian Andrivani on 11/22/2017.
- */
 @DatabaseTable
 public class ClsPhotoProfile implements Serializable {
     public String getTxtGuiId() {

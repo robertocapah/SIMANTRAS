@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -21,12 +22,7 @@ import com.google.gson.GsonBuilder;
 import com.google.zxing.Result;
 import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.DataItem;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ListDatIsianItem;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
-import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
-import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
-import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.FullScannerFragmentActivity;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
@@ -37,7 +33,6 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,18 +50,24 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
     @BindView(R.id.ivScanBarcode)
     ImageView ivScanBarcode;
     Context context;
+    @BindView(R.id.bt_toggle_input)
+    ImageButton btToggleInput;
     private Gson gson;
     int intStatus = 0;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_scan_barcode, container, false);
         unbinder = ButterKnife.bind(this, v);
-        context = getActivity().getApplicationContext();
+        if (getActivity() != null) {
+            context = getActivity().getApplicationContext();
+        }
+
         //is there any way that I can stay in your eyes
         Bundle arguments = getArguments();
-        if (arguments != null){
-            intStatus = arguments.getInt(ClsHardCode.TXT_STATUS_MENU);
+        if (arguments != null) {
+            intStatus = arguments.getInt(ClsHardCode.TXT_STATUS_MENU, 88);
         }
         return v;
     }
@@ -86,16 +87,24 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
 
     @OnClick({R.id.etSpmNumber, R.id.btnGo, R.id.ivScanBarcode})
     public void onViewClicked(View view) {
-        BLHelper.hideKeyboard(getActivity());
+        if (getActivity() != null) {
+            BLHelper.hideKeyboard(getActivity());
+        }
         switch (view.getId()) {
             case R.id.etSpmNumber:
                 break;
             case R.id.btnGo:
-                if(intStatus == ClsHardCode.INT_CHECKER){
+                if (etSpmNumber.getText().toString().trim().equals("")){
+                    Toast.makeText(context,"Fill Document Number",Toast.LENGTH_SHORT).show();
+                }else{
+                    goToInfoChecker();
+                }
+
+                /*if(intStatus == ClsHardCode.INT_CHECKER){
                     goToInfoChecker();
                 }else if (intStatus == ClsHardCode.INT_VALIDATOR){
                     goToValidatorUnLoading();
-                }
+                }*/
                 break;
             case R.id.ivScanBarcode:
                 scanBarcode();
@@ -109,28 +118,122 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
         fragmentTransactionInfoChecker.commit();*/
         String txtLink = new ClsHardCode().linkGetListFormByOrg;
-        final String noQr = "7094ecc8-493c-4122-b0d2-5de69fbea0f5";
-        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,noQr);
+        final String noQr = etSpmNumber.getText().toString().trim();
+        final int intType = ClsHardCode.INT_DOCNUMB;
+        int intFillHdrId = 60;
+        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,intType, noQr, intStatus, intFillHdrId);//validator = 2
 
         new FastNetworkingUtils().FNRequestPostData(getActivity(), txtLink, obj, "Processing SPM", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
-                if(model.getResult()!=null){
-                    if ( model.getResult().isStatus()){
-                        new RepomPertanyaan(context).deleteAllData();
-                        BLHelper.savePreference(context,"spm",noQr);// simpen spm yang lagi aktif
-                        final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
-                        Date dateScan = new Date(System.currentTimeMillis());
-                        String timeScan = format.format(dateScan);
-                        BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan); //save waktu scan
-                        GenerateData(getActivity().getApplicationContext(),model);
-                        FragmentTab fragmentTab = new FragmentTab();
-                        FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
-                        fragmentTransactionTab.commit();
-                    }else{
-                        Toast.makeText(context,model.getResult().getMessage(),Toast.LENGTH_SHORT).show();
+                if (model.getResult() != null) {
+                    if (model.getResult().isStatus()) {
+                        Bundle bundle;
+                        new BLHelper().GenerateData(getActivity().getApplicationContext(), model);
+                        if (model.getINTDESC() < 1) {
+                            bundle = new Bundle();
+                            bundle.putInt(ClsHardCode.intIsValidator, intStatus);
+                            new RepomPertanyaan(context).deleteAllData();
+                            BLHelper.savePreference(context, "spm", noQr);// simpen spm yang lagi aktif
+                            final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
+                            Date dateScan = new Date(System.currentTimeMillis());
+                            String timeScan = format.format(dateScan);
+                            BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan); //save waktu scan
+                            FragmentTab fragmentTab = new FragmentTab();
+                            fragmentTab.setArguments(bundle);
+                            FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                            fragmentTransactionTab.commit();
+                        } else {
+                            switch (model.getINTDESC()) {
+                                case 1: //ini jika sudah scan blm validate lalu scan lagi
+                                    bundle = new Bundle();
+                                    bundle.putInt(ClsHardCode.intIsValidator, intStatus);
+
+                                    new RepomPertanyaan(context).deleteAllData();
+                                    BLHelper.savePreference(context, "spm", noQr);// simpen spm yang lagi aktif
+                                    final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
+                                    Date dateScan = new Date(System.currentTimeMillis());
+                                    String timeScan = format.format(dateScan);
+                                    BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan); //save waktu scan
+                                    FragmentTab fragmentTab = new FragmentTab();
+                                    fragmentTab.setArguments(bundle);
+                                    FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                                    fragmentTransactionTab.commit();
+                                    break;
+                                case 2: // ini jika sudah scan dan validasi
+                                    bundle = new Bundle();
+                                    bundle.putInt(ClsHardCode.intIsValidator, intStatus);
+                                    bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                                    bundle.putString(ClsHardCode.txtNoSPM, noQr);
+                                    bundle.putInt(ClsHardCode.intDesc, model.getINTDESC());
+                                    new BLHelper().saveDataTimeFromApi(model, context);
+                                    fragmentTab = new FragmentTab();
+                                    fragmentTab.setArguments(bundle);
+                                    fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                                    fragmentTransactionTab.commit();
+                                    break;
+                                case 3: // ini jika sudah scan dan validasi dan start timer
+                                    bundle = new Bundle();
+                                    bundle.putInt(ClsHardCode.intIsValidator, intStatus);
+                                    bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                                    bundle.putString(ClsHardCode.txtNoSPM, noQr);
+                                    bundle.putInt(ClsHardCode.intDesc, model.getINTDESC());
+                                    new BLHelper().saveDataTimeFromApi(model, context);
+                                    fragmentTab = new FragmentTab();
+                                    fragmentTab.setArguments(bundle);
+                                    fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                                    fragmentTransactionTab.commit();
+                                    break;
+                                case 4: // ini jika sudah scan dan validasi dan start timer
+                                    bundle = new Bundle();
+                                    bundle.putInt(ClsHardCode.intIsValidator, intStatus);
+                                    bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                                    bundle.putString(ClsHardCode.txtNoSPM, noQr);
+                                    bundle.putInt(ClsHardCode.intDesc, model.getINTDESC());
+                                    new BLHelper().saveDataTimeFromApi(model, context);
+                                    fragmentTab = new FragmentTab();
+                                    fragmentTab.setArguments(bundle);
+                                    fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                                    fragmentTransactionTab.commit();
+                                    break;
+                                case 5: // ini jika sudah scan dan validasi dan start timer
+                                    bundle = new Bundle();
+                                    bundle.putInt(ClsHardCode.intIsValidator, intStatus);
+                                    bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                                    bundle.putString(ClsHardCode.txtNoSPM, noQr);
+                                    bundle.putInt(ClsHardCode.intDesc, model.getINTDESC());
+                                    new BLHelper().saveDataTimeFromApi(model, context);
+                                    fragmentTab = new FragmentTab();
+                                    fragmentTab.setArguments(bundle);
+                                    fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                                    fragmentTransactionTab.commit();
+                                    break;
+                                case 6: // ini jika sudah scan dan validasi dan start timer
+                                    bundle = new Bundle();
+                                    bundle.putInt(ClsHardCode.intIsValidator, intStatus);
+                                    bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                                    bundle.putString(ClsHardCode.txtNoSPM, noQr);
+                                    bundle.putInt(ClsHardCode.intDesc, model.getINTDESC());
+                                    new BLHelper().saveDataTimeFromApi(model, context);
+                                    fragmentTab = new FragmentTab();
+                                    fragmentTab.setArguments(bundle);
+                                    fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
+                                    fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                                    fragmentTransactionTab.commit();
+                                    break;
+                            }
+                        }
+
+
+                    } else {
+                        Toast.makeText(context, model.getResult().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -141,11 +244,12 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
             }
         });
     }
-    private void goToValidatorUnLoading() {
-       /* FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
+
+    /*private void goToValidatorUnLoading() {
+     *//* FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
         FragmentTransactions fragmentTransactionInfoChecker = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
-        fragmentTransactionInfoChecker.commit();*/
+        fragmentTransactionInfoChecker.commit();*//*
         String txtLink = new ClsHardCode().linkGetListFormByOrg;
         JSONObject obj = new BLHelper().getDataRequestDataSPM(context,"KNS17090047");
 
@@ -172,197 +276,15 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                 int a = 1;
             }
         });
-    }
-    private void scanBarcode(){
+    }*/
+    private void scanBarcode() {
 //        IntentIntegrator.initiateScan(getActivity(), zxingLibConfig);
         Intent intent = new Intent(getActivity(), FullScannerFragmentActivity.class);
-        intent.putExtra(ClsHardCode.txtMessage,ClsHardCode.txtBundleKeyBarcode);
+        intent.putExtra(ClsHardCode.txtMessage, ClsHardCode.txtBundleKeyBarcode);
+        intent.putExtra(ClsHardCode.TXT_STATUS_MENU, intStatus);
         startActivity(intent);
     }
-    public void GenerateData(Context context, ResponseGetQuestion model){
-        BLHelper.savePreference(context,ClsHardCode.INT_HEADER_ID,String.valueOf(model.getINTFILLHDRID()));
-        List<DataItem> datas =  model.getData();
-        for (DataItem data :
-                datas) {
-            ClsmPertanyaan pertanyaan = new ClsmPertanyaan();
-            pertanyaan.setIntPertanyaanId(data.getINTFORMDTLID());
-            pertanyaan.setIntFillHeaderId(model.getINTFILLHDRID());
-            pertanyaan.setIntJenisPertanyaanId(data.getINTTYPEID());
-            pertanyaan.setTxtPertanyaan(data.getTXTFORMNAME());
-            pertanyaan.setIntLocationDocsId(data.getINTPOSITIONID());
-            pertanyaan.setIntSeq(Integer.parseInt(data.getINTSEQ()));
-            pertanyaan.setIntValidateID(data.getINTVALIDATEID());
-            pertanyaan.setTxtMapCol(data.getTXTMAPCOL());
-            if (data.getBITIMG().equals("1")){
-                pertanyaan.setBolHavePhoto(true);
-                pertanyaan.setIntPhotoNeeded(Integer.parseInt(data.getINTIMGNEED()));
-            }else{
-                pertanyaan.setBolHavePhoto(false);
-            }
-            if(data.getBITDATA().equals("1")){
-                pertanyaan.setBolHaveAnswer(true);
-            }
-            if (data.getListDatIsian()!= null){
-                List<ListDatIsianItem> lisDataIsian = data.getListDatIsian();
-                for (ListDatIsianItem jwb :
-                        lisDataIsian) {
-                    ClsmJawaban clsmJawaban = new ClsmJawaban();
-                    clsmJawaban.setBitActive(true);
-                    clsmJawaban.setTxtIdJawaban(jwb.getTXTDATADTLID());
-                    clsmJawaban.setIdJawaban(jwb.getINTDATADTLID());
-                    clsmJawaban.setIdPertanyaan(data.getINTFORMDTLID());
-                    clsmJawaban.setBitChoosen(false);
-                    clsmJawaban.setTxtMapCol(jwb.getTXTMAPCOL());
-                    if(jwb.getTXTVALUE().equals("null")){
-                        clsmJawaban.setTxtJawaban("");
-                    }else{
-                        clsmJawaban.setTxtJawaban(jwb.getTXTVALUE());
-                    }
 
-                    try{
-                        new RepomJawaban(context).createOrUpdate(clsmJawaban);
-                    }catch (Exception ex){
-                        ex.getMessage();
-                    }
-                }
-
-            }else{
-                pertanyaan.setBolHaveAnswer(false);
-            }
-            try{
-                new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-            }catch (Exception e){
-
-            }
-        }
-        /*ClsmPertanyaan pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-        pertanyaan.setBolHaveAnswer(false);
-        pertanyaan.setIntJenisPertanyaanId(1);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setBolHaveAnswer(true);
-        pertanyaan.setIntPertanyaanId(2);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanCheckBox);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setTxtPertanyaan("pilih beberapa dari pertanyaan di checkbox di bawah ya pak");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(3);
-        pertanyaan.setBolHaveAnswer(true);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanRadioButton);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setTxtPertanyaan("pilih satu dari beberapa di radioButton di bawah ya pak");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(4);
-        pertanyaan.setBolHaveAnswer(true);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setTxtPertanyaan("isi textbox dan ambil sebuah gambar ya pak");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-        pertanyaan = new ClsmPertanyaan();
-        pertanyaan.setIntPertanyaanId(7);
-        pertanyaan.setBolHaveAnswer(false);
-        pertanyaan.setBolHavePhoto(true);
-        pertanyaan.setIntJenisPertanyaanId(ClsHardCode.JenisPertanyaanTextBox);
-        pertanyaan.setIntLocationDocsId(1);
-        pertanyaan.setTxtPertanyaan("Tuliskan beberapa hal di dalam textbox di bawah ya pak (2)");
-        try{
-            new RepomPertanyaan(context).createOrUpdate(pertanyaan);
-        }catch (Exception e){
-
-        }
-
-        ClsmJawaban clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(1);
-        clsmJawaban.setIdPertanyaan(2);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja   1");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(2);
-        clsmJawaban.setIdPertanyaan(2);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(3);
-        clsmJawaban.setIdPertanyaan(2);
-        clsmJawaban.setTxtJawaban("coba kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(4);
-        clsmJawaban.setIdPertanyaan(3);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja 1");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(5);
-        clsmJawaban.setIdPertanyaan(3);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  2");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-        clsmJawaban = new ClsmJawaban();
-        clsmJawaban.setBitActive(true);
-        clsmJawaban.setIdJawaban(6);
-        clsmJawaban.setIdPertanyaan(3);
-        clsmJawaban.setBitChoosen(false);
-        clsmJawaban.setTxtJawaban("radio kjdhahsdka akjsdaksjdh ashdlakjsdha ashdakjakjdhahsdka akjsdaksjdh ashdlakjsdha ashdakja  3");
-        try{
-            new RepomJawaban(context).createOrUpdate(clsmJawaban);
-        }catch (Exception ex){
-
-        }
-*/
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -382,5 +304,10 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
     @Override
     public void handleResult(Result result) {
         int a = 1;
+    }
+
+    @OnClick(R.id.bt_toggle_input)
+    public void onViewClicked() {
+        etSpmNumber.setText("");
     }
 }

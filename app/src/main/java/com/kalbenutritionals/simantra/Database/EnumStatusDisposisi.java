@@ -6,9 +6,8 @@ package com.kalbenutritionals.simantra.Database;
 
 public enum EnumStatusDisposisi {
     Accept (1),
-    Excalated (2),
-    AccepetWithVariance (3),
-    Reject (4)
+    AcceptWithVariance (2),
+    Reject (3)
     ;
     EnumStatusDisposisi(int idStatus){
         this.idStatus = idStatus;

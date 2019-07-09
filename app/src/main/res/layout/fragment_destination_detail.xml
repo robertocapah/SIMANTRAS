@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-<!--                    <LinearLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/white"
@@ -132,14 +132,52 @@
                         android:minHeight="?attr/actionBarSize"
                         android:orientation="horizontal">
 
-                        <ImageButton
+                        <ImageView
+                            android:layout_width="?attr/actionBarSize"
+                            android:layout_height="?attr/actionBarSize"
+                            android:layout_margin="@dimen/spacing_large"
+                            android:background="@android:color/transparent"
+                            app:srcCompat="@drawable/ic_truck"
+                            tools:ignore="VectorDrawableCompat" />
+                        <!--<ImageButton
                             android:layout_width="?attr/actionBarSize"
                             android:layout_height="?attr/actionBarSize"
                             android:background="@android:color/transparent"
                             android:tint="@color/colorPrimaryLight"
                             app:srcCompat="@drawable/ic_directions_car_black_24dp"
-                            tools:ignore="VectorDrawableCompat" />
+                            tools:ignore="VectorDrawableCompat" />-->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="No Polisi"
+                                android:layout_margin="@dimen/spacing_small"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_90"
+                                android:textStyle="bold" />
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/spacing_small"
+                                android:text="Driver"
+                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_90" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/spacing_small"
+                                android:text="Kerani"
+                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_90" />
+                        </LinearLayout>
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -150,26 +188,28 @@
                                 android:id="@+id/tv_no_pol"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/spacing_small"
                                 android:text="B 3874 IG"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_90"
-                                android:textStyle="bold" />
+                                android:textColor="@color/grey_90"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Roberto oloan capah"
+                                android:layout_margin="@dimen/spacing_small"
+                                android:text="Roberto oloan capah sdadsdas"
                                 android:id="@+id/tvDriverName"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_40" />
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_90" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Anton"
+                                android:layout_margin="@dimen/spacing_small"
+                                android:text="ARDI ADE AMINUDINsdasdasdasdasd"
                                 android:id="@+id/tvKeraniName"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_40" />
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_90" />
 
                         </LinearLayout>
 
@@ -177,7 +217,7 @@
                             android:layout_width="@dimen/spacing_smlarge"
                             android:layout_height="wrap_content" />
 
-                    </LinearLayout>-->
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -370,7 +410,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_no_pol"
                     android:layout_marginLeft="@dimen/spacing_large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -13,7 +13,7 @@ android {
         config {
             keyAlias 'sign key am'
             keyPassword 's4nghi4ng'
-            storeFile file('D:/Real Project/signedkeyandroidam.jks')
+            storeFile file('E:/PROJECTKERJAAN/signedkeyandroidam.jks')
             storePassword 's4nghi4ng'
         }
     }
@@ -163,7 +163,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
-
+    //
     implementation 'com.github.ybq:Android-SpinKit:1.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

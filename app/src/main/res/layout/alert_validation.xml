@@ -9,13 +9,13 @@
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_alert"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scrollbars="none"
         android:scrollingCache="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
@@ -32,7 +32,8 @@
                     android:id="@+id/tvTitleAlert"
                     android:layout_margin="@dimen/spacing_small"
                     android:text="UNMET EXCALATION POINT :"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/grey_95"/>
 
             </LinearLayout>
 
@@ -51,30 +52,22 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/titleConfirm"
                 android:layout_margin="@dimen/spacing_small"
+                android:textAlignment="center"
                 android:text="Do you want to proceed?"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:layout_weight="1"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnSaveToDraft"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/spacing_small"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_rounded_blue_300"
-                    android:text="Save to Draft"
-                    android:textColor="@color/white" />
-
                 <Button
                     android:id="@+id/btnProceed"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/spacing_small"
                     android:layout_weight="1"

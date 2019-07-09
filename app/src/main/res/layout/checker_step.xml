@@ -17,6 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/tvLabelTitle"
             android:text="Checker Process"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/grey_80"
@@ -74,7 +75,7 @@
                 android:layout_marginRight="150dp">
 
                 <ImageView
-                    android:id="@+id/image_shipping"
+                    android:id="@+id/image_left"
                     android:layout_width="@dimen/spacing_smlarge"
                     android:layout_height="@dimen/spacing_smlarge"
                     android:layout_centerHorizontal="false"
@@ -82,7 +83,7 @@
                     android:src="@drawable/shape_round_outline_primary" />
 
                 <TextView
-                    android:id="@+id/tv_shipping"
+                    android:id="@+id/tvlineone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
@@ -98,7 +99,7 @@
                 android:layout_centerHorizontal="true">
 
                 <ImageView
-                    android:id="@+id/image_payment"
+                    android:id="@+id/image_midle"
                     android:layout_width="@dimen/spacing_smlarge"
                     android:layout_height="@dimen/spacing_smlarge"
                     android:layout_centerHorizontal="true"
@@ -106,7 +107,7 @@
                     app:srcCompat="@drawable/shape_round_outline_primary" />
 
                 <TextView
-                    android:id="@+id/tv_payment"
+                    android:id="@+id/tvlinetwo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
@@ -123,7 +124,7 @@
                 android:layout_alignParentRight="true">
 
                 <ImageView
-                    android:id="@+id/image_confirm"
+                    android:id="@+id/image_right"
                     android:layout_width="@dimen/spacing_smlarge"
                     android:layout_height="@dimen/spacing_smlarge"
                     android:layout_centerHorizontal="true"
@@ -131,7 +132,7 @@
                     app:srcCompat="@drawable/shape_round_outline_primary" />
 
                 <TextView
-                    android:id="@+id/tv_confirm"
+                    android:id="@+id/tvlinethree"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
@@ -148,7 +149,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="90sp"
+        android:layout_marginTop="80sp"
         android:orientation="vertical"
         android:scrollbars="vertical">
 
@@ -164,19 +165,19 @@
             android:orientation="horizontal">
 
             <com.balysv.materialripple.MaterialRippleLayout
-                android:id="@+id/lyt_previous"
+                android:id="@+id/lyt_save"
                 style="@style/RippleStyleWhite"
                 android:layout_width="@dimen/spacing_xxlarge"
                 android:layout_height="@dimen/spacing_xxlarge"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:background="@color/colorPrimaryLight">
 
                 <ImageView
-                    android:layout_width="@dimen/spacing_smlarge"
-                    android:layout_height="@dimen/spacing_smlarge"
+                    android:layout_width="@dimen/spacing_mxlarge"
+                    android:layout_height="@dimen/spacing_mxlarge"
                     android:layout_gravity="center"
                     android:tint="@android:color/white"
-                    app:srcCompat="@drawable/ic_arrow_back"
+                    app:srcCompat="@drawable/ic_save_white_24dp"
                     tools:ignore="VectorDrawableCompat" />
 
             </com.balysv.materialripple.MaterialRippleLayout>

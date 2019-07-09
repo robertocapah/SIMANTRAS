@@ -368,10 +368,11 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:id="@+id/tvDescOptional"
+                                android:layout_width="wrap_content"
+                                android:layout_height="7dp"
                                 android:text="Di anjurkan di isi"
+                                android:visibility="gone"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/grey_40" />
 
@@ -399,7 +400,7 @@
                         android:visibility="gone">
 
                         <android.support.v7.widget.RecyclerView
-                            android:id="@+id/rvOptional"
+                            android:id="@+id/rvHeader"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scrollbars="vertical"
@@ -509,7 +510,7 @@
                         android:visibility="gone">
 
                         <android.support.v7.widget.RecyclerView
-                            android:id="@+id/rvMandatory"
+                            android:id="@+id/rvBody"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scrollbars="vertical"

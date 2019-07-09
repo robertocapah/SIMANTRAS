@@ -33,9 +33,11 @@ import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterExpandableList;
 import com.kalbenutritionals.simantra.CustomView.Adapter.LineItemDecoration;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Database.Common.ClsImages;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
 import com.kalbenutritionals.simantra.Database.EnumStatusDisposisi;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsImages;
 import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.R;
@@ -48,7 +50,6 @@ import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserDetail;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserHeader;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -83,17 +84,19 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     Button btHideOptional;
     @BindView(R.id.bt_hide_mandatory)
     Button btHideMandatory;
-    @BindView(R.id.rvOptional)
-    RecyclerView rvOptional;
-    @BindView(R.id.rvMandatory)
-    RecyclerView rvMandatory;
+    @BindView(R.id.rvHeader)
+    RecyclerView rvHeader;
+    @BindView(R.id.rvBody)
+    RecyclerView rvBody;
+    @BindView(R.id.rvFooter)
+    RecyclerView rvFooter;
     @BindView(R.id.btnValidate)
     Button btnValidate;
     boolean statusValid = false;
     boolean statusRejected = false;
     String txtMsg = "";
-    AdapterExpandableList mAdapterOptional;
-    AdapterExpandableList mAdapterMandatory;
+    AdapterExpandableList mAdapterHeader;
+    AdapterExpandableList mAdapterBody;
     AdapterExpandableList mAdapterFooter;
     List<VmListItemAdapterPertanyaan> items;
 
@@ -106,19 +109,18 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public static Uri uriImage;
     public static String imgName;
     public static int CAMERA_REQUEST_QUESTION = 1;
-    List<VmListItemAdapterPertanyaan> ltDataPertanyaanOptional = new ArrayList<>();
-    List<VmListItemAdapterPertanyaan> ltDataPertanyaanMandatory = new ArrayList<>();
+    List<VmListItemAdapterPertanyaan> ltDataPertanyaanHeader = new ArrayList<>();
+    List<VmListItemAdapterPertanyaan> ltDataPertanyaanBody = new ArrayList<>();
     List<VmListItemAdapterPertanyaan> ltDataPertanyaanFooter = new ArrayList<>();
-    List<VmListAnswerView> ListAnswerViewOptional = new ArrayList<>();
-    List<VmListAnswerView> ListAnswerViewMandatory = new ArrayList<>();
+    List<VmListAnswerView> ListAnswerViewHeader = new ArrayList<>();
+    List<VmListAnswerView> ListAnswerViewBody = new ArrayList<>();
     List<VmListAnswerView> ListAnswerViewFooter = new ArrayList<>();
     //    List<VmBasicListView> ltDataPIC = new ArrayList<>();
     public List<VmAdapterBasic> ListRejection = new ArrayList<>();
-    @BindView(R.id.rvFooter)
-    RecyclerView rvFooter;
     private LinearLayout linearLayout;
     Context context;
     VmTJawabanUserHeader jawabanListFinal = new VmTJawabanUserHeader();
+
     public FragmentDetailInfoChecker() {
 
     }
@@ -139,8 +141,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         v = inflater.inflate(R.layout.fragment_transaksi_transpoter, container, false);
         unbinder = ButterKnife.bind(this, v);
         context = getActivity().getApplicationContext();
-        rvOptional.setNestedScrollingEnabled(false);
-        rvMandatory.setNestedScrollingEnabled(false);
+        rvHeader.setNestedScrollingEnabled(false);
+        rvBody.setNestedScrollingEnabled(false);
         rvFooter.setNestedScrollingEnabled(false);
 
         btToggleOptional.setOnClickListener(new View.OnClickListener() {
@@ -243,42 +245,42 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     }
 
     private void getDataValidate() {
-        int intItemCount = mAdapterOptional.getItemCount();
+        int intItemCount = mAdapterHeader.getItemCount();
 
     }
 
     public void generateDat() {
-        rvOptional.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvOptional.addItemDecoration(new LineItemDecoration(getActivity(), LinearLayout.VERTICAL));
-        rvOptional.setHasFixedSize(true);
-        rvMandatory.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvMandatory.addItemDecoration(new LineItemDecoration(getActivity(), LinearLayout.VERTICAL));
-        rvMandatory.setHasFixedSize(true);
+        rvHeader.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvHeader.addItemDecoration(new LineItemDecoration(getActivity(), LinearLayout.VERTICAL));
+        rvHeader.setHasFixedSize(true);
+        rvBody.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvBody.addItemDecoration(new LineItemDecoration(getActivity(), LinearLayout.VERTICAL));
+        rvBody.setHasFixedSize(true);
         rvFooter.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvFooter.addItemDecoration(new LineItemDecoration(getActivity(), LinearLayout.VERTICAL));
         rvFooter.setHasFixedSize(true);
 
 //        List<Social> items = getData(this);
 
-        ltDataPertanyaanOptional = getData(getActivity(), ClsHardCode.HEADER);
-        ltDataPertanyaanMandatory = getData(getActivity(), ClsHardCode.BODY);
+        ltDataPertanyaanHeader = getData(getActivity(), ClsHardCode.HEADER);
+        ltDataPertanyaanBody = getData(getActivity(), ClsHardCode.BODY);
         ltDataPertanyaanFooter = getData(getActivity(), ClsHardCode.FOOTER);
 
         toggleSectionOptional(btToggleOptional);
         toggleSectionMandatory(btToggleMandatory);
         toggleSectionPic(btTogglePic);
         //set data and list adapter
-//        CustomAdapter mAdapterOptional = new CustomAdapter(getActivity(), mItems);
-        mAdapterOptional = new AdapterExpandableList(getActivity(), ltDataPertanyaanOptional);
-        mAdapterMandatory = new AdapterExpandableList(getActivity(), ltDataPertanyaanMandatory);
+//        CustomAdapter mAdapterHeader = new CustomAdapter(getActivity(), mItems);
+        mAdapterHeader = new AdapterExpandableList(getActivity(), ltDataPertanyaanHeader);
+        mAdapterBody = new AdapterExpandableList(getActivity(), ltDataPertanyaanBody);
         mAdapterFooter = new AdapterExpandableList(getActivity(), ltDataPertanyaanFooter);
 
-        rvOptional.setAdapter(mAdapterOptional);
-        rvMandatory.setAdapter(mAdapterMandatory);
+        rvHeader.setAdapter(mAdapterHeader);
+        rvBody.setAdapter(mAdapterBody);
         rvFooter.setAdapter(mAdapterFooter);
 
-        mAdapterOptional.sendData(FragmentDetailInfoChecker.this);
-        mAdapterMandatory.sendData(FragmentDetailInfoChecker.this);
+        mAdapterHeader.sendData(FragmentDetailInfoChecker.this);
+        mAdapterBody.sendData(FragmentDetailInfoChecker.this);
         mAdapterFooter.sendData(FragmentDetailInfoChecker.this);
     }
 
@@ -293,7 +295,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 pertanyaans = new RepomPertanyaan(context).findQuestion(ClsHardCode.HEADER);
             } else if (jenis == ClsHardCode.BODY) {
                 pertanyaans = new RepomPertanyaan(context).findQuestion(ClsHardCode.BODY);
-            }else if (jenis == ClsHardCode.FOOTER) {
+            } else if (jenis == ClsHardCode.FOOTER) {
                 pertanyaans = new RepomPertanyaan(context).findQuestion(ClsHardCode.FOOTER);
             }
             items = new ArrayList<>();
@@ -315,6 +317,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 obj.jenisPertanyaan = pertanyaan.getIntJenisPertanyaanId();
                 obj.intValidateId = pertanyaan.getIntValidateID();
                 obj.intPositionId = pertanyaan.getIntLocationDocsId();
+                obj.txtMetodePemeriksaan = "(hardcode) metode pemeriksaan dengan mengamati sekitaran ....";
                 List<ClsmJawaban> jawabans1 = new RepomJawaban(context).findByHeader(pertanyaan.getIntPertanyaanId());
                 List<Jawaban> jawabans = new ArrayList<>();
 
@@ -331,10 +334,20 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                 List<VmImageContainer> containerList = new ArrayList<>();
                 for (int i = 0; i < pertanyaan.getIntPhotoNeeded(); i++) {
+                    List<ClsImages> dataImages = new RepoClsImages(context).findByFillDtlId(obj.intFillDtlId);
                     VmImageContainer imageContainer = new VmImageContainer();
                     imageContainer.setPosition(i);
                     imageContainer.setPath(null);
                     imageContainer.setBitmap(null);
+                    if (dataImages!= null && dataImages.get(i)!=null){
+                        try{
+                            imageContainer.setTxtLink(dataImages.get(i).txtLinkImages);
+                        }catch (Exception ex){
+                            imageContainer.setTxtLink(null);
+                        }
+                    }else{
+                        imageContainer.setTxtLink(null);
+                    }
                     containerList.add(imageContainer);
                 }
                 obj.listImage = containerList;
@@ -360,57 +373,61 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public void onViewClicked() {
 
     }
-    public VmTJawabanUserHeader validateAll(){
+
+    public VmTJawabanUserHeader validateAll(int intFlagPush) {
         jawabanListFinal = new VmTJawabanUserHeader();
-//        boolean validOptional = validateOptionals();
-        boolean validMandatory = validateMandatory();
-        boolean validFooter =validateFooter();
-        if (validMandatory&&validFooter) {
+        boolean validOptional = validateHeader();
+        boolean validMandatory = validateBody();
+        boolean validFooter = validateFooter();
+        if (validMandatory && validFooter) {
             statusValid = true;
             jawabanListFinal = saveData();
-            mAdapterMandatory.notifyDataSetChanged();
-            rvMandatory.setAdapter(mAdapterMandatory);
+            mAdapterBody.notifyDataSetChanged();
+            rvBody.setAdapter(mAdapterBody);
 
-//            mAdapterOptional.notifyDataSetChanged();
-//            rvOptional.setAdapter(mAdapterOptional);
+            mAdapterHeader.notifyDataSetChanged();
+            rvHeader.setAdapter(mAdapterHeader);
 
             mAdapterFooter.notifyDataSetChanged();
             rvFooter.setAdapter(mAdapterFooter);
 //            Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         } else {
-            if (!validMandatory){
-                txtMsg = "Please take all picture at mandatory conditions !";
-                Toast.makeText(context,txtMsg,Toast.LENGTH_SHORT).show();
-            }else if (!validateFooter()){
+            if (intFlagPush == ClsHardCode.PUSHDATA){
+                if (!validMandatory || !validOptional || !validFooter) {
+                    txtMsg = "All question must be filled out";
+                    Toast.makeText(context, txtMsg, Toast.LENGTH_SHORT).show();
+                }/*else if (!validateFooter()){
                 txtMsg = "Mandatory Question must be filled out !";
                 Toast.makeText(context,txtMsg,Toast.LENGTH_SHORT).show();
+            }*/
+                statusValid = false;
+                mAdapterBody.notifyDataSetChanged();
+                rvBody.setAdapter(mAdapterBody);
+
+                mAdapterHeader.notifyDataSetChanged();
+                rvHeader.setAdapter(mAdapterHeader);
+
+                mAdapterFooter.notifyDataSetChanged();
+                rvFooter.setAdapter(mAdapterFooter);
             }
-            statusValid = false;
-            mAdapterMandatory.notifyDataSetChanged();
-            rvMandatory.setAdapter(mAdapterMandatory);
 
-//            mAdapterOptional.notifyDataSetChanged();
-//            rvOptional.setAdapter(mAdapterOptional);
-
-            mAdapterFooter.notifyDataSetChanged();
-            rvFooter.setAdapter(mAdapterFooter);
         }
 
         return jawabanListFinal;
     }
 
-    private boolean validateOptionals(){
+    private boolean validateHeader() {
         boolean bolValid = true;
-        for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
+        for (int i = 0; i < ListAnswerViewHeader.size(); i++) {
             List<Jawaban> jawabans = new ArrayList<>();
-            int intPertanyaanId = ListAnswerViewOptional.get(i).getIntPertanyaanId();
-            int position = ListAnswerViewOptional.get(i).getIntPosition();
-            if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
-                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 24);
-            } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
-                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 22);
-            } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
-                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 21);
+            int intPertanyaanId = ListAnswerViewHeader.get(i).getIntPertanyaanId();
+            int position = ListAnswerViewHeader.get(i).getIntPosition();
+            if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 21);
             }
 
             int count = 0;
@@ -420,73 +437,73 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 if (nextChild instanceof CheckBox) {
                     CheckBox checkBox = (CheckBox) nextChild;
                     if (checkBox.isChecked()) {
-                        ltDataPertanyaanOptional.get(position).jawabans.get(x).bitChoosen = true;
+                        ltDataPertanyaanHeader.get(position).jawabans.get(x).bitChoosen = true;
                         count++;
                     } else {
-                        ltDataPertanyaanOptional.get(position).jawabans.get(x).bitChoosen = false;
+                        ltDataPertanyaanHeader.get(position).jawabans.get(x).bitChoosen = false;
                     }
                 }
-                if (count == 0 && ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                if (count == 0 && ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
                     bolValid = false;
-//                    ltDataPertanyaanOptional.get(position).bitValid = false;
-//                    ltDataPertanyaanOptional.get(position).message = "Checkbox at least 1 option";
-                } else if (count > 0 && ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+//                    ltDataPertanyaanHeader.get(position).bitValid = false;
+//                    ltDataPertanyaanHeader.get(position).message = "Checkbox at least 1 option";
+                } else if (count > 0 && ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
                     bolValid = true;
-                    ltDataPertanyaanOptional.get(position).bitValid = true;
-                    ltDataPertanyaanOptional.get(position).message = "";
+                    ltDataPertanyaanHeader.get(position).bitValid = true;
+                    ltDataPertanyaanHeader.get(position).message = "";
                 }
                 if (nextChild instanceof RadioGroup) {
                     RadioGroup radioGroup = (RadioGroup) nextChild;
                     if ((radioGroup.getCheckedRadioButtonId() == -1)) {
                         bolValid = false;
-//                        ltDataPertanyaanOptional.get(position).bitValid = false;
-//                        ltDataPertanyaanOptional.get(position).message = "Choose 1 option";
+                        ltDataPertanyaanHeader.get(position).bitValid = false;
+                        ltDataPertanyaanHeader.get(position).message = "Choose 1 option";
                         int index = 0;
-                        for (Jawaban jwb : ltDataPertanyaanOptional.get(position).jawabans) {
-                            ltDataPertanyaanOptional.get(position).jawabans.get(index).bitChoosen = false;
+                        for (Jawaban jwb : ltDataPertanyaanHeader.get(position).jawabans) {
+                            ltDataPertanyaanHeader.get(position).jawabans.get(index).bitChoosen = false;
                             index++;
                         }
                     } else {
                         bolValid = true;
-                        ltDataPertanyaanOptional.get(position).bitValid = true;
-                        ltDataPertanyaanOptional.get(position).message = "";
+                        ltDataPertanyaanHeader.get(position).bitValid = true;
+                        ltDataPertanyaanHeader.get(position).message = "";
                         int posisi = radioGroup.getCheckedRadioButtonId();
                         int index = 0;
-                        for (Jawaban jwb : ltDataPertanyaanOptional.get(position).jawabans) {
+                        for (Jawaban jwb : ltDataPertanyaanHeader.get(position).jawabans) {
                             if (jwb.idJawaban == posisi) {
-                                ltDataPertanyaanOptional.get(position).jawabans.get(index).bitChoosen = true;
+                                ltDataPertanyaanHeader.get(position).jawabans.get(index).bitChoosen = true;
                             } else {
-                                ltDataPertanyaanOptional.get(position).jawabans.get(index).bitChoosen = false;
+                                ltDataPertanyaanHeader.get(position).jawabans.get(index).bitChoosen = false;
                             }
                             index++;
                         }
-//                        ltDataPertanyaanOptional.get(position).jawabans.get(x).idJawaban = radioGroup.getCheckedRadioButtonId();
+//                        ltDataPertanyaanHeader.get(position).jawabans.get(x).idJawaban = radioGroup.getCheckedRadioButtonId();
                     }
                 }
                 if (nextChild instanceof EditText) {
                     EditText editText = (EditText) nextChild;
                     if (editText.getText().toString().trim().equals("")) {
                         bolValid = false;
-//                        ltDataPertanyaanOptional.get(position).bitValid = false;
-//                        ltDataPertanyaanOptional.get(position).message = "Please fill this text";
+//                        ltDataPertanyaanHeader.get(position).bitValid = false;
+//                        ltDataPertanyaanHeader.get(position).message = "Please fill this text";
 
                     } else {
                         bolValid = true;
-                        ltDataPertanyaanOptional.get(position).bitValid = true;
-                        ltDataPertanyaanOptional.get(position).message = "";
+                        ltDataPertanyaanHeader.get(position).bitValid = true;
+                        ltDataPertanyaanHeader.get(position).message = "";
                     }
                     Jawaban jwbn = new Jawaban();
-                    jwbn.idPertanyaan = ltDataPertanyaanOptional.get(position).id;
+                    jwbn.idPertanyaan = ltDataPertanyaanHeader.get(position).id;
                     jwbn.idJawaban = 0;
                     jwbn.jawaban = editText.getText().toString();
                     jwbn.bitChoosen = false;
                     jawabans.add(jwbn);
-                    ltDataPertanyaanOptional.get(position).jawabans = jawabans;
+                    ltDataPertanyaanHeader.get(position).jawabans = jawabans;
                 }
                 if (nextChild instanceof RecyclerView) {
                     RecyclerView recyclerView = (RecyclerView) nextChild;
                     boolean bolValidImg = true;
-                    for (VmImageContainer data : ltDataPertanyaanOptional.get(position).listImage) {
+                    for (VmImageContainer data : ltDataPertanyaanHeader.get(position).listImage) {
                         if (data.getPath() == null) {
                             bolValid = false;
                             bolValidImg = false;
@@ -494,28 +511,26 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     }
 
                     if (bolValidImg == false) {
-                        ltDataPertanyaanOptional.get(position).bitValid = false;
-                        ltDataPertanyaanOptional.get(position).message = "Please take all picture...";
-                    }
-                    else {
-                        ltDataPertanyaanOptional.get(position).bitValid = true;
-                        ltDataPertanyaanOptional.get(position).message = "";
+                        ltDataPertanyaanHeader.get(position).bitValid = false;
+                        ltDataPertanyaanHeader.get(position).message = "Please take all picture...";
+                    } else {
+                        ltDataPertanyaanHeader.get(position).bitValid = true;
+                        ltDataPertanyaanHeader.get(position).message = "";
                         bolValid = true;
                     }
                 }
 
                 if (nextChild instanceof ImageView) {
                     ImageView imageView = (ImageView) nextChild;
-                    if (ltDataPertanyaanOptional.get(position).path == null) {
+                    if (ltDataPertanyaanHeader.get(position).path == null) {
                         bolValid = false;
                     }
                     if (bolValid == false) {
-                        ltDataPertanyaanOptional.get(position).bitValid = false;
-                        ltDataPertanyaanOptional.get(position).message = "Please take all picture...";
-                    }
-                    else {
-                        ltDataPertanyaanOptional.get(position).bitValid = true;
-                        ltDataPertanyaanOptional.get(position).message = "";
+                        ltDataPertanyaanHeader.get(position).bitValid = false;
+                        ltDataPertanyaanHeader.get(position).message = "Please take all picture...";
+                    } else {
+                        ltDataPertanyaanHeader.get(position).bitValid = true;
+                        ltDataPertanyaanHeader.get(position).message = "";
                         bolValid = true;
                     }
                 }
@@ -524,19 +539,19 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         return bolValid;
     }
 
-    private boolean validateMandatory(){
+    private boolean validateBody() {
         boolean bolValid = true;
         ListRejection = new ArrayList<>();
-        for (int i = 0; i < ListAnswerViewMandatory.size(); i++) {
+        for (int i = 0; i < ListAnswerViewBody.size(); i++) {
             List<Jawaban> jawabans = new ArrayList<>();
-            int intPertanyaanId = ListAnswerViewMandatory.get(i).getIntPertanyaanId();
-            int position = ListAnswerViewMandatory.get(i).getIntPosition();
-            if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
-                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 24);
-            } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
-                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 22);
-            } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
-                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 21);
+            int intPertanyaanId = ListAnswerViewBody.get(i).getIntPertanyaanId();
+            int position = ListAnswerViewBody.get(i).getIntPosition();
+            if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 21);
             }
 
             int count = 0;
@@ -548,30 +563,38 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     CheckBox checkBox = (CheckBox) nextChild;
                     countAll++;
                     if (checkBox.isChecked()) {
-                        ltDataPertanyaanMandatory.get(position).jawabans.get(x).bitChoosen = true;
+                        ltDataPertanyaanBody.get(position).jawabans.get(x).bitChoosen = true;
                         count++;
                     } else {
-                        ltDataPertanyaanMandatory.get(position).jawabans.get(x).bitChoosen = false;
-                        jawabanCheckbox = jawabanCheckbox+ ltDataPertanyaanMandatory.get(position).jawabans.get(x).jawaban+", ";
+                        ltDataPertanyaanBody.get(position).jawabans.get(x).bitChoosen = false;
+                        jawabanCheckbox = jawabanCheckbox + ltDataPertanyaanBody.get(position).jawabans.get(x).jawaban + ", ";
                     }
                 }
 
                 if (nextChild instanceof RadioGroup) {
                     RadioGroup radioGroup = (RadioGroup) nextChild;
                     if ((radioGroup.getCheckedRadioButtonId() == -1)) {
+                        /*int index = 0;
+                        for (Jawaban jwb : ltDataPertanyaanBody.get(position).jawabans) {
+                            ltDataPertanyaanBody.get(position).jawabans.get(index).bitChoosen = false;
+                            index++;
+                        }*/
+                        bolValid = false;
+                        ltDataPertanyaanBody.get(position).bitValid = false;
+                        ltDataPertanyaanBody.get(position).message = "Choose 1 option";
                         int index = 0;
-                        for (Jawaban jwb : ltDataPertanyaanMandatory.get(position).jawabans) {
-                            ltDataPertanyaanMandatory.get(position).jawabans.get(index).bitChoosen = false;
+                        for (Jawaban jwb : ltDataPertanyaanBody.get(position).jawabans) {
+                            ltDataPertanyaanBody.get(position).jawabans.get(index).bitChoosen = false;
                             index++;
                         }
                     } else {
                         int posisi = radioGroup.getCheckedRadioButtonId();
                         int index = 0;
-                        for (Jawaban jwb : ltDataPertanyaanMandatory.get(position).jawabans) {
+                        for (Jawaban jwb : ltDataPertanyaanBody.get(position).jawabans) {
                             if (jwb.idJawaban == posisi) {
-                                ltDataPertanyaanMandatory.get(position).jawabans.get(index).bitChoosen = true;
+                                ltDataPertanyaanBody.get(position).jawabans.get(index).bitChoosen = true;
                             } else {
-                                ltDataPertanyaanMandatory.get(position).jawabans.get(index).bitChoosen = false;
+                                ltDataPertanyaanBody.get(position).jawabans.get(index).bitChoosen = false;
                             }
                             index++;
                         }
@@ -581,26 +604,26 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     EditText editText = (EditText) nextChild;
 //                    if (editText.getText().toString().trim().equals("")) {
 //                        bolValid = false;
-////                        ltDataPertanyaanMandatory.get(position).bitValid = false;
-//                        ltDataPertanyaanMandatory.get(position).message = "Please fill this text";
+////                        ltDataPertanyaanBody.get(position).bitValid = false;
+//                        ltDataPertanyaanBody.get(position).message = "Please fill this text";
 //
 //                    } else {
 //                        bolValid = true;
-//                        ltDataPertanyaanMandatory.get(position).bitValid = true;
-//                        ltDataPertanyaanMandatory.get(position).message = "";
+//                        ltDataPertanyaanBody.get(position).bitValid = true;
+//                        ltDataPertanyaanBody.get(position).message = "";
 //                    }
                     Jawaban jwbn = new Jawaban();
-                    jwbn.idPertanyaan = ltDataPertanyaanMandatory.get(position).id;
+                    jwbn.idPertanyaan = ltDataPertanyaanBody.get(position).id;
                     jwbn.idJawaban = 0;
                     jwbn.jawaban = editText.getText().toString();
                     jwbn.bitChoosen = false;
                     jawabans.add(jwbn);
-                    ltDataPertanyaanMandatory.get(position).jawabans = jawabans;
+                    ltDataPertanyaanBody.get(position).jawabans = jawabans;
                 }
                 if (nextChild instanceof RecyclerView) {
                     RecyclerView recyclerView = (RecyclerView) nextChild;
                     boolean bolValidImg = true;
-                    for (VmImageContainer data : ltDataPertanyaanMandatory.get(position).listImage) {
+                    for (VmImageContainer data : ltDataPertanyaanBody.get(position).listImage) {
                         if (data.getPath() == null) {
                             bolValidImg = false;
                         }
@@ -608,12 +631,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                     if (bolValidImg == false) {
                         bolValid = false;
-                        ltDataPertanyaanMandatory.get(position).bitValid = false;
-                        ltDataPertanyaanMandatory.get(position).message = " Please take all picture...";
-                    }
-                    else {
-                        ltDataPertanyaanMandatory.get(position).bitValid = true;
-                        ltDataPertanyaanMandatory.get(position).message = "";
+                        ltDataPertanyaanBody.get(position).bitValid = false;
+                        ltDataPertanyaanBody.get(position).message = " Please take all picture...";
+                    } else {
+                        ltDataPertanyaanBody.get(position).bitValid = true;
+                        ltDataPertanyaanBody.get(position).message = "";
                         bolValid = true;
                     }
                 }
@@ -625,7 +647,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         return bolValid;
     }
 
-    private boolean validateFooter(){
+    private boolean validateFooter() {
         boolean bolValid = true;
         for (int i = 0; i < ListAnswerViewFooter.size(); i++) {
             List<Jawaban> jawabans = new ArrayList<>();
@@ -762,17 +784,54 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
     String jawabanCheckbox = "";
 
-    public JSONObject getDataTransaction() {
-        JSONObject json = new BLHelper().getDataTransaksiJsonObjCommon(context,jawabanListFinal);
+    public JSONObject getDataTransaction(int FlagPush) {
+        //jika nambah jawaban dari basic
+        /*List<VmTJawabanUser> jawabanUser= jawabanListFinal.getListJawabanUser();
+        try {
+            List<ClsmPertanyaan> pertanyaans = new RepomPertanyaan(context).findQuestionGeneralInfoAll();
+            for (ClsmPertanyaan per : pertanyaans) {
+                List<ClsmJawaban> jawabans = new RepomJawaban(context).findByHeader(per.getIntPertanyaanId());
+                List<VmTJawabanUserDetail> ltDetail = new ArrayList<>();
+                for (ClsmJawaban j :
+                        jawabans) {
+                    String jawaban = j.getTxtJawaban();
+                    VmTJawabanUserDetail detail = new VmTJawabanUserDetail();
+                    detail.setIntmJawabanId(j.getIdJawaban());
+                    detail.setQualified(true);
+                    ltDetail.add(detail);
+                }
+                VmTJawabanUser tJawabanUser = new VmTJawabanUser();
+                tJawabanUser.setBolHaveAnswer(true);
+                tJawabanUser.setBolHavePhoto(false);
+                tJawabanUser.setIntPertanyaanId(per.getIntPertanyaanId());
+                tJawabanUser.setIntTypePertanyaanId(per.getIntJenisPertanyaanId());
+                tJawabanUser.setJawabanUserDetailList(ltDetail);
+                jawabanUser.add(tJawabanUser);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        jawabanListFinal.setListJawabanUser(jawabanUser);*/
+        if (FlagPush == ClsHardCode.SAVE){
+            jawabanListFinal = saveData();
+            jawabanListFinal.setIntStatusDisposisi(0);
+        }
+//        String HeaderID = BLHelper.getPreference(context,ClsHardCode.INT_HEADER_ID);
+//        jawabanListFinal.setIntFillHeaderId(Integer.parseInt(HeaderID));
+        JSONObject json = new BLHelper().getDataTransaksiJsonObjCommon(context, jawabanListFinal);
         return json;
     }
+
     public VmTJawabanUserHeader saveData() {
         VmTJawabanUserHeader tJawabanUserHeader = new VmTJawabanUserHeader();
         List<VmTJawabanUser> tJawabanList = new ArrayList<>();
-        for (int i = 0; i < ListAnswerViewOptional.size(); i++) {
+        boolean bolVariance = true;
+        int count = 0;
+        for (int i = 0; i < ListAnswerViewHeader.size(); i++) {
             try {
-                int intPertanyaanId = ListAnswerViewOptional.get(i).getIntPertanyaanId();
-                int position = ListAnswerViewOptional.get(i).getIntPosition();
+                int intPertanyaanId = ListAnswerViewHeader.get(i).getIntPertanyaanId();
+                int position = ListAnswerViewHeader.get(i).getIntPosition();
                 ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
                 VmTJawabanUser tJawaban = new VmTJawabanUser();
                 tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
@@ -782,16 +841,17 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
                 tJawabanUserHeader.setIntFillHeaderId(pertanyaans.getIntFillHeaderId());
 
-                if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
-                    int a= ListAnswerViewOptional.get(i).getIntPertanyaanId();
-                    int b = rvOptional.getChildCount();
-                    ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 24);
-                } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
-                    ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 22);
-                } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
-                    ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 21);
+                if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                    int a = ListAnswerViewHeader.get(i).getIntPertanyaanId();
+                    int b = rvHeader.getChildCount();
+                    ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 24);
+                } else if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                    ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 22);
+                } else if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 21);
                 }
-                int count = 0;
+                String jawabanFinal = "";
+                Boolean boolJawabanFinal = true;
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
                     boolean isImage = true;
@@ -807,119 +867,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         dtJawaban.setIntmJawabanId(checkBox.getId());
                         dtJawaban.setTxtJawaban(checkBox.getText().toString());
                         dtJawaban.setQualified(checkBox.isChecked());
-                    }
-
-                    if (nextChild instanceof RadioGroup) {
-                        isImage = false;
-                        RadioGroup radioGroup = (RadioGroup) nextChild;
-                        int posisi = radioGroup.getCheckedRadioButtonId();
-                        RadioButton rb = (RadioButton) rvOptional.getChildAt(i).findViewById(posisi);
-                        if(posisi>-1){
-                            String txtJawaban = rb.getText().toString();
-                            dtJawaban.setIntmJawabanId(posisi);
-                            dtJawaban.setTxtJawaban(txtJawaban);
-                            dtJawaban.setQualified(true);
-                        }else {
-                            dtJawaban.setIntmJawabanId(0);
-                            dtJawaban.setTxtJawaban(null);
-                            dtJawaban.setQualified(false);
-                        }
-
-                    }
-                    if (nextChild instanceof EditText) {
-                        isImage = false;
-                        EditText editText = (EditText) nextChild;
-                        dtJawaban.setIntmJawabanId(0);
-                        dtJawaban.setTxtJawaban(editText.getText().toString());
-                        if (editText.getText().toString().length()>0){
-                            dtJawaban.setQualified(true);
-                        }else {
-                            dtJawaban.setQualified(false);
-                        }
-                    }
-                    if (listJawaban.size()==0){
-                        if (pertanyaans.isBolHavePhoto()) {
-                            for (int z = 0; z < ltDataPertanyaanOptional.get(position).listImage.size(); z++) {
-                                if (ltDataPertanyaanOptional.get(position).listImage.get(z).getPath()!= null){
-
-                                    String dirA =ltDataPertanyaanOptional.get(position).listImage.get(z).getPath().getPath();
-                                    dirA = dirA.replaceAll(".+Android", "");
-                                    String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
-                                    File file = new File(dir);
-                                    String imageName = ltDataPertanyaanOptional.get(position).listImage.get(z).getImgName();
-                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName,dir);
-
-                                    listImage.add(dtImage);
-                                }
-                            }
-                        }
-
-                        dtJawaban.setDtImageModels(listImage);
-                    }
-                    if (!isImage){
-                        listJawaban.add(dtJawaban);
-                    }
-                }
-                tJawaban.setJawabanUserDetailList(listJawaban);
-                tJawabanList.add(tJawaban);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-        }
-        for (int i = 0; i < ListAnswerViewMandatory.size(); i++) {
-            try {
-                int intPertanyaanId = ListAnswerViewMandatory.get(i).getIntPertanyaanId();
-                int position = ListAnswerViewMandatory.get(i).getIntPosition();
-                ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
-                VmTJawabanUser tJawaban = new VmTJawabanUser();
-                tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
-                tJawaban.setIntPertanyaanId(intPertanyaanId);
-                tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
-                tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
-                tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
-//                if (pertanyaans.isBolHavePhoto()) {
-//                    for (int x = 0; x < ltDataPertanyaanMandatory.get(position).listImage.size(); x++) {
-//                        if (ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath()!= null){
-//
-//                            String dirA =ltDataPertanyaanMandatory.get(position).listImage.get(x).getPath().getPath();
-//                            dirA = dirA.replaceAll(".+Android", "");
-//                            String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
-//                            File file = new File(dir);
-//                            String imageName = ltDataPertanyaanMandatory.get(position).listImage.get(x).getImgName();
-//                            VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
-//                            listImage.add(dtImage);
-//                        }
-//                    }
-//                }
-//                tJawaban.setDtImageModels(listImage);
-
-                if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
-                    ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 24);
-                } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
-                    ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 22);
-                } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
-                    ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 21);
-                }
-                int count = 0;
-                String jawabanFinal = "";
-                List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
-                for (int x = 0; x < ln.getChildCount(); x++) {
-                    List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
-                    VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
-                    boolean isImage= true;
-                    View nextChild = ln.getChildAt(x);
-                    if (nextChild instanceof CheckBox) {
-                        isImage = false;
-                        CheckBox checkBox = (CheckBox) nextChild;
-                        dtJawaban.setIntmJawabanId(checkBox.getId());
-                        dtJawaban.setTxtJawaban(checkBox.getText().toString());
-                        dtJawaban.setQualified(checkBox.isChecked());
                         if (!checkBox.isChecked()) {
-                            count ++;
-                            if (jawabanFinal.equals("")){
+                            count++;
+                            bolVariance = false;
+                            if (jawabanFinal.equals("")) {
                                 jawabanFinal = String.valueOf(count) + ". " + checkBox.getText().toString();
-                            }else {
+                            } else {
                                 jawabanFinal += "\n" + String.valueOf(count) + ". " + checkBox.getText().toString();
                             }
                         }
@@ -929,17 +882,25 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         isImage = false;
                         RadioGroup radioGroup = (RadioGroup) nextChild;
                         int posisi = radioGroup.getCheckedRadioButtonId();
-                        RadioButton rb = (RadioButton) rvMandatory.getChildAt(i).findViewById(posisi);
-                        if(posisi>-1){
+                        RadioButton rb = (RadioButton) rvHeader.getChildAt(i).findViewById(posisi);
+                        if (posisi > -1) {
                             String txtJawaban = rb.getText().toString();
                             dtJawaban.setIntmJawabanId(posisi);
                             dtJawaban.setTxtJawaban(txtJawaban);
-                            dtJawaban.setQualified(true);
-                        }else {
+                            dtJawaban.setQualified(rb.isChecked());
+                            if (txtJawaban.equals("Yes")) {
+                                dtJawaban.setQualified(true);
+                            } else {
+                                dtJawaban.setQualified(false);
+                                jawabanFinal = txtJawaban;
+                                boolJawabanFinal = false;
+                                bolVariance = false;
+                            }
+                        }/*else {
                             dtJawaban.setIntmJawabanId(0);
                             dtJawaban.setTxtJawaban(null);
                             dtJawaban.setQualified(false);
-                        }
+                        }*/
 
                     }
                     if (nextChild instanceof EditText) {
@@ -947,24 +908,23 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
-                        if (editText.getText().toString().length()>0){
+                        if (editText.getText().toString().length() > 0) {
                             dtJawaban.setQualified(true);
-                        }else {
+                        } else {
                             dtJawaban.setQualified(false);
                         }
                     }
-
-                    if (listJawaban.size()==0){
+                    if (listJawaban.size() == 0) {
                         if (pertanyaans.isBolHavePhoto()) {
-                            for (int z = 0; z < ltDataPertanyaanMandatory.get(position).listImage.size(); z++) {
-                                if (ltDataPertanyaanMandatory.get(position).listImage.get(z).getPath()!= null){
+                            for (int z = 0; z < ltDataPertanyaanHeader.get(position).listImage.size(); z++) {
+                                if (ltDataPertanyaanHeader.get(position).listImage.get(z).getPath() != null) {
 
-                                    String dirA =ltDataPertanyaanMandatory.get(position).listImage.get(z).getPath().getPath();
+                                    String dirA = ltDataPertanyaanHeader.get(position).listImage.get(z).getPath().getPath();
                                     dirA = dirA.replaceAll(".+Android", "");
-                                    String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
+                                    String dir = Environment.getExternalStorageDirectory() + "/Android/" + dirA;
                                     File file = new File(dir);
-                                    String imageName = ltDataPertanyaanMandatory.get(position).listImage.get(z).getImgName();
-                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName,dir);
+                                    String imageName = ltDataPertanyaanHeader.get(position).listImage.get(z).getImgName();
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName, dir);
 
                                     listImage.add(dtImage);
                                 }
@@ -973,15 +933,157 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                         dtJawaban.setDtImageModels(listImage);
                     }
-                    if (!isImage){
+                    if (!isImage) {
                         listJawaban.add(dtJawaban);
                     }
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
-                if (!jawabanFinal.equals("")){
+
+                if (!boolJawabanFinal && ltDataPertanyaanHeader.get(position).intValidateId == 3) {
                     VmAdapterBasic data = new VmAdapterBasic();
-                    data.setTitle(ltDataPertanyaanMandatory.get(position).txtPertanyaan);
+                    data.setTitle(ltDataPertanyaanHeader.get(position).txtPertanyaan);
+                    data.setSubtitle(jawabanFinal);
+                    ListRejection.add(data);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        for (int i = 0; i < ListAnswerViewBody.size(); i++) {
+            try {
+                int intPertanyaanId = ListAnswerViewBody.get(i).getIntPertanyaanId();
+                int position = ListAnswerViewBody.get(i).getIntPosition();
+                ClsmPertanyaan pertanyaans = (ClsmPertanyaan) new RepomPertanyaan(context).findById(intPertanyaanId);
+                VmTJawabanUser tJawaban = new VmTJawabanUser();
+                tJawaban.setTxtTransJawabanId(new BLActivity().GenerateGuid());
+                tJawaban.setIntPertanyaanId(intPertanyaanId);
+                tJawaban.setIntTypePertanyaanId(pertanyaans.getIntJenisPertanyaanId());
+                tJawaban.setBolHavePhoto(pertanyaans.isBolHavePhoto());
+                tJawaban.setBolHaveAnswer(pertanyaans.isBolHaveAnswer());
+//                if (pertanyaans.isBolHavePhoto()) {
+//                    for (int x = 0; x < ltDataPertanyaanBody.get(position).listImage.size(); x++) {
+//                        if (ltDataPertanyaanBody.get(position).listImage.get(x).getPath()!= null){
+//
+//                            String dirA =ltDataPertanyaanBody.get(position).listImage.get(x).getPath().getPath();
+//                            dirA = dirA.replaceAll(".+Android", "");
+//                            String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
+//                            File file = new File(dir);
+//                            String imageName = ltDataPertanyaanBody.get(position).listImage.get(x).getImgName();
+//                            VmTJawabanUser.imageModel dtImage = new VmTJawabanUser().new imageModel(imageName,dir);
+//                            listImage.add(dtImage);
+//                        }
+//                    }
+//                }
+//                tJawaban.setDtImageModels(listImage);
+
+                if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                    ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 24);
+                } else if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                    ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 22);
+                } else if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                    ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 21);
+                }
+                String jawabanFinal = "";
+                Boolean boolJawabanFinal = true;
+                List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
+                for (int x = 0; x < ln.getChildCount(); x++) {
+                    List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
+                    VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
+                    boolean isImage = true;
+                    View nextChild = ln.getChildAt(x);
+                    if (nextChild instanceof CheckBox) {
+                        isImage = false;
+                        CheckBox checkBox = (CheckBox) nextChild;
+                        dtJawaban.setIntmJawabanId(checkBox.getId());
+                        dtJawaban.setTxtJawaban(checkBox.getText().toString());
+                        dtJawaban.setQualified(checkBox.isChecked());
+                        if (!checkBox.isChecked()) {
+                            count++;
+                            bolVariance = false;
+                            if (jawabanFinal.equals("")) {
+                                jawabanFinal = String.valueOf(count) + ". " + checkBox.getText().toString();
+                            } else {
+                                jawabanFinal += "\n" + String.valueOf(count) + ". " + checkBox.getText().toString();
+                            }
+                        }
+                    }
+
+                    if (nextChild instanceof RadioGroup) {
+                        isImage = false;
+                        RadioGroup radioGroup = (RadioGroup) nextChild;
+                        int posisi = radioGroup.getCheckedRadioButtonId();
+                        RadioButton rb = (RadioButton) rvBody.getChildAt(i).findViewById(posisi);
+                        if (posisi > -1) {
+                            String txtJawaban = rb.getText().toString();
+                            dtJawaban.setIntmJawabanId(posisi);
+                            dtJawaban.setTxtJawaban(txtJawaban);
+
+                            if (txtJawaban.equals("Yes")) {
+                                dtJawaban.setQualified(true);
+                            } else {
+                                dtJawaban.setQualified(false);
+                                jawabanFinal = txtJawaban;
+                                boolJawabanFinal = false;
+                                bolVariance = false;
+                            }
+                        }/*else {
+                            dtJawaban.setIntmJawabanId(0);
+                            dtJawaban.setTxtJawaban(null);
+                            dtJawaban.setQualified(false);
+                            jawabanFinal = rb.getText().toString();
+                            boolJawabanFinal = false;
+                        }*/
+
+                    }
+                    if (nextChild instanceof EditText) {
+                        isImage = false;
+                        EditText editText = (EditText) nextChild;
+                        dtJawaban.setIntmJawabanId(0);
+                        dtJawaban.setTxtJawaban(editText.getText().toString());
+                        if (editText.getText().toString().length() > 0) {
+                            dtJawaban.setQualified(true);
+                        } else {
+                            dtJawaban.setQualified(false);
+                            bolVariance = false;
+                        }
+                    }
+
+                    if (listJawaban.size() == 0) {
+                        if (pertanyaans.isBolHavePhoto()) {
+                            for (int z = 0; z < ltDataPertanyaanBody.get(position).listImage.size(); z++) {
+                                if (ltDataPertanyaanBody.get(position).listImage.get(z).getPath() != null) {
+
+                                    String dirA = ltDataPertanyaanBody.get(position).listImage.get(z).getPath().getPath();
+                                    dirA = dirA.replaceAll(".+Android", "");
+                                    String dir = Environment.getExternalStorageDirectory() + "/Android/" + dirA;
+                                    File file = new File(dir);
+                                    String imageName = ltDataPertanyaanBody.get(position).listImage.get(z).getImgName();
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName, dir);
+
+                                    listImage.add(dtImage);
+                                }
+                            }
+                        }
+
+                        dtJawaban.setDtImageModels(listImage);
+                    }
+                    if (!isImage) {
+                        listJawaban.add(dtJawaban);
+                    }
+                }
+                tJawaban.setJawabanUserDetailList(listJawaban);
+                tJawabanList.add(tJawaban);
+                /*if (!jawabanFinal.equals("")){
+                    VmAdapterBasic data = new VmAdapterBasic();
+                    data.setTitle(ltDataPertanyaanBody.get(position).txtPertanyaan);
+                    data.setSubtitle(jawabanFinal);
+                    ListRejection.add(data);
+                }*/
+                if (!boolJawabanFinal && ltDataPertanyaanBody.get(position).intValidateId == 3) {
+                    VmAdapterBasic data = new VmAdapterBasic();
+                    data.setTitle(ltDataPertanyaanBody.get(position).txtPertanyaan);
                     data.setSubtitle(jawabanFinal);
                     ListRejection.add(data);
                 }
@@ -1013,6 +1115,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 }
 
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
+                String jawabanFinal = "";
+                Boolean boolJawabanFinal = true;
                 for (int x = 0; x < ln.getChildCount(); x++) {
                     List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
@@ -1027,6 +1131,15 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         dtJawaban.setIntmJawabanId(checkBox.getId());
                         dtJawaban.setTxtJawaban(checkBox.getText().toString());
                         dtJawaban.setQualified(checkBox.isChecked());
+                        if (!checkBox.isChecked()) {
+                            count++;
+                            bolVariance = false;
+                            if (jawabanFinal.equals("")) {
+                                jawabanFinal = String.valueOf(count) + ". " + checkBox.getText().toString();
+                            } else {
+                                jawabanFinal += "\n" + String.valueOf(count) + ". " + checkBox.getText().toString();
+                            }
+                        }
                     }
 
                     if (nextChild instanceof RadioGroup) {
@@ -1034,39 +1147,52 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         RadioGroup radioGroup = (RadioGroup) nextChild;
                         int posisi = radioGroup.getCheckedRadioButtonId();
                         RadioButton rb = (RadioButton) rvFooter.getChildAt(i).findViewById(posisi);
-                        if(rb != null){
+                        if (rb != null && posisi > -1) {
+                           /* String txtJawaban = rb.getText().toString();
+                            dtJawaban.setIntmJawabanId(posisi);
+                            dtJawaban.setTxtJawaban(txtJawaban);
+                            dtJawaban.setQualified(true);*/
                             String txtJawaban = rb.getText().toString();
                             dtJawaban.setIntmJawabanId(posisi);
                             dtJawaban.setTxtJawaban(txtJawaban);
-                            dtJawaban.setQualified(true);
-                        }else {
+                            dtJawaban.setQualified(rb.isChecked());
+                            if (txtJawaban.equals("Yes")) {
+                                dtJawaban.setQualified(true);
+                            } else {
+                                dtJawaban.setQualified(false);
+                                jawabanFinal = txtJawaban;
+                                boolJawabanFinal = false;
+                                bolVariance = false;
+                            }
+                        }/*else {
                             dtJawaban.setIntmJawabanId(0);
                             dtJawaban.setTxtJawaban(null);
                             dtJawaban.setQualified(false);
-                        }
+                        }*/
                     }
                     if (nextChild instanceof EditText) {
                         isImage = false;
                         EditText editText = (EditText) nextChild;
                         dtJawaban.setIntmJawabanId(0);
                         dtJawaban.setTxtJawaban(editText.getText().toString());
-                        if (editText.getText().toString().length()>0){
+                        if (editText.getText().toString().length() > 0) {
                             dtJawaban.setQualified(true);
-                        }else {
+                        } else {
                             dtJawaban.setQualified(false);
+                            bolVariance = false;
                         }
                     }
-                    if (listJawaban.size()==0){
+                    if (listJawaban.size() == 0) {
                         if (pertanyaans.isBolHavePhoto()) {
                             for (int z = 0; z < ltDataPertanyaanFooter.get(position).listImage.size(); z++) {
-                                if (ltDataPertanyaanFooter.get(position).listImage.get(z).getPath()!= null){
+                                if (ltDataPertanyaanFooter.get(position).listImage.get(z).getPath() != null) {
 
-                                    String dirA =ltDataPertanyaanFooter.get(position).listImage.get(z).getPath().getPath();
+                                    String dirA = ltDataPertanyaanFooter.get(position).listImage.get(z).getPath().getPath();
                                     dirA = dirA.replaceAll(".+Android", "");
-                                    String dir = Environment.getExternalStorageDirectory()+"/Android/"+dirA;
+                                    String dir = Environment.getExternalStorageDirectory() + "/Android/" + dirA;
                                     File file = new File(dir);
                                     String imageName = ltDataPertanyaanFooter.get(position).listImage.get(z).getImgName();
-                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName,dir);
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imageName, dir);
 
                                     listImage.add(dtImage);
                                 }
@@ -1076,22 +1202,32 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         dtJawaban.setDtImageModels(listImage);
                     }
 
-                    if (!isImage){
-                        listJawaban.add(dtJawaban); 
+                    if (!isImage) {
+                        listJawaban.add(dtJawaban);
                     }
                 }
                 tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
+                if (!boolJawabanFinal && ltDataPertanyaanFooter.get(position).intValidateId == 3) {
+                    VmAdapterBasic data = new VmAdapterBasic();
+                    data.setTitle(ltDataPertanyaanFooter.get(position).txtPertanyaan);
+                    data.setSubtitle(jawabanFinal);
+                    ListRejection.add(data);
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
         }
 
-        if (ListRejection.size()==0){
-            tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.Accept.getIdStatus());
-        }else if (ListRejection.size()>0){
-            tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.Excalated.getIdStatus());
+        if (ListRejection.size() == 0) {
+            if(!bolVariance) {
+                tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.AcceptWithVariance.getIdStatus());
+            }else{
+                tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.Accept.getIdStatus());
+            }
+        } else if (ListRejection.size() > 0) {
+            tJawabanUserHeader.setIntStatusDisposisi(EnumStatusDisposisi.Reject.getIdStatus());
         }
         tJawabanUserHeader.setListJawabanUser(tJawabanList);
         return tJawabanUserHeader;
@@ -1101,26 +1237,27 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST_QUESTION) {
             if (resultCode == -1) {
-                if (GLOBAL_PICK_PICTURE_POSITION_ID == ClsHardCode.HEADER){
+                if (GLOBAL_PICK_PICTURE_POSITION_ID == ClsHardCode.HEADER) {
                     setOnActivityResultOptional();
-                }else if(GLOBAL_PICK_PICTURE_POSITION_ID == ClsHardCode.BODY){
+                } else if (GLOBAL_PICK_PICTURE_POSITION_ID == ClsHardCode.BODY) {
                     setOnActivityResultMandatory();
-                }else if(GLOBAL_PICK_PICTURE_POSITION_ID == ClsHardCode.FOOTER){
+                } else if (GLOBAL_PICK_PICTURE_POSITION_ID == ClsHardCode.FOOTER) {
                     setOnActivityResultFooter();
                 }
 
             }
         }
     }
-    public void setOnActivityResultOptional(){
-        for (int i = 0; i < rvOptional.getChildCount(); i++) {
-            int position = ListAnswerViewOptional.get(i).getIntPosition();
-            if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
-                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 24);
-            } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
-                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 22);
-            } else if (ltDataPertanyaanOptional.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
-                ln = (LinearLayout) rvOptional.getChildAt(i).findViewById(ListAnswerViewOptional.get(i).getIntPertanyaanId() * 21);
+
+    public void setOnActivityResultOptional() {
+        for (int i = 0; i < rvHeader.getChildCount(); i++) {
+            int position = ListAnswerViewHeader.get(i).getIntPosition();
+            if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaanHeader.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvHeader.getChildAt(i).findViewById(ListAnswerViewHeader.get(i).getIntPertanyaanId() * 21);
             }
 
             for (int x = 0; x < ln.getChildCount(); x++) {
@@ -1135,11 +1272,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         try {
                             Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
                             new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
-                            ltDataPertanyaanOptional.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setPath(uriImage);
-                            ltDataPertanyaanOptional.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setImgName(imgName);
-                            ltDataPertanyaanOptional.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setBitmap(thePic);
-//                                            ltDataPertanyaanOptional.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
-//                                            ltDataPertanyaanOptional.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
+                            ltDataPertanyaanHeader.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setPath(uriImage);
+                            ltDataPertanyaanHeader.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setImgName(imgName);
+                            ltDataPertanyaanHeader.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setBitmap(thePic);
+//                                            ltDataPertanyaanHeader.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
+//                                            ltDataPertanyaanHeader.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
                         } catch (Exception ex) {
                             String a = ex.getMessage();
                         }
@@ -1148,15 +1285,16 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             }
         }
     }
-    public void setOnActivityResultMandatory(){
-        for (int i = 0; i < rvMandatory.getChildCount(); i++) {
-            int position = ListAnswerViewMandatory.get(i).getIntPosition();
-            if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
-                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 24);
-            } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
-                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 22);
-            } else if (ltDataPertanyaanMandatory.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
-                ln = (LinearLayout) rvMandatory.getChildAt(i).findViewById(ListAnswerViewMandatory.get(i).getIntPertanyaanId() * 21);
+
+    public void setOnActivityResultMandatory() {
+        for (int i = 0; i < rvBody.getChildCount(); i++) {
+            int position = ListAnswerViewBody.get(i).getIntPosition();
+            if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
+                ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 24);
+            } else if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton) {
+                ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 22);
+            } else if (ltDataPertanyaanBody.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanCheckBox) {
+                ln = (LinearLayout) rvBody.getChildAt(i).findViewById(ListAnswerViewBody.get(i).getIntPertanyaanId() * 21);
             }
 
             for (int x = 0; x < ln.getChildCount(); x++) {
@@ -1171,11 +1309,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         try {
                             Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
                             new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
-                            ltDataPertanyaanMandatory.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setPath(uriImage);
-                            ltDataPertanyaanMandatory.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setBitmap(thePic);
-                            ltDataPertanyaanMandatory.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setImgName(imgName);
-//                                            ltDataPertanyaanMandatory.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
-//                                            ltDataPertanyaanMandatory.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
+                            ltDataPertanyaanBody.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setPath(uriImage);
+                            ltDataPertanyaanBody.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setBitmap(thePic);
+                            ltDataPertanyaanBody.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setImgName(imgName);
+//                                            ltDataPertanyaanBody.get(GLOBAL_PICK_PICTURE_QUEST_ID).path = uriImage;
+//                                            ltDataPertanyaanBody.get(GLOBAL_PICK_PICTURE_QUEST_ID).bitmap = thePic;
                         } catch (Exception ex) {
                             String a = ex.getMessage();
                         }
@@ -1184,7 +1322,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             }
         }
     }
-    public void setOnActivityResultFooter(){
+
+    public void setOnActivityResultFooter() {
         for (int i = 0; i < rvFooter.getChildCount(); i++) {
             int position = ListAnswerViewFooter.get(i).getIntPosition();
             if (ltDataPertanyaanFooter.get(position).jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox) {
@@ -1226,12 +1365,12 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             (List<View> listAnswer, HashMap<Integer, View> HMPertanyaan1, List<VmListAnswerView> ListAnswerView, int intPositionID) {
 //        this.listAnswer = listAnswer;
         this.HMPertanyaan1 = HMPertanyaan1;
-//        this.ListAnswerViewOptional = new ArrayList<>();
+//        this.ListAnswerViewHeader = new ArrayList<>();
         if (intPositionID == ClsHardCode.HEADER) {
-            this.ListAnswerViewOptional = ListAnswerView;
+            this.ListAnswerViewHeader = ListAnswerView;
         } else if (intPositionID == ClsHardCode.BODY) {
-            this.ListAnswerViewMandatory = ListAnswerView;
-        }else if (intPositionID == ClsHardCode.FOOTER) {
+            this.ListAnswerViewBody = ListAnswerView;
+        } else if (intPositionID == ClsHardCode.FOOTER) {
             this.ListAnswerViewFooter = ListAnswerView;
         }
     }

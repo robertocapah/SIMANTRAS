@@ -27,7 +27,8 @@ public class FragmentTab extends Fragment {
     private SectionsPagerAdapter viewPagerAdapter;
     private TabLayout tab_layout;
     View v;
-
+    int statusLoading, intDesc;
+    int intIsValidator = 0;// buat membedakan mana dari unloading ato loading tab
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,21 +91,33 @@ public class FragmentTab extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         viewPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         String myValue, noSPM;
-        int statusLoading;
+
         Bundle bundle = new Bundle();
         if (this.getArguments() != null) {
             myValue = this.getArguments().getString(ClsHardCode.txtMessage);
             noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);
             statusLoading = this.getArguments().getInt(ClsHardCode.txtStatusLoading);
+            intDesc = this.getArguments().getInt(ClsHardCode.intDesc,99);
+            intIsValidator = this.getArguments().getInt(ClsHardCode.intIsValidator,88);
             bundle.putString(ClsHardCode.txtMessage, myValue);
             bundle.putString(ClsHardCode.txtNoSPM, noSPM);
             bundle.putInt(ClsHardCode.txtStatusLoading, statusLoading);
+            bundle.putInt(ClsHardCode.intDesc, intDesc);
+            bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
         }
 //        viewPagerAdapter.addFragment(FragmentDetailInfoChecker.newInstance(), "Questioner Checker");    // index 0
         Fragment fragmentQuestionTab = FragmentQuestionTab.newInstance();
         fragmentQuestionTab.setArguments(bundle);
-        viewPagerAdapter.addFragment(fragmentQuestionTab, "Questioner Checker");    // index 0
-        viewPagerAdapter.addFragment(FragmentDestinationDetail.newInstance(), "General Information");   // index 1
+        FragmentValidator fragmentValidator = FragmentValidator.newInstance();
+        fragmentValidator.setArguments(bundle);
+        /*if (intIsValidator == ClsHardCode.INT_VALIDATOR){
+            viewPagerAdapter.addFragment(fragmentValidator, "Validator Unloading");    // index 0
+            viewPagerAdapter.addFragment(FragmentDestinationDetail.newInstance(), "General Information");   // index 1
+        }else {*/
+            viewPagerAdapter.addFragment(fragmentQuestionTab, "Questioner Checker");    // index 0
+            viewPagerAdapter.addFragment(FragmentDestinationDetail.newInstance(), "General Information");   // index 1
+        //}
+
         viewPager.setAdapter(viewPagerAdapter);
     }
     private class SectionsPagerAdapter extends FragmentPagerAdapter {

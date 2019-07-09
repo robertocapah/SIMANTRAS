@@ -27,6 +27,32 @@ public class VMRequestDataSPM {
         public String txtNameApp;
         public String intOrgID;
         public String txtNoSPM;
+        public int intIsValidator;
+        public int Type;
+        public int intFillHdrID;
+
+        public int getIntFillHdrID() {
+            return intFillHdrID;
+        }
+
+        public void setIntFillHdrID(int intFillHdrID) {
+            this.intFillHdrID = intFillHdrID;
+        }
+
+        public int getType() {
+            return Type;
+        }
+        public void setType(int type) {
+            Type = type;
+        }
+
+        public int getIntIsValidator() {
+            return intIsValidator;
+        }
+
+        public void setIntIsValidator(int intIsValidator) {
+            this.intIsValidator = intIsValidator;
+        }
 
         public int getIntUserId() {
             return intUserId;
