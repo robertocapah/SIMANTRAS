@@ -85,24 +85,20 @@ import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 import com.kalbenutritionals.simantra.Fragment.FragmentApprover;
 import com.kalbenutritionals.simantra.Fragment.FragmentHome;
 import com.kalbenutritionals.simantra.Fragment.FragmentNotification;
-import com.kalbenutritionals.simantra.Fragment.FragmentPushData;
 import com.kalbenutritionals.simantra.Fragment.FragmentSPMSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSetting;
 import com.kalbenutritionals.simantra.Fragment.FragmentTab;
-import com.kalbenutritionals.simantra.Fragment.FragmentQuestionTab;
+import com.kalbenutritionals.simantra.Fragment.FragmentTestUIS;
 import com.kalbenutritionals.simantra.Fragment.FragmentTransactions;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.Service.ServiceNative;
 
-/**
- * Created by Rian Andrivani on 11/22/2017.
- */
 
 public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    List<ClsmUserLogin> dataLogin = null;
+    ClsmUserLogin dataLogin = null;
     RepomUserLogin loginRepo;
     PackageInfo pInfo = null;
     int selectedId;
@@ -120,7 +116,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     @BindView(R.id.main_content)
     CoordinatorLayout mainContent;
     @BindView(R.id.navigation_view)
-    NavigationView navigationView;
+    public NavigationView navigationView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     private String i_View = "Fragment";
@@ -131,7 +127,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
     private AccountManager mAccountManager;
     boolean isOnCreate = false;
     Unbinder unbinder;
-    Toolbar toolbar;
+    public Toolbar toolbar;
     public CircleImageView ivProfile;
     TextView tvUsername, tvEmail;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -179,11 +175,11 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                         android.app.AlertDialog alert = builder.create();
                         alert.show();
                     } else {
-                        toolbar.setTitle("Home");
+                        /*toolbar.setTitle("Home");
                         FragmentHome fragmentHome = new FragmentHome();
                         FragmentTransaction fragmentTransactionHome = getSupportFragmentManager().beginTransaction();
                         fragmentTransactionHome.replace(R.id.frame, fragmentHome);
-                        fragmentTransactionHome.commit();
+                        fragmentTransactionHome.commit();*/
                     }
                 }
             }
@@ -297,6 +293,20 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                         fragmentTransactionTab.replace(R.id.frame, fragmentTab);
                         fragmentTransactionTab.commit();
                         break;
+                    case 6:
+                        bundle = new Bundle();
+                        bundle.putString(ClsHardCode.txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                        bundle.putString(ClsHardCode.txtNoSPM, noSPM);
+                        bundle.putInt(ClsHardCode.intDesc,intDesc);
+                        bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+                        int intStatus = intent.getIntExtra(ClsHardCode.txtStatusLoading,0);
+                        bundle.putInt(ClsHardCode.txtStatusLoading,intStatus);
+                        fragmentTab = new FragmentTab();
+                        fragmentTab.setArguments(bundle);
+                        fragmentTransactionTab = getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionTab.replace(R.id.frame, fragmentTab);
+                        fragmentTransactionTab.commit();
+                        break;
                 }
             }
 
@@ -322,15 +332,21 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                 Bundle bundle = new Bundle();
                 String myMessage = "notMainMenu";
                 bundle.putString("message", myMessage);
-
-                FragmentPushData fragmentPushData = new FragmentPushData();
-                fragmentPushData.setArguments(bundle);
-                FragmentTransaction fragmentTransactionPushData = getSupportFragmentManager().beginTransaction();
-                fragmentTransactionPushData.replace(R.id.frame, fragmentPushData);
-                fragmentTransactionPushData.commit();
-                selectedId = 99;
             }
-        } else {
+        } else if(getIntent().getIntExtra(new ClsHardCode().intRejectPopUp,000) == 1){
+            checkNavItem = null;
+            toolbar.setTitle("SIMANTRA");
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            Bundle arguments = new Bundle();
+            arguments.putInt( ClsHardCode.intRejectPopUp , 1);
+            FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
+            fragmentSPMSearch.setArguments(arguments);
+            FragmentTransaction fragmentTransactionSPMSearch = getSupportFragmentManager().beginTransaction();
+            fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
+            fragmentTransactionSPMSearch.commit();
+
+            selectedId = 99;
+        }else{
             toolbar.setTitle("Home");
             setSupportActionBar(toolbar);
 
@@ -372,7 +388,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
         View headerNav = navigationView.getHeaderView(0);
         tvEmail = (TextView) headerNav.findViewById(R.id.tvEmail);
         tvUsername = (TextView) headerNav.findViewById(R.id.tvUsername);
@@ -419,39 +435,41 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
         try {
             loginRepo = new RepomUserLogin(getApplicationContext());
-            dataLogin = (List<ClsmUserLogin>) loginRepo.findAll();
+            dataLogin = loginRepo.getUserLogin(getApplicationContext());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (dataLogin.size() > 0) {
-            tvUsername.setText(dataLogin.get(0).getTxtUserName());
-            tvEmail.setText(dataLogin.get(0).getTxtEmail());
+        int intRoleId = 0;
+        if (dataLogin!=null) {
+            tvUsername.setText(dataLogin.getTxtUserName());
+            tvEmail.setText(dataLogin.getTxtEmail());
+            intRoleId = dataLogin.getIntRoleID();
         } else {
             tvUsername.setText("Roberto Oloan Capah");
             tvEmail.setText("Roberto.capah@kalbenutritionals.com");
         }
 
-        if (dataLogin.get(0).getBlobImg() != null) {
-            Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dataLogin.get(0).getBlobImg());
+        if (dataLogin.getBlobImg() != null) {
+            Bitmap bitmap = new PickImage().decodeByteArrayReturnBitmap(dataLogin.getBlobImg());
             Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
             ivProfile.setImageBitmap(bitmap1);
         }
-
-        String linkAPI = new RepomConfig(getApplicationContext()).APIToken;
-        try {
-            URL u = new URL(linkAPI);
-            linkAPI = u.getHost();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        String linkAPI = BLHelper.getLinkApp(this);
 
         Menu header = navigationView.getMenu();
         SubMenu subMenuVersion = header.addSubMenu(R.id.groupVersion, 0, 3, "Version");
         try {
-            subMenuVersion.add(getPackageManager().getPackageInfo(getPackageName(), 0).versionName + " \u00a9 KN-IT").setIcon(R.mipmap.ic_android).setEnabled(false);
+            String vers = BLHelper.getVersionApp(this);
+            subMenuVersion.add(vers).setIcon(R.mipmap.ic_android).setEnabled(false);
             subMenuVersion.add(linkAPI).setIcon(R.mipmap.ic_link).setEnabled(false);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (intRoleId == ClsHardCode.ROLE_CHECKER){
+            header.removeItem(R.id.mnValidator);
+        }else if (intRoleId == ClsHardCode.ROLE_VERIFICATOR){
+            header.removeItem(R.id.mnTransporter);
         }
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -459,28 +477,14 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 menuItem.setChecked(true);
                 checkNavItem = menuItem;
-                pDialog.setCancelable(false);
+                /*pDialog.setCancelable(false);
                 pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
 
                     }
                 });
-                pDialog.show();
-                drawerLayout.closeDrawers();
-
-                return true;
-            }
-        });
-
-//        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                Fragment fragment = null;
-                pDialog.dismiss();
+                pDialog.show();*/
                 if (checkNavItem != null) {
                     switch (checkNavItem.getItemId()) {
                         case R.id.mnLogout:
@@ -547,7 +551,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             fragmentTransactionApprover.commit();
                             selectedId = 99;
                             break;
-                        case R.id.transporter:
+                        case R.id.mnTransporter:
                             checkNavItem = null;
                             toolbar.setTitle("SIMANTRA");
 
@@ -578,9 +582,9 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             selectedId = 99;
                             break;
 
-                        case R.id.validator:
+                        case R.id.mnValidator:
                             checkNavItem = null;
-                            toolbar.setTitle("Validator");
+                            toolbar.setTitle("Verificator");
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -615,43 +619,6 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             fragmentTransactionsTrans.commit();
                             selectedId = 99;
                             break;
-                        case R.id.mnpushData:
-                            checkNavItem = null;
-                            toolbar.setTitle("Push Data");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-                            FragmentPushData fragmentPushData = new FragmentPushData();
-                            FragmentTransaction fragmentTransactionPushData = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionPushData.replace(R.id.frame, fragmentPushData);
-                            fragmentTransactionPushData.commit();
-                            selectedId = 99;
-                            break;
-                        case R.id.mnDownloadData:
-                            checkNavItem = null;
-                            toolbar.setTitle("Download Data");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-
-                            selectedId = 99;
-                            break;
-                        case R.id.mnNotification:
-                            checkNavItem = null;
-                            toolbar.setTitle("Notification");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-                            FragmentNotification fragmentNotification = new FragmentNotification();
-                            FragmentTransaction fragmentTransactionNotification = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionNotification.replace(R.id.frame, fragmentNotification);
-                            fragmentTransactionNotification.commit();
-                            selectedId = 99;
-
-                            break;
                         case R.id.mnSetting:
                             checkNavItem = null;
                             toolbar.setTitle("Setting");
@@ -672,11 +639,19 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
 
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-                            FragmentQuestionTab fragmentQuestionTab = new FragmentQuestionTab();
+                            /*FragmentQuestionTab fragmentQuestionTab = new FragmentQuestionTab();
                             FragmentTransaction fragmentTransactionTestUI = getSupportFragmentManager().beginTransaction();
                             fragmentTransactionTestUI.replace(R.id.frame, fragmentQuestionTab);
+                            fragmentTransactionTestUI.commit();*/
+                            FragmentTestUIS fragmentTestUIS = new FragmentTestUIS();
+                            FragmentTransaction fragmentTransactionTestUI = getSupportFragmentManager().beginTransaction();
+                            fragmentTransactionTestUI.replace(R.id.frame, fragmentTestUIS);
                             fragmentTransactionTestUI.commit();
                             selectedId = 99;
+                            break;
+                        case R.id.mnAbout:
+                            Intent i = new Intent(ActivityMainMenu.this,AboutApp.class);
+                            startActivity(i);
                             break;
 
                         default:
@@ -706,6 +681,21 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             }*/
                     }
                 }
+                drawerLayout.closeDrawers();
+
+                return true;
+            }
+        });
+
+//        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                Fragment fragment = null;
+                pDialog.dismiss();
+
 
             }
 
@@ -804,7 +794,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                             ShortcutBadger.removeCountOrThrow(getApplicationContext());
 
                             Log.d("Data info", "logout Success");
-
+                            new BLHelper().clearDataSharePreference(getApplicationContext());
                             Intent intent = new Intent(ActivityMainMenu.this, ActivitySplash.class);
                             finish();
                             startActivity(intent);
@@ -946,7 +936,7 @@ public class ActivityMainMenu extends AppCompatActivity implements GoogleApiClie
                         if (accounts.length > 0) {
                             boolean isExist = false;
                             for (int i = 0; i < accounts.length; i++) {
-                                if (accounts[i].name.equals(dataLogin.get(0).getTxtUserName().toUpperCase().toString())) {
+                                if (accounts[i].name.equals(dataLogin.getTxtUserName().toUpperCase().toString())) {
                                     isExist = true;
                                     break;
                                 }

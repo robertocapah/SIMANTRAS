@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,12 +28,7 @@ import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.CustomView.Utils.CameraSelectorDialogFragment;
 import com.kalbenutritionals.simantra.CustomView.Utils.FormatSelectorDialogFragment;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.DataItem;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ListDatIsianItem;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
-import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
-import com.kalbenutritionals.simantra.Database.Common.ClsmPertanyaan;
-import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
@@ -199,13 +193,19 @@ public class FullScannerFragment extends Fragment implements
         if (message.equals(ClsHardCode.txtBundleKeyBarcode)) {
             goToInfoChecker(QRCodeReal);
         } else {
-            Intent i = new Intent(new Intent(getActivity(), ActivityMainMenu.class));
-            i.putExtra(new ClsHardCode().txtMessage, ClsHardCode.txtBundleKeyBarcodeLoad);
-            i.putExtra(new ClsHardCode().txtNoSPM, rawResult.getText());
-            i.putExtra(new ClsHardCode().txtStatusLoading, statusLoading);
-            i.putExtra(ClsHardCode.intDesc,intDesc);
-            i.putExtra(ClsHardCode.intIsValidator, intStatus);
-            getActivity().startActivity(i);
+            String qrCode = BLHelper.getPreference(context,ClsHardCode.SP_QRCodeActive);
+            if (qrCode.equals(rawResult.getText())){
+                Intent i = new Intent(new Intent(getActivity(), ActivityMainMenu.class));
+                i.putExtra(new ClsHardCode().txtMessage, ClsHardCode.txtBundleKeyBarcodeLoad);
+                i.putExtra(new ClsHardCode().txtNoSPM, rawResult.getText());
+                i.putExtra(new ClsHardCode().txtStatusLoading, statusLoading);
+                i.putExtra(ClsHardCode.intDesc,intDesc);
+                i.putExtra(ClsHardCode.intIsValidator, intStatus);
+                getActivity().startActivity(i);
+            }else{
+                getActivity().finish();
+                Toast.makeText(context, "SPM not match with current transaction", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -227,11 +227,12 @@ public class FullScannerFragment extends Fragment implements
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
                 if (model.getResult() != null) {
                     if (model.getResult().isStatus()) {
-                        BLHelper.savePreference(context,ClsHardCode.INT_HEADER_ID,String.valueOf(model.getINTFILLHDRID()));
+                        BLHelper.savePreference(context,ClsHardCode.SP_INT_HEADER_ID,String.valueOf(model.getINTFILLHDRID()));
                         new BLHelper().GenerateData(getActivity().getApplicationContext(), model);
                         if (model.getINTDESC() < 1) {
                             new RepomPertanyaan(context).deleteAllData();
                             BLHelper.savePreference(context, "spm", noQr);
+                            new BLHelper().saveDataTimeFromApi(model, context);
                             Intent i = new Intent(new Intent(getActivity(), ActivityMainMenu.class));
                             i.putExtra(new ClsHardCode().txtMessage, new ClsHardCode().txtBundleKeyBarcode);
                             i.putExtra(new ClsHardCode().txtNoSPM, rawResult.getText());
@@ -245,7 +246,7 @@ public class FullScannerFragment extends Fragment implements
                                     final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
                                     Date dateScan = new Date(System.currentTimeMillis());
                                     String timeScan = format.format(dateScan);
-                                    BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan); //save waktu scan
+                                    new BLHelper().saveDataTimeFromApi(model, context); //save waktu scan
                                     Intent i = new Intent(new Intent(getActivity(), ActivityMainMenu.class));
                                     i.putExtra(new ClsHardCode().txtMessage, new ClsHardCode().txtBundleKeyBarcode);
                                     i.putExtra(new ClsHardCode().txtNoSPM, rawResult.getText());
@@ -304,13 +305,47 @@ public class FullScannerFragment extends Fragment implements
                                     i.putExtra(new ClsHardCode().intDesc, model.getINTDESC());
                                     getActivity().startActivity(i);
                                     break;
+                                case 6:
+                                    new BLHelper().saveDataTimeFromApi(model, context);
+                                    i = new Intent(new Intent(getActivity(), ActivityMainMenu.class));
+                                    i.putExtra(new ClsHardCode().txtMessage, new ClsHardCode().txtBundleKeyBarcode);
+                                    i.putExtra(new ClsHardCode().txtNoSPM, rawResult.getText());
+                                    i.putExtra(ClsHardCode.intIsValidator, intStatus);
+                                    i.putExtra(new ClsHardCode().intDesc, model.getINTDESC());
+                                    getActivity().startActivity(i);
+                                    break;
                             }
                         }
 
                     } else {
-                        Toast.makeText(context, model.getResult().getMessage(), Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
+
+//                        getActivity().finish();
+//                        new BLHelper().popUpRejectedData(context);
+//                        final Dialog dialog = new Dialog(context);
+//                        dialog.setContentView(R.layout.dialog_rejected_vehicle);
+                        /*Button btnClose = dialog.findViewById(R.id.btnClose);
+                        btnClose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });*/
+                        if(model.getDataIssue()!=null){
+                            new BLHelper().GenerateData(getActivity().getApplicationContext(), model);
+                            Intent i = new Intent(new Intent(getActivity(), ActivityMainMenu.class));
+                            i.putExtra(new ClsHardCode().intDesc, model.getINTDESC());
+                            i.putExtra(new ClsHardCode().intRejectPopUp, 1);
+                            getActivity().startActivity(i);
+                        }else{
+                            Toast.makeText(context, model.getResult().getMessage(), Toast.LENGTH_SHORT).show();
+                            getActivity().finish();
+                        }
+
+//                        dialog.show();
                     }
+                }else{
+                    getActivity().finish();
+                    Toast.makeText(context, "Null Return", Toast.LENGTH_SHORT).show();
                 }
             }
 

@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,6 +33,7 @@ import android.widget.TextView;
 
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.UriData;
+import com.kalbenutritionals.simantra.ActivityWebView;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.CustomView.Utils.SpacingItemDecoration;
 import com.kalbenutritionals.simantra.CustomView.Utils.setDataChecklist;
@@ -104,8 +109,10 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         public View lyt_expand;
         public LinearLayout lyt_parent, ln_error_msg;
         private LinearLayout lyt_pertayaan, ll_jawaban1;
+//        private LinearLayout ll_reason;
         public TextView tvErrorMesage;
         public TextView tvBtnInformation;
+//        public EditText etReason;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -118,19 +125,20 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             tvBtnInformation = (TextView) v.findViewById(R.id.tvBtnInformation);
             ln_error_msg = (LinearLayout) v.findViewById(R.id.ln_error_msg);
             if(lyt_pertayaan== null)lyt_pertayaan = (LinearLayout) v.findViewById(R.id.ll_pertanyaan1);
+//            ll_reason = (LinearLayout) v.findViewById(R.id.ll_reason);
+//            etReason = (EditText) v.findViewById(R.id.etReason);
 
             if (ll_jawaban1 == null)ll_jawaban1 = (LinearLayout) v.findViewById(R.id.ll_jawaban1);
-
-
 
         }
     }
 
-    private void selectImage(final int id, int position, final int imgId) {
+    private void selectImage(final int id, int position, final int imgId, String txtImageName) {
         FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION = id;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_ID = imgId;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_QUEST_ID = position;
-        String filename = "tmp_act"+id;
+        String filename = "tmp_act"+txtImageName;
+
         FragmentDetailInfoChecker.uriImage = new UriData().getOutputMediaImageUri(ctx, new ClsHardCode().txtFolderDataQuest, filename);
         FragmentDetailInfoChecker.imgName = filename;
         new PickImage().CaptureImage(ctx, new ClsHardCode().txtFolderDataQuest, filename, FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION);
@@ -184,7 +192,6 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 
     private void findViewId(VmListItemAdapterPertanyaan pa, OriginalViewHolder holder, int postition){
 
-
         if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanCheckBox){
             int size = holder.ll_jawaban1.getChildCount();
             for (int x = 0; x < holder.ll_jawaban1.getChildCount(); x++) {
@@ -216,6 +223,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 //            vmListAnswerView.setVwJawaban(listAnswer.get(postition));
             vmListAnswerView.setIntPosition(postition);
             vmListAnswerView.setType(pa.intValidateId);
+            vmListAnswerView.setTxtReason(pa.txtReason);
             ListAnswerView.add(vmListAnswerView);
         }/*else if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanTextBox){
             int size = holder.ll_jawaban1.getChildCount();
@@ -257,15 +265,20 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         }
 //        listAnswer.add();
     }
-    private  void generateQ(final VmListItemAdapterPertanyaan pa, OriginalViewHolder holder,final int position){
+    private  void generateQ(final VmListItemAdapterPertanyaan pa, final OriginalViewHolder holder, final int position){
         holder.tvBtnInformation.setVisibility(View.VISIBLE);
         holder.tvBtnInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 
                 builder.setTitle("Metode Pemeriksaan");
-                builder.setMessage(pa.txtMetodePemeriksaan);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    builder.setMessage(Html.fromHtml(pa.txtMetodePemeriksaan, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    builder.setMessage(Html.fromHtml(pa.txtMetodePemeriksaan));
+                }
+
 
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -275,7 +288,11 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 });
 
                 AlertDialog alert = builder.create();
-                alert.show();
+                alert.show();*/
+                Intent i = new Intent(ctx, ActivityWebView.class);
+                i.putExtra("content",pa.txtMetodePemeriksaan);
+                ctx.startActivity(i);
+
             }
         });
         if (pa.bitValid){
@@ -361,14 +378,15 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImage(paId,position2, position);
+                        selectImage(paId,position2, position, String.valueOf(pa.intFillHdrId)+String.valueOf(pa.id)+position);
                         GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });
                 linearLayout.addView(rcImage);
             }
             holder.ll_jawaban1.addView(linearLayout);
-        }else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
+        }
+        else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanRadioButton){
             TextView tvPertanyaan = new TextView(ctx);
             tvPertanyaan.setText(pa.txtPertanyaan);
             holder.lyt_pertayaan.addView(tvPertanyaan);
@@ -379,20 +397,17 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             layoutParams.gravity =  Gravity.CENTER_VERTICAL;
             linearLayout.setLayoutParams(layoutParams);
             linearLayout.setId(pa.id*22);
-
+            final RadioGroup rg = new RadioGroup(ctx); //create the RadioGroup
+            RadioButton rb = new RadioButton(ctx);
             if (pa.bolHaveAnswer){
                 List<Jawaban> jawabans  = pa.jawabans;
 //                    List<ClsmJawaban> jawabans = new RepomJawaban(ctx).findByHeader(pa.id);
-                RadioGroup rg = new RadioGroup(ctx); //create the RadioGroup
                 rg.setOrientation(RadioGroup.HORIZONTAL);//or RadioGroup.VERTICAL
                 rg.setGravity(Gravity.CENTER);
-
                 rg.setId(pa.id*12);
                 rg.clearCheck();
-
-                for (Jawaban j :
+                for (final Jawaban j :
                         jawabans) {
-                    RadioButton rb = new RadioButton(ctx);
                     rb = new RadioButton(ctx);
                     rb.setText(j.jawaban);
                     rb.setId(j.idJawaban);
@@ -404,8 +419,17 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     params.setMargins(10, 10, 100, 15);
                     rb.setLayoutParams(params);
                     rb.setChecked(j.bitChoosen);
+                    if (j.bitChoosen){
+                        if(rb.getText().equals("No")){
+//                            holder.ll_reason.setVisibility(View.VISIBLE);
+//                            holder.etReason.setText(pa.txtReason);
+                        }else{
+//                            holder.ll_reason.setVisibility(View.GONE);
+                        }
+                    }
                     rg.addView(rb);
                     ClsTools.setMargins(rg,5,20,5,20);
+
                 }
 
                 ClsTools.setMargins(linearLayout,5,20,5,20);
@@ -436,6 +460,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     imageAdapter.setIntId((pa.id*15)+pa.listImage.get(i).getPosition());
                     imageAdapter.setBmpImage(pa.listImage.get(i).getBitmap());
                     imageAdapter.setIntPosition(pa.listImage.get(i).getPosition());
+                    imageAdapter.setTxtLinkImage(pa.listImage.get(i).getTxtLink());
                     listImage.add(imageAdapter);
                 }
 
@@ -445,13 +470,63 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImage(paId,position2, position);
+                        view.setFocusable(true);
+                        selectImage(paId,position2, position,String.valueOf(pa.intFillHdrId)+String.valueOf(pa.id)+position);
                         GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });
                 linearLayout.addView(rcImage);
 
             }
+            /*DisplayMetrics displayMetrics = new DisplayMetrics();
+            Activity activity = (Activity) ctx;
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels - 60;
+            int heigth = displayMetrics.heightPixels / 10;
+            LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(width, heigth);
+            layoutParams2.gravity = Gravity.CENTER_HORIZONTAL;
+            layoutParams2.setMargins(100,10,100,10);
+            final EditText etTest = new EditText(ctx);
+            etTest.setText(pa.txtReason);
+            etTest.setHint("Please fill the reason...");
+            etTest.setId(pa.id*14);
+            etTest.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            etTest.setSingleLine(false);
+//            etTest.setEms(10);
+            etTest.setGravity(Gravity.TOP);
+//            etTest.setPadding(20,0,20,0);
+//            etTest.setBackgroundResource(R.drawable.bg_edtext);
+            etTest.setLayoutParams(layoutParams2);
+            linearLayout.addView(etTest);
+            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    rg.setFocusable(false);
+                    if (checkedId==2){
+                        etTest.setVisibility(View.VISIBLE);
+                        rg.setFocusable(true);
+                    }else{
+                        etTest.setVisibility(View.GONE);
+                        rg.setFocusable(true);
+                    }
+
+                }
+            });
+            if(rg.getCheckedRadioButtonId()==-1){
+                int selectedId = rg.getCheckedRadioButtonId();
+                // find the radiobutton by returned id
+                RadioButton rd = (RadioButton)v.findViewById(selectedId);
+                if (rd!=null){
+                    String txt = rd.getText().toString();
+                    if (txt.equals("No")){
+                        etTest.setVisibility(View.GONE);
+                    }else{
+                        etTest.setVisibility(View.VISIBLE);
+                    }
+                }else{
+                    etTest.setVisibility(View.GONE);
+                }
+            }*/
             holder.ll_jawaban1.addView(linearLayout);
 
         }else if(pa!=null && pa.jenisPertanyaan == ClsHardCode.JenisPertanyaanTextBox){
@@ -554,7 +629,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImage(paId,position2, position);
+                        selectImage(paId,position2, position,String.valueOf(pa.intFillHdrId)+String.valueOf(pa.id)+position);
                         GLOBAL_PICK_PICTURE_POSITION_ID = p.intPositionId;
                     }
                 });

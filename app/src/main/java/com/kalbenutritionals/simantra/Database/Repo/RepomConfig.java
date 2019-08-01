@@ -10,14 +10,14 @@ import com.kalbenutritionals.simantra.Database.DatabaseManager;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by Rian Andrivani on 11/21/2017.
- */
 
 public class RepomConfig {
     DatabaseHelper helper;
-//    public String APIToken = "http://10.171.13.50:8092/";
-    public String APIToken = "http://10.171.14.59/simantra-api/";
+//    public String APIToken = "http://10.171.13.50:8092/
+//    ";
+    public String APIToken = "http://10.171.13.50/simantra-api/";
+//    public String APIToken = "http://10.171.14.56/simantra-api/";
+//    public String APIToken = "http://192.168.137.6/simantra-api/";
     public String API = APIToken + "api/";
 
     public RepomConfig(Context context) {

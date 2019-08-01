@@ -1,8 +1,8 @@
 package com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps;
 
-import com.google.gson.annotations.SerializedName;
-
+import java.util.List;
 import javax.annotation.Generated;
+import com.google.gson.annotations.SerializedName;
 
 @Generated("com.robohorse.robopojogenerator")
 public class Data{
@@ -10,11 +10,17 @@ public class Data{
 	@SerializedName("dtDateLogin")
 	private String dtDateLogin;
 
+	@SerializedName("intBitFaceDetection")
+	private int intBitFaceDetection;
+
 	@SerializedName("IntLOBID")
 	private int intLOBID;
 
 	@SerializedName("txtGuiID")
 	private String txtGuiID;
+
+	@SerializedName("listExpedition")
+	private List<ListExpeditionItem> listExpedition;
 
 	@SerializedName("TxtUserName")
 	private String txtUserName;
@@ -49,7 +55,7 @@ public class Data{
 	@SerializedName("txtLinkFotoProfile")
 	private String txtLinkFotoProfile;
 
-	@SerializedName("ClsmUserRole")
+	@SerializedName("mUserRole")
 	private MUserRole mUserRole;
 
 	@SerializedName("BitActive")
@@ -67,12 +73,23 @@ public class Data{
 	@SerializedName("TxtCompanyCode")
 	private String txtCompanyCode;
 
+	@SerializedName("listORG")
+	private List<ListORGItem> listORG;
+
 	public void setDtDateLogin(String dtDateLogin){
 		this.dtDateLogin = dtDateLogin;
 	}
 
 	public String getDtDateLogin(){
 		return dtDateLogin;
+	}
+
+	public void setIntBitFaceDetection(int intBitFaceDetection){
+		this.intBitFaceDetection = intBitFaceDetection;
+	}
+
+	public int getIntBitFaceDetection(){
+		return intBitFaceDetection;
 	}
 
 	public void setIntLOBID(int intLOBID){
@@ -89,6 +106,14 @@ public class Data{
 
 	public String getTxtGuiID(){
 		return txtGuiID;
+	}
+
+	public void setListExpedition(List<ListExpeditionItem> listExpedition){
+		this.listExpedition = listExpedition;
+	}
+
+	public List<ListExpeditionItem> getListExpedition(){
+		return listExpedition;
 	}
 
 	public void setTxtUserName(String txtUserName){
@@ -227,13 +252,23 @@ public class Data{
 		return txtCompanyCode;
 	}
 
+	public void setListORG(List<ListORGItem> listORG){
+		this.listORG = listORG;
+	}
+
+	public List<ListORGItem> getListORG(){
+		return listORG;
+	}
+
 	@Override
  	public String toString(){
 		return 
 			"Data{" + 
 			"dtDateLogin = '" + dtDateLogin + '\'' + 
+			",intBitFaceDetection = '" + intBitFaceDetection + '\'' + 
 			",intLOBID = '" + intLOBID + '\'' + 
 			",txtGuiID = '" + txtGuiID + '\'' + 
+			",listExpedition = '" + listExpedition + '\'' + 
 			",txtUserName = '" + txtUserName + '\'' + 
 			",txtNick = '" + txtNick + '\'' + 
 			",txtEmail = '" + txtEmail + '\'' + 
@@ -245,12 +280,13 @@ public class Data{
 			",intUserID = '" + intUserID + '\'' + 
 			",txtEmpID = '" + txtEmpID + '\'' + 
 			",txtLinkFotoProfile = '" + txtLinkFotoProfile + '\'' + 
-			",ClsmUserRole = '" + mUserRole + '\'' +
+			",mUserRole = '" + mUserRole + '\'' + 
 			",bitActive = '" + bitActive + '\'' + 
 			",txtPassword = '" + txtPassword + '\'' + 
 			",txtCreateBy = '" + txtCreateBy + '\'' + 
 			",txtUpdateBy = '" + txtUpdateBy + '\'' + 
 			",txtCompanyCode = '" + txtCompanyCode + '\'' + 
+			",listORG = '" + listORG + '\'' + 
 			"}";
 		}
 }

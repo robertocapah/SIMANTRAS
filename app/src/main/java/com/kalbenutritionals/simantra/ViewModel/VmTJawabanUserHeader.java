@@ -9,7 +9,16 @@ import java.util.List;
 public class VmTJawabanUserHeader {
     private int intFillHeaderId;
     private int intStatusDisposisi;
+    private String txtLoadingMessage;
     private List<VmTJawabanUser> listJawabanUser;
+
+    public String getTxtLoadingMessage() {
+        return txtLoadingMessage;
+    }
+
+    public void setTxtLoadingMessage(String txtLoadingMessage) {
+        this.txtLoadingMessage = txtLoadingMessage;
+    }
 
     public int getIntFillHeaderId() {
         return intFillHeaderId;

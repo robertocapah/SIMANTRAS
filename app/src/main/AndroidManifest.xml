@@ -98,6 +98,14 @@
             android:name="com.kalbenutritionals.simantra.ActivityMainMenu"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.kalbenutritionals.simantra.AboutApp"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.kalbenutritionals.simantra.ActivityWebView"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -1,5 +1,9 @@
 package com.kalbenutritionals.simantra.ViewModel;
 
+import com.kalbenutritionals.simantra.Database.Common.ClsOrganisation;
+
+import java.util.List;
+
 public class VMRequestDataSPM {
     public UserRequestSPM data;
     public DeviceInfo device_info;
@@ -30,6 +34,15 @@ public class VMRequestDataSPM {
         public int intIsValidator;
         public int Type;
         public int intFillHdrID;
+        public List<ClsOrganisation> ltOrganisation;
+
+        public List<ClsOrganisation> getLtOrganisation() {
+            return ltOrganisation;
+        }
+
+        public void setLtOrganisation(List<ClsOrganisation> ltOrganisation) {
+            this.ltOrganisation = ltOrganisation;
+        }
 
         public int getIntFillHdrID() {
             return intFillHdrID;

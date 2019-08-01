@@ -6,12 +6,15 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.kalbenutritionals.simantra.Database.Common.ClsExpedition;
 import com.kalbenutritionals.simantra.Database.Common.ClsImages;
+import com.kalbenutritionals.simantra.Database.Common.ClsOrganisation;
 import com.kalbenutritionals.simantra.Database.Common.ClsPhotoProfile;
 import com.kalbenutritionals.simantra.Database.Common.ClsTChecker;
+import com.kalbenutritionals.simantra.Database.Common.ClsTConfigHelper;
+import com.kalbenutritionals.simantra.Database.Common.ClsTDataRejection;
 import com.kalbenutritionals.simantra.Database.Common.ClsTJawaban;
 import com.kalbenutritionals.simantra.Database.Common.ClsTNotifikasi;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
@@ -41,7 +44,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // txtPertanyaan of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = _path.dbName;
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 25;
 
     // the DAO object we use to access the SimpleData table
     protected Dao<ClsmConfigData, Integer> mConfigDao;
@@ -63,6 +66,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     protected Dao<ClsTChecker, Integer> tCheckersDao;
     protected Dao<ClsTNotifikasi, Integer> tNotifikasisDao;
     protected Dao<ClsImages, Integer> ClsImagesDao;
+    protected Dao<ClsTConfigHelper, Integer> ClsTCommonRejectionDao;
+    protected Dao<ClsTDataRejection, Integer> ClsTDataRejectionDao;
+    protected Dao<ClsOrganisation, Integer> ClsOrganisationDao;
+    protected Dao<ClsExpedition, Integer> ClsExpeditionDao;
 
 
 
@@ -92,6 +99,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, ClsTChecker.class);
             TableUtils.createTableIfNotExists(connectionSource, ClsTNotifikasi.class);
             TableUtils.createTableIfNotExists(connectionSource, ClsImages.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsTDataRejection.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsTConfigHelper.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsOrganisation.class);
+            TableUtils.createTableIfNotExists(connectionSource, ClsExpedition.class);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,6 +136,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, ClsTChecker.class,true );
             TableUtils.dropTable(connectionSource, ClsTNotifikasi.class,true );
             TableUtils.dropTable(connectionSource, ClsImages.class,true );
+            TableUtils.dropTable(connectionSource, ClsTDataRejection.class,true );
+            TableUtils.dropTable(connectionSource, ClsTConfigHelper.class,true );
+            TableUtils.dropTable(connectionSource, ClsOrganisation.class,true );
+            TableUtils.dropTable(connectionSource, ClsExpedition.class,true );
 
             onCreate(database, connectionSource);
         } catch (SQLException e) {
@@ -150,6 +165,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, ClsTChecker.class);
             TableUtils.clearTable(connectionSource, ClsTNotifikasi.class);
             TableUtils.clearTable(connectionSource, ClsImages.class);
+            TableUtils.clearTable(connectionSource, ClsTDataRejection.class);
+            TableUtils.clearTable(connectionSource, ClsTConfigHelper.class);
+            TableUtils.clearTable(connectionSource, ClsOrganisation.class);
+            TableUtils.clearTable(connectionSource, ClsExpedition.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -173,12 +192,40 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, ClsmJawaban.class);
             TableUtils.clearTable(connectionSource, ClsmPertanyaan.class);
             TableUtils.clearTable(connectionSource, ClsImages.class);
+            TableUtils.clearTable(connectionSource, ClsTDataRejection.class);
+            TableUtils.clearTable(connectionSource, ClsTConfigHelper.class);
             valid = true;
         }catch (SQLException e) {
             e.printStackTrace();
             valid = false;
         }
         return valid;
+    }
+
+    public Dao<ClsExpedition, Integer> getClsExpeditionDao() throws SQLException {
+        if(ClsExpeditionDao == null){
+            ClsExpeditionDao = getDao(ClsExpedition.class);
+        }
+        return ClsExpeditionDao;
+    }
+    public Dao<ClsOrganisation, Integer> getClsOrganisationDao() throws SQLException {
+        if(ClsOrganisationDao == null){
+            ClsOrganisationDao = getDao(ClsOrganisation.class);
+        }
+        return ClsOrganisationDao;
+    }
+    public Dao<ClsTConfigHelper, Integer> getClsTCommonRejectionDao() throws SQLException {
+        if(ClsTCommonRejectionDao == null){
+            ClsTCommonRejectionDao = getDao(ClsTConfigHelper.class);
+        }
+        return ClsTCommonRejectionDao;
+    }
+
+    public Dao<ClsTDataRejection, Integer> getClsTDataRejectionDao() throws SQLException {
+        if(ClsTDataRejectionDao == null){
+            ClsTDataRejectionDao = getDao(ClsTDataRejection.class);
+        }
+        return ClsTDataRejectionDao;
     }
 
     public Dao<ClsImages, Integer> gettClsImagesDao() throws SQLException {
@@ -330,5 +377,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         tJawabanDao = null;
         tNotifikasisDao = null;
         ClsImagesDao = null;
+        ClsTCommonRejectionDao = null;
+        ClsTDataRejectionDao = null;
+        ClsOrganisationDao = null;
+        ClsExpeditionDao = null;
     }
 }

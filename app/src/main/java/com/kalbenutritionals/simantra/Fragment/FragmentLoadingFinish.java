@@ -48,15 +48,15 @@ public class FragmentLoadingFinish extends Fragment {
         v = inflater.inflate(R.layout.fragment_loading_finish, container, false);
         unbinder = ButterKnife.bind(this, v);
         context = getActivity().getApplicationContext();
-        String scanTime = BLHelper.getPreference(context, ClsHardCode.ScanTime);
-        String loadTimeStart = BLHelper.getPreference(context, ClsHardCode.StartTime);
-        String loadTimeFinish = BLHelper.getPreference(context, ClsHardCode.EndTime);
+        String scanTime = BLHelper.getPreference(context, ClsHardCode.SP_SCAN_TIME);
+        String loadTimeStart = BLHelper.getPreference(context, ClsHardCode.SP_STARTTIME_CHECKER);
+        String loadTimeFinish = BLHelper.getPreference(context, ClsHardCode.SP_FINISHTIME_CHECKER);
         String txtDurationStart = new BLHelper().getDataDurationString(scanTime, loadTimeStart);
         String txtDurationFinish = new BLHelper().getDataDurationString(loadTimeStart, loadTimeFinish);
 
-        String scanTimeUnloading = BLHelper.getPreference(context, ClsHardCode.ScanTimeUnloading);
-        String loadTimeStartUnloading = BLHelper.getPreference(context, ClsHardCode.StartTimeUnloading);
-        String loadTimeFinishUnloading = BLHelper.getPreference(context, ClsHardCode.EndTimeUnloading);
+        String scanTimeUnloading = BLHelper.getPreference(context, ClsHardCode.SP_SCANTIME_UNLOADING);
+        String loadTimeStartUnloading = BLHelper.getPreference(context, ClsHardCode.SP_STARTTIME_UNLOADING);
+        String loadTimeFinishUnloading = BLHelper.getPreference(context, ClsHardCode.SP_FINISHTIME_UNLOADING);
         String txtDurationStartUnloading = new BLHelper().getDataDurationString(scanTimeUnloading, loadTimeStartUnloading);
         String txtDurationFinishUnloading = new BLHelper().getDataDurationString(loadTimeStartUnloading, loadTimeFinishUnloading);
 
@@ -73,8 +73,8 @@ public class FragmentLoadingFinish extends Fragment {
 
             tvLabelLoadFinish2.setText("Unloading Finish");
             tvLabelloadFinish.setText("Unloading Finish");
-            tvLabelloadStart.setText("Unload Start");
-            tvLabelLoadStart2.setText("Unload Start");
+            tvLabelloadStart.setText("Unloading Start");
+            tvLabelLoadStart2.setText("Unloading Start");
         } else {
             tvScanTime.setText(scanTime);
             tvLoadingStart.setText(loadTimeStart);

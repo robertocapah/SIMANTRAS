@@ -46,8 +46,8 @@ public class FragmentTestUIS extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.checker_step, container, false);
-        line_first = (View) v.findViewById(R.id.line_first);
+        v = inflater.inflate(R.layout.dialog_rejected_vehicle, container, false);
+        /*line_first = (View) v.findViewById(R.id.line_first);
         line_second = (View) v.findViewById(R.id.line_second);
         image_shipping = (ImageView) v.findViewById(R.id.image_left);
         image_payment = (ImageView) v.findViewById(R.id.image_midle);
@@ -77,14 +77,14 @@ public class FragmentTestUIS extends Fragment {
                                 final Dialog dialog = new Dialog(getActivity());
                                 dialog.setContentView(R.layout.alert_validation);
                                 dialog.setTitle("Warning");
-                                /*Button btnSave = (Button) dialog.findViewById(R.id.btnSaveToDraft);
+                                *//*Button btnSave = (Button) dialog.findViewById(R.id.btnSaveToDraft);
                                 // if button is clicked, close the custom dialog
                                 btnSave.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         dialog.dismiss();
                                     }
-                                });*/
+                                });*//*
 
                                 dialog.show();
                             }else{
@@ -110,7 +110,7 @@ public class FragmentTestUIS extends Fragment {
                 displayFragment(array_state[idx_state]);
             }
         });
-        displayFragment(array_state[idx_state]);
+        displayFragment(array_state[idx_state]);*/
 
         return v;
     }

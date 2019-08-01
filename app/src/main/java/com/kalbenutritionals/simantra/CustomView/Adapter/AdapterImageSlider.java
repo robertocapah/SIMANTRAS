@@ -2,12 +2,15 @@ package com.kalbenutritionals.simantra.CustomView.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.balysv.materialripple.MaterialRippleLayout;
@@ -15,12 +18,13 @@ import com.kalbenutritionals.simantra.CustomView.Utils.ClsTools;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.Images;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterImageSlider extends PagerAdapter {
     private Activity act;
-    private List<Images> items;
-
+    private List<Images> items = new ArrayList<>();
+    Context context;
     private AdapterImageSlider.OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
@@ -35,6 +39,7 @@ public class AdapterImageSlider extends PagerAdapter {
     public AdapterImageSlider(Activity activity, List<Images> items) {
         this.act = activity;
         this.items = items;
+        this.context = activity.getApplicationContext();
     }
 
     @Override
@@ -62,6 +67,7 @@ public class AdapterImageSlider extends PagerAdapter {
         LayoutInflater inflater = (LayoutInflater) act.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.item_slider_image, container, false);
 
+        final LinearLayout layout_dots = v.findViewById(R.id.layout_dots);
         ImageView image = (ImageView) v.findViewById(R.id.image);
         MaterialRippleLayout lyt_parent = (MaterialRippleLayout) v.findViewById(R.id.lyt_parent);
         ClsTools.displayImageOriginalUrl(act, image, o.image,o.imgLink);
@@ -73,8 +79,9 @@ public class AdapterImageSlider extends PagerAdapter {
                 }
             }
         });
+        ViewPager vp = (ViewPager) container;
 
-        ((ViewPager) container).addView(v);
+        vp.addView(v);
 
         return v;
     }

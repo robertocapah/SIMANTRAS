@@ -10,9 +10,7 @@ import com.kalbenutritionals.simantra.Database.DatabaseManager;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by Rian Andrivani on 11/22/2017.
- */
+
 
 public class RepomMenu implements CRUD {
     private DatabaseHelper helper;

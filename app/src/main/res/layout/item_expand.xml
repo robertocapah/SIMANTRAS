@@ -80,6 +80,20 @@
             android:orientation="vertical">
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/ll_reason"
+            android:orientation="vertical">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_edtext"
+                android:id="@+id/etReason"
+                android:hint="Fill the reason"
+                />
+        </LinearLayout>
 
     </LinearLayout>
     <LinearLayout

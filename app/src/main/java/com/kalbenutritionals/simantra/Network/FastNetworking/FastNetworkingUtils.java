@@ -147,6 +147,30 @@ public class FastNetworkingUtils {
                     }
                 });
     }
+    public void FNRequestPostDataNoProgress(final Activity activity, String txtLink, JSONObject JObject, final InterfaceFastNetworking listener) {
+        String access_token = "";
+        List<ClsToken> dataToken = null;
+        access_token = getToken(activity);
+        AndroidNetworking.post(txtLink)
+                .addJSONObjectBody(JObject)
+                .addHeaders("Authorization", "Bearer " + access_token)
+                .setTag("test")
+                .setPriority(Priority.LOW)
+                .doNotCacheResponse()
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        listener.onResponse(response);
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        listener.onError(error);
+                        ErrorHandlerFN(activity, error, TAG);
+                    }
+                });
+    }
 
     public void FNRequestPostDataWthBody(final Context context, String txtLink, final String progressBarType, final InterfaceFastNetworking listener) {
         String access_token = "";
@@ -160,6 +184,7 @@ public class FastNetworkingUtils {
                 .addHeaders("Authorization", "Bearer " + access_token)
                 .setTag("test")
                 .setPriority(Priority.LOW)
+                .doNotCacheResponse()
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
@@ -319,12 +344,21 @@ public class FastNetworkingUtils {
         }
         return token;
     }
+    Dialog dialog;
     public void FNRequestUploadListImage(final Activity ctx, String strLinkAPI, final String mRequestBody, Map<String,File> files, final String progressBarType, final String tag, final InterfaceFastNetworking listener) {
         String access_token = getToken(ctx);
         final ProgressDialog Dialog = new ProgressDialog(ctx);
         Dialog.setMessage(progressBarType);
         Dialog.setCancelable(false);
-        Dialog.show();
+//        Dialog.show();
+        dialog = new Dialog(ctx);
+        dialog.setContentView(R.layout.layout_progress_download_apk);
+        TextView tvProcessDesc = dialog.findViewById(R.id.tvProgressDesc);
+        tvProcessDesc.setText("Pushing Datas ...");
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        final DonutProgress progressD = (DonutProgress) dialog.findViewById(R.id.progressPercentage);
+        dialog.show();
         AndroidNetworking.upload(strLinkAPI)
                 .addMultipartFile(files)
                 .addMultipartParameter("txtParam", mRequestBody)
@@ -340,7 +374,7 @@ public class FastNetworkingUtils {
                             @Override
                             public void run() {
                                 double precentage = ((double) bytesUploaded / (double) totalBytes) * 100;
-//                                progressD.setProgress((int) precentage);
+                                progressD.setProgress((int) precentage);
                             }
                         });
                     }
@@ -351,6 +385,7 @@ public class FastNetworkingUtils {
                         // do anything with response
                         listener.onResponse(response);
                         Dialog.dismiss();
+                        dialog.dismiss();
                     }
 
                     @Override
@@ -359,6 +394,7 @@ public class FastNetworkingUtils {
                         listener.onError(error);
                         ErrorHandlerFN(ctx,error,tag);
                         Dialog.dismiss();
+                        dialog.dismiss();
                     }
                 });
     }
@@ -373,7 +409,10 @@ public class FastNetworkingUtils {
         }
         new ToastCustom().showToasty(context, "Network Error "+error.getErrorBody() + " " + error.getErrorDetail(), 4);
         if (error.getErrorCode() == 401){
-            new ActivitySplash().requestToken(context);
+            new ActivitySplash().requestToken(context,1);
+        }
+        if (error.getErrorCode() == 408){
+            new ToastCustom().showToasty(context, "Network Error Request Timeout " + error.getErrorDetail(), 4);
         }
     }
 }

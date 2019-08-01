@@ -7,9 +7,18 @@ public class VmListAnswerView {
     private int intPertanyaanId;
     private View vwJawaban;
     private int intPosition;
+    private String txtReason;
     private Bitmap bitmap;
     private String pathImage;
     private int type;
+
+    public String getTxtReason() {
+        return txtReason;
+    }
+
+    public void setTxtReason(String txtReason) {
+        this.txtReason = txtReason;
+    }
 
     public int getType() {
         return type;

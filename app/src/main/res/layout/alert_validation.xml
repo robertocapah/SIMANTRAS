@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/spacing_medium"
@@ -27,13 +28,15 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvTitleAlert"
+                    style="@style/TextAppearance.Medium.Bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvTitleAlert"
                     android:layout_margin="@dimen/spacing_small"
                     android:text="UNMET EXCALATION POINT :"
+                    android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/grey_95"/>
+                    android:textColor="@color/grey_95" />
 
             </LinearLayout>
 
@@ -46,25 +49,34 @@
                 android:background="@drawable/bg_rounded_normal"
                 android:nestedScrollingEnabled="true"
                 android:scrollbars="vertical"
-                android:scrollingCache="true"></android.support.v7.widget.RecyclerView>
+                android:scrollingCache="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
 
-
-            <TextView
+            <EditText
+                android:id="@+id/etReason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:background="@drawable/bg_edtext"
+                android:hint="Fill Reason" />
+
+            <TextView
                 android:id="@+id/titleConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_small"
+                android:text="Do you want to Continue?"
                 android:textAlignment="center"
-                android:text="Do you want to proceed?"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:layout_weight="1"
-                android:layout_gravity="center"
                 android:orientation="horizontal">
+
                 <Button
                     android:id="@+id/btnProceed"
                     android:layout_width="wrap_content"

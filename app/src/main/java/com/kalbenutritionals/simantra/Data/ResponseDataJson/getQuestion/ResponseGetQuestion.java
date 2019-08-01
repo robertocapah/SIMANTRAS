@@ -16,11 +16,36 @@ public class ResponseGetQuestion{
 	@SerializedName("INT_FILL_HDR_ID")
 	private int iNTFILLHDRID;
 
+	@SerializedName("txtLoadingMessage")
+	private String txtLoadingMessage;
+
+	@SerializedName("txtQRCode")
+	private String txtQRCode;
+
 	@SerializedName("TimeData")
 	private List<TimeDataItem> timeData;
 
 	@SerializedName("INT_DESC")
 	private int iNTDESC;
+
+	@SerializedName("dataIssue")
+	private DataIssue dataIssue;
+
+	public String getTxtLoadingMessage() {
+		return txtLoadingMessage;
+	}
+
+	public void setTxtLoadingMessage(String txtLoadingMessage) {
+		this.txtLoadingMessage = txtLoadingMessage;
+	}
+
+	public String getTxtQRCode() {
+		return txtQRCode;
+	}
+
+	public void setTxtQRCode(String txtQRCode) {
+		this.txtQRCode = txtQRCode;
+	}
 
 	public void setResult(Result result){
 		this.result = result;
@@ -62,6 +87,14 @@ public class ResponseGetQuestion{
 		return iNTDESC;
 	}
 
+	public void setDataIssue(DataIssue dataIssue){
+		this.dataIssue = dataIssue;
+	}
+
+	public DataIssue getDataIssue(){
+		return dataIssue;
+	}
+
 	@Override
  	public String toString(){
 		return 
@@ -71,6 +104,7 @@ public class ResponseGetQuestion{
 			",iNT_FILL_HDR_ID = '" + iNTFILLHDRID + '\'' + 
 			",timeData = '" + timeData + '\'' + 
 			",iNT_DESC = '" + iNTDESC + '\'' + 
+			",dataIssue = '" + dataIssue + '\'' + 
 			"}";
 		}
 }

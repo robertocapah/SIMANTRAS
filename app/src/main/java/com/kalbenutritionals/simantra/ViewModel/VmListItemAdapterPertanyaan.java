@@ -25,14 +25,17 @@ public class VmListItemAdapterPertanyaan {
     public int intValidateId;
     public int intPositionId;
     public int intFillDtlId;
+    public int intFillHdrId;
     public String txtMetodePemeriksaan;
+    public String txtReason;
+    public String txtLoadingMessage;
     // flag when item swiped
     public boolean swiped = false;
 
     public VmListItemAdapterPertanyaan() {
     }
 
-    public VmListItemAdapterPertanyaan(int image, String txtPertanyaan, int id, int jenisPertanyaan, boolean bitImage, List<Jawaban> jawabans, boolean bitValid, String msg, Bitmap bitmap, Uri uri, boolean bolHaveAnswer, int intValidateId, int intPositionId, String txtMetodePemeriksaan, int intFillDtlId) {
+    public VmListItemAdapterPertanyaan(int image, String txtPertanyaan, int id, int jenisPertanyaan, boolean bitImage, List<Jawaban> jawabans, boolean bitValid, String msg, Bitmap bitmap, Uri uri, boolean bolHaveAnswer, int intValidateId, int intPositionId, String txtMetodePemeriksaan, int intFillDtlId, int intFillHdrId, String txtReason, String txtLoadingMessage) {
         this.id = id;
         this.image = image;
         this.txtPertanyaan = txtPertanyaan;
@@ -48,5 +51,8 @@ public class VmListItemAdapterPertanyaan {
         this.intPositionId = intPositionId;
         this.txtMetodePemeriksaan = txtMetodePemeriksaan;
         this.intFillDtlId = intFillDtlId;
+        this.intFillHdrId = intFillHdrId;
+        this.txtReason = txtReason;
+        this.txtLoadingMessage = txtLoadingMessage;
     }
 }

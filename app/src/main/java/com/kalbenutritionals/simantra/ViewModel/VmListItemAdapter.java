@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Created by Dewi Oktaviani on 10/2/2018.
  */
-@DatabaseTable
+
 public class VmListItemAdapter implements Serializable {
 
     public String getTxtId() {
@@ -91,25 +91,41 @@ public class VmListItemAdapter implements Serializable {
         this.txtImgName = txtImgName;
     }
 
+    public String getTxtStatus() {
+        return txtStatus;
+    }
 
-    @DatabaseField(id = true, columnName = "txtId")
+    public void setTxtStatus(String txtStatus) {
+        this.txtStatus = txtStatus;
+    }
+
+    public int getIntStatus() {
+        return intStatus;
+    }
+
+    public void setIntStatus(int intStatus) {
+        this.intStatus = intStatus;
+    }
+
+    public String getTxtLinkPdf() {
+        return txtLinkPdf;
+    }
+
+    public void setTxtLinkPdf(String txtLinkPdf) {
+        this.txtLinkPdf = txtLinkPdf;
+    }
+
     public String txtId;
-    @DatabaseField(columnName = "intImgView")
     public Integer intImgView;
-    @DatabaseField(columnName = "drwImg")
     public Drawable drwImg;
-    @DatabaseField(columnName = "txtTitle")
     public String txtTittle;
-    @DatabaseField(columnName = "txtSubTittle")
     public String txtSubTittle;
-    @DatabaseField(columnName = "txtDesc")
     public String txtDesc;
-    @DatabaseField(columnName = "txtDate")
     public String txtDate;
-    @DatabaseField(columnName = "intColor")
     public int intColor;
-    @DatabaseField(columnName = "boolSection")
     public boolean boolSection;
-    @DatabaseField(columnName = "txtImgName")
     public String txtImgName;
+    public String txtStatus;
+    public String txtLinkPdf;
+    public int intStatus;
 }

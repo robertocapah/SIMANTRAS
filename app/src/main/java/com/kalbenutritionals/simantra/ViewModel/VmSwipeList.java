@@ -2,9 +2,6 @@ package com.kalbenutritionals.simantra.ViewModel;
 
 import java.io.Serializable;
 
-/**
- * Created by Rian Andrivani on 11/23/2017.
- */
 
 public class VmSwipeList implements Serializable {
     private String _txtId;

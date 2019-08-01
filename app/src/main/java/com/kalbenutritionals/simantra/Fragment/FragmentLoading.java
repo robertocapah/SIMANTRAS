@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +34,8 @@ import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -128,7 +125,7 @@ public class FragmentLoading extends Fragment {
                 timeContinue();
             }
             if (myValue != null && myValue.equals(ClsHardCode.txtBundleKeyBarcodeLoad)) {
-                String spmActive = BLHelper.getPreference(context, ClsHardCode.txtNoSPMActive);
+                String spmActive = BLHelper.getPreference(context, ClsHardCode.SP_NoSPMActive);
                 if (spmActive.equals(noSPM)) {
                     int status = this.getArguments().getInt(ClsHardCode.txtStatusLoading);
                     if (status == 0) {//status buat baca barcode untuk mengarahkan ke halaman load
@@ -174,7 +171,7 @@ public class FragmentLoading extends Fragment {
         String strLinkAPI = new ClsHardCode().linksetUnlockTransaksi;
         Date date = new Date(System.currentTimeMillis());
         final String time = format.format(date);
-        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.SP_INT_HEADER_ID);
         int intHeaderId = Integer.parseInt(txtHeaderId);
         int intStatus = EnumTime.FinishLoading.getIdStatus();
         String txtStatus = EnumTime.FinishLoading.name();
@@ -264,7 +261,7 @@ public class FragmentLoading extends Fragment {
     }
 
     public void timeContinue() {
-        String startT = BLHelper.getPreference(context, ClsHardCode.StartTime);
+        String startT = BLHelper.getPreference(context, ClsHardCode.SP_STARTTIME_CHECKER);
         tvStartTime.setText(startT);
         btnStart.setText("Processing ...");
         spinKit.setVisibility(View.VISIBLE);
@@ -275,16 +272,15 @@ public class FragmentLoading extends Fragment {
 
     public void startingTime() {
         final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
-        spinKit.setVisibility(View.VISIBLE);
+
 //        handler.postDelayed(runnable, 0);
         Date date = new Date(System.currentTimeMillis());
         final String time = format.format(date);
-        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.SP_INT_HEADER_ID);
         int intHeaderId = Integer.parseInt(txtHeaderId);
         int intStatus = EnumTime.StartLoading.getIdStatus();
         String txtStatus = EnumTime.StartLoading.name();
         String strLinkAPI = new ClsHardCode().linksetTimeStatusTransaksiMobile;
-
         JSONObject resJson = new BLHelper().getJsonParamSetTime(time, context, dataLogin.get(0).getIntUserID(), intHeaderId, intStatus, txtStatus,1,"");
 
         new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Changing status, please wait", new InterfaceFastNetworking() {
@@ -292,12 +288,17 @@ public class FragmentLoading extends Fragment {
             public void onResponse(JSONObject response) {
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
                 if (model.getResult() != null) {
-                    tvStartTime.setText(time);
-                    BLHelper.savePreference(context, ClsHardCode.StartTime, time);
-                    btnStart.setText("Processing ...");
-                    btnStart.setClickable(false);
-                    StartTime = SystemClock.uptimeMillis();
-                    btnFinish.setVisibility(View.VISIBLE);
+                    if(model.getResult().isStatus()){
+                        spinKit.setVisibility(View.VISIBLE);
+                        tvStartTime.setText(time);
+                        BLHelper.savePreference(context, ClsHardCode.SP_STARTTIME_CHECKER, time);
+                        btnStart.setText("Processing ...");
+                        btnStart.setClickable(false);
+                        StartTime = SystemClock.uptimeMillis();
+                        btnFinish.setVisibility(View.VISIBLE);
+                    }else{
+                        Toast.makeText(context,model.getResult().getMessage(),Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -317,7 +318,7 @@ public class FragmentLoading extends Fragment {
 
         String strLinkAPI = new ClsHardCode().linksetTimeStatusTransaksiMobile;
         JSONObject jData = new JSONObject();
-        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.SP_INT_HEADER_ID);
         int intHeaderId = Integer.parseInt(txtHeaderId);
         int intStatus = EnumTime.FinishLoading.getIdStatus();
         String txtStatus = EnumTime.FinishLoading.name();
@@ -328,22 +329,26 @@ public class FragmentLoading extends Fragment {
             public void onResponse(JSONObject response) {
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
                 if (model.getResult() != null) {
-                    BLHelper.savePreference(context, ClsHardCode.EndTime, timeFinish);
+                    if (model.getResult().isStatus()){
+                        BLHelper.savePreference(context, ClsHardCode.SP_FINISHTIME_CHECKER, timeFinish);
 //        handler.removeCallbacks(runnable);
-                    String startT = BLHelper.getPreference(context, ClsHardCode.StartTime);
-                    String selisih = new BLHelper().getDataDurationString(startT,timeFinish);
-                    tvResultTime.setText(selisih);
-                    tvResultTime.setVisibility(View.VISIBLE);
-                    tvLabelResult.setVisibility(View.VISIBLE);
-                    tvStartTime.setText(startT);
-                    tvFinishTime.setText(timeFinish);
-                    btnFinish.setText("Finished");
-                    ivDone.setVisibility(View.VISIBLE);
-                    spinKit.setVisibility(View.GONE);
-                    btnStart.setVisibility(View.GONE);
-                    btnFinish.setClickable(false);
-                    isFinished = true;
-                    btnSkip.setVisibility(View.GONE);
+                        String startT = BLHelper.getPreference(context, ClsHardCode.SP_STARTTIME_CHECKER);
+                        String selisih = new BLHelper().getDataDurationString(startT,timeFinish);
+                        tvResultTime.setText(selisih);
+                        tvResultTime.setVisibility(View.VISIBLE);
+                        tvLabelResult.setVisibility(View.VISIBLE);
+                        tvStartTime.setText(startT);
+                        tvFinishTime.setText(timeFinish);
+                        btnFinish.setText("Finished");
+                        ivDone.setVisibility(View.VISIBLE);
+                        spinKit.setVisibility(View.GONE);
+                        btnStart.setVisibility(View.GONE);
+                        btnFinish.setClickable(false);
+                        isFinished = true;
+                        btnSkip.setVisibility(View.GONE);
+                    }else{
+                        Toast.makeText(context,model.getResult().getMessage(),Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 

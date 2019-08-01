@@ -306,7 +306,7 @@ public class FragmentApprover extends Fragment {
         adapterImageSlider.setOnItemClickListener(new AdapterImageSlider.OnItemClickListener() {
             @Override
             public void onItemClick(View view, Images obj) {
-                showDialogImageCenter("https://lerry07.files.wordpress.com/2017/04/kata-kata-semangat.jpg?w=307&h=307");
+//                showDialogImageCenter("https://lerry07.files.wordpress.com/2017/04/kata-kata-semangat.jpg?w=307&h=307");
             }
         });
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -378,7 +378,7 @@ public class FragmentApprover extends Fragment {
 
         dialogMain.show();
     }
-    private void showDialogImageCenter(String linkImages) {
+    /*private void showDialogImageCenter(String linkImages) {
         final Dialog dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(R.layout.dialog_image_center);
@@ -394,7 +394,7 @@ public class FragmentApprover extends Fragment {
                 dialog.dismiss();
             }
         });
-    }
+    }*/
 
 
     private void startAutoSlider(final int count) {

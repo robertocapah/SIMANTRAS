@@ -1,6 +1,7 @@
 package com.kalbenutritionals.simantra.CustomView.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,7 +92,7 @@ public class AdapterHistoricalTransaction extends BaseExpandableListAdapter {
             holder.imgArrow.setImageResource(R.mipmap.ic_arrow_black);
         }
 
-        displayImage(holder, group);
+//        displayImage(holder, group);
         return convertView;
     }
 
@@ -108,7 +109,19 @@ public class AdapterHistoricalTransaction extends BaseExpandableListAdapter {
         // displaying text view data
         holder.title_child.setText(child.getTxtTittle());
         holder.subtitle_child.setText(child.getTxtSubTittle());
-        holder.date_child.setText(child.getTxtDate());
+        holder.date_child.setTextColor(Color.BLUE);
+        switch (child.getIntStatus()){
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                holder.date_child.setTextColor(Color.RED);
+                break;
+            case 4:
+                break;
+        }
+        holder.date_child.setText(child.getTxtStatus());
 
         return convertView;
     }

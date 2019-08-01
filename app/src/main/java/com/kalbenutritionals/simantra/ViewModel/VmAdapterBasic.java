@@ -1,5 +1,8 @@
 package com.kalbenutritionals.simantra.ViewModel;
 
+import java.util.List;
+import java.util.ListIterator;
+
 public class VmAdapterBasic {
     private String txtLinkImage;
     private String title;

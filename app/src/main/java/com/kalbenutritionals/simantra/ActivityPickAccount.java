@@ -34,11 +34,18 @@ import com.androidnetworking.error.ANError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getRole.ResponseGetRoles;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListExpeditionItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListORGItem;
+import com.kalbenutritionals.simantra.Database.Common.ClsExpedition;
+import com.kalbenutritionals.simantra.Database.Common.ClsOrganisation;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
 import com.kalbenutritionals.simantra.Database.Common.ClsmConfigData;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserRole;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsExpedition;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsOrganisation;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.Network.Volley.InterfaceVolleyResponseListener;
@@ -103,6 +110,9 @@ public class ActivityPickAccount extends Activity {
     List<ClsToken> dataToken;
     RepomUserLogin loginRepo;
     RepoclsToken tokenRepo;
+
+    RepoClsOrganisation RepoOrg;
+    RepoClsExpedition RepoExp;
     RepomMenu menuRepo;
     //    ListView listView;
     RecyclerView lvRecycleview;
@@ -283,6 +293,7 @@ public class ActivityPickAccount extends Activity {
             public void onResponse(JSONObject response) {
                 if (response!=null){
                     try {
+//                        ResponseGetRoles
                         JSONObject jsn = response.getJSONObject("result");
                         boolean txtStatus = jsn.getBoolean("status");
                         String txtMessage = jsn.getString("message");
@@ -293,59 +304,66 @@ public class ActivityPickAccount extends Activity {
                                 if (arrayData.length()>0){
                                     int index = 0;
                                     role = new String[arrayData.length()];
-                                    for (int i = 0; i < arrayData.length(); i++){
-                                        JSONObject object = arrayData.getJSONObject(i);
-                                        String txtRoleName = object.getString("txtRoleName");
+                                    if (arrayData.length()==1){
+                                        JSONObject object = arrayData.getJSONObject(0);
                                         int intRoleId = object.getInt("intRoleId");
-                                        role[i] = txtRoleName;
+                                        popupSubmit(data_token, intRoleId, activity, mAccountManager);
+                                    }else{
+                                        for (int i = 0; i < arrayData.length(); i++){
+                                            JSONObject object = arrayData.getJSONObject(i);
+                                            String txtRoleName = object.getString("txtRoleName");
+                                            int intRoleId = object.getInt("intRoleId");
+                                            role[i] = txtRoleName;
 
-                                        ClsmUserRole data = new ClsmUserRole();
-                                        data.setTxtId(String.valueOf(index));
-                                        data.setIntRoleId(intRoleId);
-                                        data.setTxtRoleName(txtRoleName);;
-                                        RepomUserRole userRoleRepo = new RepomUserRole(activity.getApplicationContext());
-                                        userRoleRepo.createOrUpdate(data);
+                                            ClsmUserRole data = new ClsmUserRole();
+                                            data.setTxtId(String.valueOf(index));
+                                            data.setIntRoleId(intRoleId);
+                                            data.setTxtRoleName(txtRoleName);;
+                                            RepomUserRole userRoleRepo = new RepomUserRole(activity.getApplicationContext());
+                                            userRoleRepo.createOrUpdate(data);
 
-                                        HMRole.put(txtRoleName, intRoleId);
-                                        index++;
+                                            HMRole.put(txtRoleName, intRoleId);
+                                            index++;
+                                        }
+
+                                        single_choice_selected = "";
+                                        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(activity);
+                                        builder.setTitle("ROLE");
+                                        builder.setSingleChoiceItems(role, -1, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                single_choice_selected = role[i];
+                                            }
+                                        });
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                            }
+                                        });
+                                        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        final android.support.v7.app.AlertDialog alertD = builder.create();
+                                        alertD.show();
+//                                    builder.show();
+                                        final Button btnPos = alertD.getButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE);
+                                        btnPos.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                if (!single_choice_selected.equals("")){
+                                                    popupSubmit(data_token, HMRole.get(single_choice_selected), activity, mAccountManager);
+                                                    alertD.dismiss();
+                                                }else {
+                                                    new ToastCustom().showToasty(activity,"Please select role",4);
+                                                }
+                                            }
+                                        });
                                     }
 
-                                    single_choice_selected = "";
-                                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(activity);
-                                    builder.setTitle("ROLE");
-                                    builder.setSingleChoiceItems(role, -1, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            single_choice_selected = role[i];
-                                        }
-                                    });
-                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                                        }
-                                    });
-                                    builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    final android.support.v7.app.AlertDialog alertD = builder.create();
-                                    alertD.show();
-//                                    builder.show();
-                                    final Button btnPos = alertD.getButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE);
-                                    btnPos.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            if (!single_choice_selected.equals("")){
-                                                popupSubmit(data_token, HMRole.get(single_choice_selected), activity, mAccountManager);
-                                                alertD.dismiss();
-                                            }else {
-                                                new ToastCustom().showToasty(activity,"Please select role",4);
-                                            }
-                                        }
-                                    });
                                 }else {
 //                                    spnRoleLogin.setEnabled(false);
                                 }
@@ -369,7 +387,7 @@ public class ActivityPickAccount extends Activity {
         });
     }
 
-    private void popupSubmit(final String[] data_token, final int txtRoleName, final Activity activity, final AccountManager mAccountManager) {
+    private void popupSubmit(final String[] data_token, final int intRoleName, final Activity activity, final AccountManager mAccountManager) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle("Confirm");
@@ -378,7 +396,7 @@ public class ActivityPickAccount extends Activity {
         builder.setPositiveButton("LOGIN", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
-                login(data_token, txtRoleName, activity, mAccountManager);
+                login(data_token, intRoleName, activity, mAccountManager);
                 dialog.dismiss();
             }
         });
@@ -395,10 +413,10 @@ public class ActivityPickAccount extends Activity {
         alert.show();
     }
 
-    public void login(final String[] data_token, int txtRoleName, final Activity activity, final AccountManager mAccountManager) {
+    public void login(final String[] data_token, int intRoleName, final Activity activity, final AccountManager mAccountManager) {
         txtUsername = data_token[0];
         txtPassword = data_token[1];
-        int intRoleId = txtRoleName;
+        int intRoleId = intRoleName;
         String strLinkAPI = new ClsHardCode().linkLogin;
         JSONObject resJson = new JSONObject();
         this.mAccountManager = mAccountManager;
@@ -415,6 +433,8 @@ public class ActivityPickAccount extends Activity {
         try {
             loginRepo = new RepomUserLogin(activity.getApplicationContext());
             tokenRepo = new RepoclsToken(activity.getApplicationContext());
+            RepoOrg = new RepoClsOrganisation(activity.getApplicationContext());
+            RepoExp = new RepoClsExpedition(activity.getApplicationContext());
             dataToken = (List<ClsToken>) tokenRepo.findAll();
             resJson.put("data", jData);
             resJson.put("device_info", new ClsHardCode().pDeviceInfo());
@@ -466,6 +486,35 @@ public class ActivityPickAccount extends Activity {
                             }else {
                                 data.setBlobImg(null);
                             }
+                            if(model.getData().getListExpedition()!=null){
+                                List<ListExpeditionItem> items = model.getData().getListExpedition();
+                                for (ListExpeditionItem item :
+                                        items) {
+                                    ClsExpedition dtExp = new ClsExpedition();
+                                    dtExp.setVENDOR_ID(item.getVENDORID());
+                                    dtExp.setVENDOR_NAME(item.getVENDORNAME());
+                                    try {
+                                        RepoExp.createOrUpdate(dtExp);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            if (model.getData().getListORG()!=null){
+                                List<ListORGItem> items = model.getData().getListORG();
+                                for (ListORGItem item :
+                                        items) {
+                                    ClsOrganisation dtOrg = new ClsOrganisation();
+                                    dtOrg.setORGANIZATION_CODE(item.getORGANIZATIONCODE());
+                                    dtOrg.setORGANIZATION_ID(item.getORGANIZATIONID());
+                                    dtOrg.setORGANIZATION_NAME(item.getORGANIZATIONNAME());
+                                    try {
+                                        RepoOrg.createOrUpdate(dtOrg);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
                             loginRepo.createOrUpdate(data);
 
                             Log.d("Data info", "Login Success");
@@ -500,7 +549,7 @@ public class ActivityPickAccount extends Activity {
     }
 
 
-    private void volleyLogin(final Activity activity, String strLinkAPI, final String mRequestBody, final String[] data_token, final int txtRoleName, String progressBarType, final InterfaceVolleyResponseListener listener) {
+    /*private void volleyLogin(final Activity activity, String strLinkAPI, final String mRequestBody, final String[] data_token, final int intRoleName, String progressBarType, final InterfaceVolleyResponseListener listener) {
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
         final String[] body = new String[1];
         final String[] message = new String[1];
@@ -577,7 +626,7 @@ public class ActivityPickAccount extends Activity {
                                     Toast.makeText(activity.getApplicationContext(), "Success get new Access Token", Toast.LENGTH_SHORT).show();
                                     newRefreshToken = refreshToken;
                                     if (refreshToken == newRefreshToken && !newRefreshToken.equals("")) {
-                                        login(data_token, txtRoleName, activity, mAccountManager);
+                                        login(data_token, intRoleName, activity, mAccountManager);
                                     }
 
                                 } catch (JSONException e) {
@@ -630,7 +679,7 @@ public class ActivityPickAccount extends Activity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(request);
-    }
+    }*/
 
     private void logout() {
         Intent intent = new Intent(ActivityPickAccount.this, ActivitySplash.class);

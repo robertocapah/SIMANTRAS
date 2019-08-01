@@ -1,8 +1,11 @@
 package com.kalbenutritionals.simantra.Fragment;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -32,7 +36,9 @@ import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasic;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.responsePushTransaksi.ResponsePushTransaksi;
+import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
 import com.kalbenutritionals.simantra.Database.Repo.EnumTime;
+import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
 import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
 import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
@@ -47,16 +53,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class FragmentQuestionTab extends Fragment {
 
+    @BindView(R.id.lyt_do_other_transaction)
+    MaterialRippleLayout lytDoOtherTransaction;
+    Unbinder unbinder1;
+    ClsmUserLogin dataLogin = null;
     public FragmentQuestionTab() {
     }
 
@@ -75,8 +89,38 @@ public class FragmentQuestionTab extends Fragment {
     Context context;
     Map<String, File> listMap = new HashMap<>();
     int intIsValidator;
-    Unbinder unbinder;
     FragmentDetailInfoChecker myFragment;
+    int intStatusMenu = 0;
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder1.unbind();
+    }
+
+    @OnClick(R.id.lyt_do_other_transaction)
+    public void onViewClicked() {
+        final AlertDialog.Builder alertDialogBuilderSkp = new AlertDialog.Builder(getActivity());
+        alertDialogBuilderSkp
+                .setCancelable(false)
+                .setMessage("Are you sure want to switch transaction ?")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TransactionClosed();
+                    }
+                })
+                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        final AlertDialog alertDSkp = alertDialogBuilderSkp.create();
+        alertDSkp.show();
+
+    }
+
     private enum State {
         CHECKING,
         LOADING,
@@ -99,6 +143,7 @@ public class FragmentQuestionTab extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.checker_step, container, false);
+        unbinder1 = ButterKnife.bind(this,v);
         context = getActivity().getApplicationContext();
         line_first = (View) v.findViewById(R.id.line_first);
         line_second = (View) v.findViewById(R.id.line_second);
@@ -117,7 +162,11 @@ public class FragmentQuestionTab extends Fragment {
         image_right.setColorFilter(getResources().getColor(R.color.grey_10), PorterDuff.Mode.SRC_ATOP);
 
         myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-
+        try {
+            dataLogin = new RepomUserLogin(context).getUserLogin(context);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         String myValue;
         int intDesc;
         if (this.getArguments() != null) {
@@ -127,10 +176,11 @@ public class FragmentQuestionTab extends Fragment {
             intDesc = this.getArguments().getInt(ClsHardCode.intDesc, 99);
             if (intIsValidator == 2) {
                 idx_state = 3;
-                tvLabelTitle.setText("Validator Unloading");
+                tvLabelTitle.setText("Verificator Unloading");
                 tvlineone.setText("Scan");
                 tvlinetwo.setText("Unloading");
                 tv_next.setText("Finish");
+                (v.findViewById(R.id.lyt_save)).setVisibility(View.GONE);
                 /*switch (intDesc){
                     case 4:
                         idx_state = 4;
@@ -148,7 +198,7 @@ public class FragmentQuestionTab extends Fragment {
             if (myValue != null && myValue.equals(ClsHardCode.txtBundleKeyBarcodeLoad) && intIsValidator != 2) {
                 idx_state = 1;
             }
-            BLHelper.savePreference(context, ClsHardCode.txtNoSPMActive, noSPM);
+            BLHelper.savePreference(context, ClsHardCode.SP_NoSPMActive, noSPM);
         }
         (btnNext).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,6 +252,8 @@ public class FragmentQuestionTab extends Fragment {
                                 lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
                                 dialog.setTitle("Warning");
                                 Button btnProceed = (Button) dialog.findViewById(R.id.btnProceed);
+                                final EditText etReason = (EditText) dialog.findViewById(R.id.etReason);
+
                                 NestedScrollView nested_scroll_view_alert = (NestedScrollView) dialog.findViewById(R.id.nested_scroll_view_alert);
                                 TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitleAlert);
                                 RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
@@ -215,16 +267,21 @@ public class FragmentQuestionTab extends Fragment {
                                     rvView.setAdapter(lv);
                                     rvView.setLayoutManager(new LinearLayoutManager(getActivity()));
                                     // if button is clicked, close the custom dialog
-
+                                    btnProceed.setBackgroundColor(getResources().getColor(R.color.red_600));
                                     btnProceed.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            pushTransaction(dialog,ClsHardCode.PUSHDATA);
+                                            if(etReason.getText().toString().trim().equals("")){
+                                                Toast.makeText(context,"Fill The Reason",Toast.LENGTH_SHORT).show();
+                                            }else{
+                                                pushTransaction(dialog, ClsHardCode.PUSHDATA, etReason.getText().toString());
+                                            }
+
                                         }
                                     });
 
                                     dialog.show();
-                                    nested_scroll_view_alert.smoothScrollTo(0,0);
+                                    nested_scroll_view_alert.smoothScrollTo(0, 0);
                                     dialog.getWindow().setAttributes(lp);
                                 } else {
                                     //disini dialog alert kalo semua terpenuhi
@@ -236,7 +293,14 @@ public class FragmentQuestionTab extends Fragment {
                                     btnProceed.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            pushTransaction(dialog,ClsHardCode.PUSHDATA);
+                                            if(etReason.getText().toString().trim().equals("")){
+                                                Toast.makeText(context,"Fill The Reason",Toast.LENGTH_SHORT).show();
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                    etReason.setBackground(getActivity().getDrawable(R.drawable.bg_rounded_normal_red));
+                                                }
+                                            }else{
+                                                pushTransaction(dialog, ClsHardCode.PUSHDATA,etReason.getText().toString());
+                                            }
                                         }
                                     });
                                 }
@@ -253,6 +317,7 @@ public class FragmentQuestionTab extends Fragment {
 
                     } else if (array_state[idx_state].name().equalsIgnoreCase(State.LOADING.name())) {
                         FragmentLoading myFragment = (FragmentLoading) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+
                         if (!myFragment.isFinished) {
                             new ToastCustom().showToasty(context, "Please finish timer first", 4);
                         } else {
@@ -263,8 +328,13 @@ public class FragmentQuestionTab extends Fragment {
                         idx_state++;
                         displayFragment(array_state[idx_state]);
                     } else if (array_state[idx_state].name().equalsIgnoreCase(State.UNLOADING.name())) {
-                        idx_state++;
-                        displayFragment(array_state[idx_state]);
+                        FragmentValidator myFragment = (FragmentValidator) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+                        if (!myFragment.isFinished) {
+                            new ToastCustom().showToasty(context, "Please finish timer first", 4);
+                        } else {
+                            idx_state++;
+                            displayFragment(array_state[idx_state]);
+                        }
                     } else if (array_state[idx_state].name().equalsIgnoreCase(State.FINISHUNLOADING.name())) {
                         idx_state++;
                         displayFragment(array_state[idx_state]);
@@ -314,8 +384,10 @@ public class FragmentQuestionTab extends Fragment {
                 TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitleAlert);
                 TextView titleConfirm = (TextView) dialog.findViewById(R.id.titleConfirm);
                 RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
+                EditText etReason = (EditText) dialog.findViewById(R.id.etReason);
                 rvView.setVisibility(View.GONE);
                 titleConfirm.setVisibility(View.GONE);
+                etReason.setVisibility(View.GONE);
                 btnProceed.setText("Save");
 //                                dialog.setTitle("Are yo");
                 tvTitle.setText("Do you want to save changes?");
@@ -325,7 +397,7 @@ public class FragmentQuestionTab extends Fragment {
                 btnProceed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pushTransaction(dialog, ClsHardCode.SAVE);
+                        pushTransaction(dialog, ClsHardCode.SAVE, "");
                     }
                 });
 
@@ -335,14 +407,15 @@ public class FragmentQuestionTab extends Fragment {
         });
         displayFragment(array_state[idx_state]);
 
+        unbinder1 = ButterKnife.bind(this, v);
         return v;
     }
 
-    private void pushTransaction(final Dialog dialog,final int FlagPush) {
+    private void pushTransaction(final Dialog dialog, final int FlagPush, String txtReason) {
 
         String txtLink = new ClsHardCode().linkSetTransactionList;
         myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        JSONObject data = myFragment.getDataTransaction(FlagPush);
+        JSONObject data = myFragment.getDataTransaction(FlagPush, txtReason);
         JSONObject object = new JSONObject();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
         JSONObject deviceInfo = new BLHelper().getDataTransaksiJsonObjCommon(context, dataDevice);
@@ -363,14 +436,14 @@ public class FragmentQuestionTab extends Fragment {
                 ResponsePushTransaksi model = gson.fromJson(response.toString(), ResponsePushTransaksi.class);
                 if (model.getResult() != null) {
                     if (model.getResult().isStatus()) {
-                        if (FlagPush == ClsHardCode.SAVE){
-                            new ToastCustom().showToasty(context,"Data Saved",1);
+                        if (FlagPush == ClsHardCode.SAVE) {
+                            new ToastCustom().showToasty(context, "Data Saved", 1);
                             dialog.dismiss();
-                        }else{
+                        } else {
 
-                        if (model.getResult().isStatusReject()) {
+                            if (model.getResult().isStatusReject()) {
                                 dialog.dismiss();
-                                new ToastCustom().showToasty(context,model.getResult().getMessage().toString(),3);
+                                new ToastCustom().showToasty(context, model.getResult().getMessage().toString(), 3);
                                 Bundle arguments2 = new Bundle();
                                 arguments2.putInt(ClsHardCode.TXT_STATUS_MENU, ClsHardCode.INT_CHECKER);
                                 FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
@@ -378,8 +451,8 @@ public class FragmentQuestionTab extends Fragment {
                                 FragmentTransaction fragmentTransactionSPMSearch = getActivity().getSupportFragmentManager().beginTransaction();
                                 fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
                                 fragmentTransactionSPMSearch.commit();
-
                             } else {
+                                (v.findViewById(R.id.lyt_save)).setVisibility(View.GONE);
                                 idx_state++;
                                 displayFragment(array_state[idx_state]);
                                 dialog.dismiss();
@@ -410,7 +483,7 @@ public class FragmentQuestionTab extends Fragment {
         UserRequest userLogin = new BLHelper().getUserInfo(context);
         String strLinkAPI = new ClsHardCode().linksetTimeStatusTransaksiMobile;
         JSONObject jData = new JSONObject();
-        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.INT_HEADER_ID);
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.SP_INT_HEADER_ID);
         int intHeaderId = Integer.parseInt(txtHeaderId);
         int intStatus = EnumTime.CheckingFinish.getIdStatus();
         String txtStatus = EnumTime.CheckingFinish.name();
@@ -421,7 +494,7 @@ public class FragmentQuestionTab extends Fragment {
             public void onResponse(JSONObject response) {
                 ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
                 if (model.getResult() != null) {
-                    BLHelper.savePreference(context, ClsHardCode.IdleTime, timeIdle);
+                    BLHelper.savePreference(context, ClsHardCode.SP_CHECKING_FINISH, timeIdle);
                 }
             }
 
@@ -433,13 +506,38 @@ public class FragmentQuestionTab extends Fragment {
     }
 
     private void TransactionClosed() {
-        Bundle arguments = new Bundle();
-        arguments.putInt(ClsHardCode.TXT_STATUS_MENU, ClsHardCode.INT_CHECKER);
-        FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
-        fragmentSPMSearch.setArguments(arguments);
-        FragmentTransaction fragmentTransactionSPMSearch = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
-        fragmentTransactionSPMSearch.commit();
+        final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
+        String strLinkAPI = new ClsHardCode().linksetUnlockTransaksi;
+        Date date = new Date(System.currentTimeMillis());
+        final String time = format.format(date);
+        String txtHeaderId = BLHelper.getPreference(context, ClsHardCode.SP_INT_HEADER_ID);
+        int intHeaderId = Integer.parseInt(txtHeaderId);
+        int intStatus = EnumTime.FinishLoading.getIdStatus();
+        String txtStatus = EnumTime.FinishLoading.name();
+        JSONObject resJson = new BLHelper().getJsonParamSetTime(time, context, dataLogin.getIntUserID(), intHeaderId, intStatus, txtStatus,1,"");
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), strLinkAPI, resJson, "Switching Transaction, please wait", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
+                if (model.getResult() != null) {
+                    if (model.getResult().isStatus()) {
+                        Bundle arguments2 = new Bundle();
+                        arguments2.putInt(ClsHardCode.TXT_STATUS_MENU, ClsHardCode.INT_CHECKER);
+                        FragmentSPMSearch fragmentSPMSearch = new FragmentSPMSearch();
+                        fragmentSPMSearch.setArguments(arguments2);
+                        FragmentTransaction fragmentTransactionSPMSearch = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransactionSPMSearch.replace(R.id.frame, fragmentSPMSearch);
+                        fragmentTransactionSPMSearch.commit();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                Toast.makeText(context, error.getErrorBody().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void displayFragment(State state) {
@@ -454,10 +552,14 @@ public class FragmentQuestionTab extends Fragment {
             fragment = new FragmentDetailInfoChecker();
             tvlineone.setTextColor(getResources().getColor(R.color.grey_90));
             image_left.clearColorFilter();
+            intStatusMenu = ClsHardCode.INT_CHECKER;
             tv_next.setText("Start Loading");
         } else if (state.name().equalsIgnoreCase(State.LOADING.name())) {
             FRAGMENT_TAG = "Loading";
+            (v.findViewById(R.id.lyt_save)).setVisibility(View.GONE);
+            (v.findViewById(R.id.lyt_do_other_transaction)).setVisibility(View.GONE);
             fragment = new FragmentLoading();
+            intStatusMenu = ClsHardCode.INT_CHECKER;
             if (this.getArguments() != null) {
                 String myValue = this.getArguments().getString(ClsHardCode.txtMessage);
                 String noSPM = this.getArguments().getString(ClsHardCode.txtNoSPM);
@@ -480,11 +582,15 @@ public class FragmentQuestionTab extends Fragment {
         } else if (state.name().equalsIgnoreCase(State.FINISH.name())) {
             FRAGMENT_TAG = "Finish";
             fragment = new FragmentLoadingFinish();
+            Bundle bundle = new Bundle();
+            bundle.putInt(ClsHardCode.intIsValidator, 88);
+            fragment.setArguments(bundle);
             line_second.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             image_midle.setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
             image_right.clearColorFilter();
             tvlinethree.setTextColor(getResources().getColor(R.color.grey_90));
             tv_next.setText("Close");
+            intStatusMenu = ClsHardCode.INT_CHECKER;
         } else if (state.name().equalsIgnoreCase(State.UNLOADING.name())) {
             FRAGMENT_TAG = "Unloading";
             fragment = new FragmentValidator();
@@ -500,6 +606,7 @@ public class FragmentQuestionTab extends Fragment {
                 bundle.putInt(ClsHardCode.intDesc, intDesc);
                 fragment.setArguments(bundle);
             }
+            intStatusMenu = ClsHardCode.INT_VALIDATOR;
             line_first.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             image_left.setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
             image_midle.clearColorFilter();
@@ -510,9 +617,11 @@ public class FragmentQuestionTab extends Fragment {
             fragment = new FragmentLoadingFinish();
             Bundle bundle = new Bundle();
             bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);
+            fragment.setArguments(bundle);
             line_second.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             image_midle.setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
             image_right.clearColorFilter();
+            intStatusMenu = ClsHardCode.INT_VALIDATOR;
             tvlinethree.setTextColor(getResources().getColor(R.color.grey_90));
             tv_next.setText("Close");
         }

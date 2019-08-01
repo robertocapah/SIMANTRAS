@@ -112,14 +112,14 @@ public class RepomPertanyaan implements CRUD {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }else if(intValidateId == ClsHardCode.FOOTER){
+        }/*else if(intValidateId == ClsHardCode.FOOTER){
             try {
                 QueryBuilder<ClsmPertanyaan, Integer> builder = helper.getmPertanyaanDao().queryBuilder();
                 items = builder.where().eq(ClsmPertanyaan.TXTINTLOCATIONID,ClsHardCode.FOOTER).query();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
         return items;
     }

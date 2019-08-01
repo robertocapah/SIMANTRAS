@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by Rian Andrivani on 11/23/2017.
- */
 
 public class BLActivity extends Activity {
     public Bitmap resizeImageForBlob(Bitmap photo){

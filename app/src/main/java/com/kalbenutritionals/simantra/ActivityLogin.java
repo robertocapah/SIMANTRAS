@@ -72,10 +72,16 @@ import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterSpinner;
 import com.kalbenutritionals.simantra.CustomView.Utils.AuthenticatorUtil;
 import com.kalbenutritionals.simantra.CustomView.Utils.DrawableClickListener;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListExpeditionItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListORGItem;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
+import com.kalbenutritionals.simantra.Database.Common.ClsExpedition;
+import com.kalbenutritionals.simantra.Database.Common.ClsOrganisation;
 import com.kalbenutritionals.simantra.Database.Common.ClsToken;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
 import com.kalbenutritionals.simantra.Database.Common.ClsmUserRole;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsExpedition;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsOrganisation;
 import com.kalbenutritionals.simantra.Database.Repo.RepoclsToken;
 import com.kalbenutritionals.simantra.Database.Repo.RepomMenu;
 import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
@@ -463,104 +469,139 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         String strLinkAPI = new ClsHardCode().linkLogin;
         JSONObject resJson = new JSONObject();
         JSONObject jData = new JSONObject();
+        if(intRoleId == 0){
+            new ToastCustom().showToasty(getApplicationContext(),"You need to choose role",4);
+        }else{
 
-        try {
-            jData.put("username", txtUsername);
-            jData.put("intRoleId", intRoleId);
-            jData.put("password", txtPassword);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            try {
+                jData.put("username", txtUsername);
+                jData.put("intRoleId", intRoleId);
+                jData.put("password", txtPassword);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-        try {
-            tokenRepo = new RepoclsToken(getApplicationContext());
-            dataToken = (List<ClsToken>) tokenRepo.findAll();
-            resJson.put("data", jData);
-            resJson.put("device_info", new ClsHardCode().pDeviceInfo());
-            resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        final String mRequestBody = resJson.toString();
-        final String accountType = getIntent().getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
-        final boolean newAccount = getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false);
+            try {
+                tokenRepo = new RepoclsToken(getApplicationContext());
+                dataToken = (List<ClsToken>) tokenRepo.findAll();
+                resJson.put("data", jData);
+                resJson.put("device_info", new ClsHardCode().pDeviceInfo());
+                resJson.put("txtRefreshToken", dataToken.get(0).txtRefreshToken.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            final String mRequestBody = resJson.toString();
+            final String accountType = getIntent().getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
+            final boolean newAccount = getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false);
 
-        final Bundle datum = new Bundle();
-        new FastNetworkingUtils().FNRequestPostData(ActivityLogin.this, strLinkAPI, resJson, "Logging in, please wait", new InterfaceFastNetworking() {
-            @Override
-            public void onResponse(JSONObject response) {
+            final Bundle datum = new Bundle();
+            new FastNetworkingUtils().FNRequestPostData(ActivityLogin.this, strLinkAPI, resJson, "Logging in, please wait", new InterfaceFastNetworking() {
+                @Override
+                public void onResponse(JSONObject response) {
 
-                if (response != null) {
-                    final LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
-                    boolean txtStatus = model.getResult().isStatus();
-                    String txtMessage = model.getResult().getMessage();
-                    String txtMethode_name = model.getResult().getMethodName();
+                    if (response != null) {
+                        final LoginMobileApps model = gson.fromJson(response.toString(), LoginMobileApps.class);
+                        boolean txtStatus = model.getResult().isStatus();
+                        String txtMessage = model.getResult().getMessage();
+                        String txtMethode_name = model.getResult().getMethodName();
 
 
-                    if (txtStatus == true) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent res = null;
-                                String accessToken = "dummy_access_token";
-                                loginRepo = new RepomUserLogin(getApplicationContext());
-                                ClsmUserLogin data = new ClsmUserLogin();
-                                data.setTxtGuID(model.getData().getTxtGuiID());
-                                data.setIntUserID(model.getData().getIntUserID());
-                                data.setTxtUserName(model.getData().getTxtUserName());
-                                data.setTxtNick(model.getData().getTxtNick());
-                                data.setTxtEmpID(model.getData().getTxtEmpID());
-                                data.setTxtEmail(model.getData().getTxtEmail());
-                                data.setIntDepartmentID(model.getData().getIntDepartmentID());
-                                data.setIntLOBID(model.getData().getIntLOBID());
-                                data.setTxtCompanyCode(model.getData().getTxtCompanyCode());
-                                if (model.getData().getMUserRole() != null) {
-                                    data.setIntRoleID(model.getData().getMUserRole().getIntRoleID());
-                                    data.setTxtRoleName(model.getData().getMUserRole().getTxtRoleName());
+                        if (txtStatus == true) {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent res = null;
+                                    String accessToken = "dummy_access_token";
+                                    loginRepo = new RepomUserLogin(getApplicationContext());
+                                    ClsmUserLogin data = new ClsmUserLogin();
+                                    data.setTxtGuID(model.getData().getTxtGuiID());
+                                    data.setIntUserID(model.getData().getIntUserID());
+                                    data.setTxtUserName(model.getData().getTxtUserName());
+                                    data.setTxtNick(model.getData().getTxtNick());
+                                    data.setTxtEmpID(model.getData().getTxtEmpID());
+                                    data.setTxtEmail(model.getData().getTxtEmail());
+                                    data.setIntDepartmentID(model.getData().getIntDepartmentID());
+                                    data.setIntLOBID(model.getData().getIntLOBID());
+                                    data.setTxtCompanyCode(model.getData().getTxtCompanyCode());
+                                    if (model.getData().getMUserRole() != null) {
+                                        data.setIntRoleID(model.getData().getMUserRole().getIntRoleID());
+                                        data.setTxtRoleName(model.getData().getMUserRole().getTxtRoleName());
+                                    }
+                                    data.setDtLogIn(parseDate(model.getData().getDtDateLogin()));
+
+                                    byte[] file = getByte(model.getData().getTxtLinkFotoProfile());
+                                    if (file != null) {
+                                        data.setBlobImg(file);
+                                    } else {
+                                        data.setBlobImg(null);
+                                    }
+                                    if(model.getData().getListExpedition()!=null){
+                                        List<ListExpeditionItem> items = model.getData().getListExpedition();
+                                        for (ListExpeditionItem item :
+                                                items) {
+                                            ClsExpedition dtExp = new ClsExpedition();
+                                            dtExp.setVENDOR_ID(item.getVENDORID());
+                                            dtExp.setVENDOR_NAME(item.getVENDORNAME());
+                                            try {
+                                                new RepoClsExpedition(getApplicationContext()).createOrUpdate(dtExp);
+                                            } catch (SQLException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                    if (model.getData().getListORG()!=null){
+                                        List<ListORGItem> items = model.getData().getListORG();
+                                        for (ListORGItem item :
+                                                items) {
+                                            ClsOrganisation dtOrg = new ClsOrganisation();
+                                            dtOrg.setORGANIZATION_CODE(item.getORGANIZATIONCODE());
+                                            dtOrg.setORGANIZATION_ID(item.getORGANIZATIONID());
+                                            dtOrg.setORGANIZATION_NAME(item.getORGANIZATIONNAME());
+                                            try {
+                                                new RepoClsOrganisation(getApplicationContext()).createOrUpdate(dtOrg);
+                                            } catch (SQLException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+
+
+                                    try {
+                                        loginRepo.createOrUpdate(data);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Log.d("Data info", "Login Success");
+
+                                    datum.putString(AccountManager.KEY_ACCOUNT_NAME, txtUsername);
+                                    datum.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+                                    datum.putString(AccountManager.KEY_AUTHTOKEN, accessToken);
+                                    datum.putString(PARAM_USER_PASS, txtPassword);
+                                    datum.putString(ARG_AUTH_TYPE, mAuthTokenType);
+                                    datum.putBoolean(ARG_IS_ADDING_NEW_ACCOUNT, newAccount);
+                                    res = new Intent();
+                                    res.putExtras(datum);
+                                    finishLogin(res, mAccountManager);
+                                    Intent intent = new Intent(ActivityLogin.this, ActivityMainMenu.class);
+                                    finish();
+                                    startActivity(intent);
                                 }
-                                data.setDtLogIn(parseDate(model.getData().getDtDateLogin()));
+                            }).start();
 
-                                byte[] file = getByte(model.getData().getTxtLinkFotoProfile());
-                                if (file != null) {
-                                    data.setBlobImg(file);
-                                } else {
-                                    data.setBlobImg(null);
-                                }
-                                try {
-                                    loginRepo.createOrUpdate(data);
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                                Log.d("Data info", "Login Success");
-
-                                datum.putString(AccountManager.KEY_ACCOUNT_NAME, txtUsername);
-                                datum.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
-                                datum.putString(AccountManager.KEY_AUTHTOKEN, accessToken);
-                                datum.putString(PARAM_USER_PASS, txtPassword);
-                                datum.putString(ARG_AUTH_TYPE, mAuthTokenType);
-                                datum.putBoolean(ARG_IS_ADDING_NEW_ACCOUNT, newAccount);
-                                res = new Intent();
-                                res.putExtras(datum);
-                                finishLogin(res, mAccountManager);
-                                Intent intent = new Intent(ActivityLogin.this, ActivityMainMenu.class);
-                                finish();
-                                startActivity(intent);
-                            }
-                        }).start();
-
-                    } else {
-                        new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
+                        } else {
+                            new ToastCustom().showToasty(ActivityLogin.this, txtMessage, 4);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onError(ANError error) {
+                @Override
+                public void onError(ANError error) {
 
-            }
-        });
+                }
+            });
+        }
 
     }
 
@@ -697,7 +738,6 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                                         data.setTxtId(String.valueOf(index));
                                         data.setIntRoleId(intRoleId);
                                         data.setTxtRoleName(txtRoleName);
-                                        ;
                                         RepomUserRole userRoleRepo = new RepomUserRole(getApplicationContext());
                                         userRoleRepo.createOrUpdate(data);
 
@@ -709,6 +749,10 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                                     }
                                     dataAdapter.notifyDataSetChanged();
                                     spnRoleLogin.setEnabled(true);
+                                    if (arrayData.length()==1){
+                                        spnRoleLogin.setSelection(1);
+                                    }
+
                                 } else {
                                     VmSpinner dataSpn2 = new VmSpinner();
                                     dataSpn2.setIntKey(0);

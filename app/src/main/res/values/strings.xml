@@ -24,6 +24,9 @@
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam efficitur ipsum in placerat molestie.  Fusce quis mauris a enim sollicitudin
         \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam efficitur ipsum in placerat molestie.  Fusce quis mauris a enim sollicitudin
     </string>
+    <string name="lorem_ipsum_short">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam efficitur ipsum in placerat molestie.  Fusce quis mauris a enim sollicitudin
+    </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="history_absence">History Absence</string>
@@ -84,4 +87,5 @@
     <!--pertanyaan-pertanyaan-->
     <string name="pertanyaan1"></string>
     <string name="transaction_number">Transaction Number</string>
+    <string name="alamat_sanghiang">Gedung Graha Kirana Lt. 11  Suite 501, Jl. Yos Sudarso Kav. 88, RT.9/RW.11, Sunter Jaya, Tanjung Priok Kota Jkt Utara, Daerah Khusus Ibukota Jakarta 14350</string>
 </resources>

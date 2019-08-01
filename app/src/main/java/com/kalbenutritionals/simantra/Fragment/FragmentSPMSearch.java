@@ -54,6 +54,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
     ImageButton btToggleInput;
     private Gson gson;
     int intStatus = 0;
+    int intReject = 000;
 
     @Nullable
     @Override
@@ -64,10 +65,14 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
             context = getActivity().getApplicationContext();
         }
 
-        //is there any way that I can stay in your eyes
+        //
         Bundle arguments = getArguments();
         if (arguments != null) {
             intStatus = arguments.getInt(ClsHardCode.TXT_STATUS_MENU, 88);
+            intReject = arguments.getInt(new ClsHardCode().intRejectPopUp, 000);
+        }
+        if (intReject==1){
+            new BLHelper().popUpRejectedData(getActivity());
         }
         return v;
     }
@@ -85,14 +90,12 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
         unbinder.unbind();
     }
 
-    @OnClick({R.id.etSpmNumber, R.id.btnGo, R.id.ivScanBarcode})
+    @OnClick({R.id.btnGo, R.id.ivScanBarcode})
     public void onViewClicked(View view) {
         if (getActivity() != null) {
             BLHelper.hideKeyboard(getActivity());
         }
         switch (view.getId()) {
-            case R.id.etSpmNumber:
-                break;
             case R.id.btnGo:
                 if (etSpmNumber.getText().toString().trim().equals("")){
                     Toast.makeText(context,"Fill Document Number",Toast.LENGTH_SHORT).show();
@@ -139,7 +142,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                             final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
                             Date dateScan = new Date(System.currentTimeMillis());
                             String timeScan = format.format(dateScan);
-                            BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan); //save waktu scan
+                            BLHelper.savePreference(context, ClsHardCode.SP_SCAN_TIME, timeScan); //save waktu scan
                             FragmentTab fragmentTab = new FragmentTab();
                             fragmentTab.setArguments(bundle);
                             FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();
@@ -156,7 +159,7 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
                                     final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
                                     Date dateScan = new Date(System.currentTimeMillis());
                                     String timeScan = format.format(dateScan);
-                                    BLHelper.savePreference(context, ClsHardCode.ScanTime, timeScan); //save waktu scan
+                                    BLHelper.savePreference(context, ClsHardCode.SP_SCAN_TIME, timeScan); //save waktu scan
                                     FragmentTab fragmentTab = new FragmentTab();
                                     fragmentTab.setArguments(bundle);
                                     FragmentTransaction fragmentTransactionTab = getActivity().getSupportFragmentManager().beginTransaction();

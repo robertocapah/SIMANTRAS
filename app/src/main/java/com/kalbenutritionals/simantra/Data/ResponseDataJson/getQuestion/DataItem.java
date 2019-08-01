@@ -73,8 +73,31 @@ public class DataItem{
 	@SerializedName("TXT_VALUE")
 	private String tXTVALUE;
 
+	@SerializedName("txtReason")
+	private String txtReason;
+
 	@SerializedName("INT_TYPE_ID")
 	private int iNTTYPEID;
+
+	@SerializedName("TXT_METODE_PEMERIKSAAN")
+	private String TXT_METODE_PEMERIKSAAN;
+
+
+	public String getTxtReason() {
+		return txtReason;
+	}
+
+	public void setTxtReason(String txtReason) {
+		this.txtReason = txtReason;
+	}
+
+	public String getTXT_METODE_PEMERIKSAAN() {
+		return TXT_METODE_PEMERIKSAAN;
+	}
+
+	public void setTXT_METODE_PEMERIKSAAN(String TXT_METODE_PEMERIKSAAN) {
+		this.TXT_METODE_PEMERIKSAAN = TXT_METODE_PEMERIKSAAN;
+	}
 
 	public void setINTSEQ(String iNTSEQ){
 		this.iNTSEQ = iNTSEQ;

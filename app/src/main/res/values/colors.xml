@@ -7,6 +7,8 @@
     <color name="colorAccent">#4CAF50</color>
     <color name="colorDefault">#13b586</color>
 
+    <color name="background">#dddddd</color>
+
     <color name="black">#000000</color>
     <color name="green">#08ff00</color>
     <color name="gray">#bfbfbf</color>

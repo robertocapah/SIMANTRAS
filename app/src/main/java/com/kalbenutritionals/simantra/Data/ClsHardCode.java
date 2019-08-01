@@ -61,6 +61,8 @@ public class ClsHardCode {
 
     public String linksetTimeStatusTransaksiMobile = new RepomConfig(context).API +"setTimeStatusTransaksiMobile";
     public String linksetUnlockTransaksi = new RepomConfig(context).API +"setUnlockTransaksi";
+    public String linkgetTransaksiMobileList = new RepomConfig(context).API +"getTransaksiMobileList";
+    public String linkgetDataHome = new RepomConfig(context).API +"getDataHome";
 
     public static String txtMessage = "message";
     public static String txtMessageUnload = "message";
@@ -68,21 +70,23 @@ public class ClsHardCode {
     public static String txtBundleKeyBarcodeLoad = "BarcodeScannerLoad";// yang ini untuk yang sudah check slsai
     public static String txtBundleKeyBarcodeCancel = "BarcodeScannerCancel";// cancel
     public static String txtNoSPM = "NoSPM";
-    public static String txtNoSPMActive = "NoSPMActive";
     public static String txtStatusLoading = "statusLoading";
     public static String txtStatusUnloading = "statusLoading";
-    public static String ScanTime = "ScanTime";//awal scan
-    public static String IdleTime = "IdleTime";//setelah selesai isi form
-    public static String StartTime = "StartTime";//mulai timer
-    public static String EndTime = "EndTime";//selesai timer
-    public static String ScanTimeUnloading = "ScanTimeUnloading";//scan unloading
-    public static String StartTimeUnloading = "IdleTimeUnloading";//scan unloading
-    public static String EndTimeUnloading = "IdleTimeUnloading";//scan unloading
-
+    public static String SP_NoSPMActive = "NoSPMActive";
+    public static String SP_QRCodeActive = "NoQRActive";
+    public static String SP_SCAN_TIME = "SP_SCAN_TIME";//awal scan
+    public static String SP_CHECKING_FINISH = "SP_CHECKING_FINISH";//setelah selesai isi form
+    public static String SP_STARTTIME_CHECKER = "SP_STARTTIME_CHECKER";//mulai timer
+    public static String SP_FINISHTIME_CHECKER = "SP_FINISHTIME_CHECKER";//selesai timer
+    public static String SP_SCANTIME_UNLOADING = "SP_SCANTIME_UNLOADING";//scan unloading
+    public static String SP_STARTTIME_UNLOADING = "SP_STARTTIME_UNLOADING";//start unloading
+    public static String SP_FINISHTIME_UNLOADING = "SP_FINISHTIME_UNLOADING";//end unloading
+    public static String SP_FINISH_MESSAGE_UNLOADING = "SP_FINISH_MESSAGE_UNLOADING";//message
 
     public static String FormatTime = "MMM dd,yyyy hh:mm a";
     public static String intDesc = "intDesc";
     public static String intIsValidator = "IsValidator";
+    public static String intRejectPopUp = "RejectPopUp";
 
     public static int JenisPertanyaanTextView = 7;
     public static int JenisPertanyaanTextBox = 1;
@@ -90,8 +94,18 @@ public class ClsHardCode {
     public static int JenisPertanyaanRadioButton = 4;
     public static int JenisPertanyaanSpinner = 5;
 
-    public static String INT_HEADER_ID = "intHeaderId";
+    public static int ROLE_ADMINISTRATOR_SUPER_USER = 1;
+    public static int ROLE_CHECKER = 15;
+    public static int ROLE_COORDINATOR = 18;
+    public static int ROLE_VERIFICATOR = 17;
+    public static int ROLE_RESPONDER = 14;
 
+
+    public static String SP_INT_HEADER_ID = "intHeaderId";
+
+    public static int TXT_SPLASH_CODE = 1;
+
+    public static int GENERAL = 1;
     public static int OPTIONAL = 2;
     public static int MANDATORY = 3;
 
@@ -101,11 +115,18 @@ public class ClsHardCode {
     public static int BASIC = 1;
     public static int HEADER = 2;
     public static int BODY = 3;
-    public static int FOOTER = 4;
+
+    public static int FIXED = 0;
+    public static int ISSUE = 1;
+
+//    public static int FOOTER = 4;
     public static String nameApp = "SIMANTRAMOBILE";
 
     public static int INT_QRCODE = 0;
     public static int INT_DOCNUMB= 1;
+
+    public static int INT_IMAGE_ISSUE = 0;
+    public static int INT_IMAGE_FIX = 1;
 
     public static int INT_CHECKER = 1;
     public static int INT_VALIDATOR = 2;
@@ -123,11 +144,13 @@ public class ClsHardCode {
     public static String VEHICLE_NUMBER = "VEHICLE_NUMBER";
     public static String DRIVER_NAME = "DRIVER_NAME";
     public static String KERANI_NAME = "KERANI_NAME";
+    public static String TXT_NO_DOCUMENT = "NO_DOCUMENT";
 
     public static String TXT_SHIP_FROM = "SHIP_FROM";
     public static String TXT_SHIP_TO = "SHIP_TO";
 
     public static String TXT_SHARED_PREF_KEY = "SimantraPref";
+
 
     public String copydb(Context context) throws IOException {
         String CURRENT_DATABASE_PATH = "data/data/" + context.getPackageName() + "/databases/"+ new ClsHardCode().dbName;
@@ -155,7 +178,7 @@ public class ClsHardCode {
     }
 
     public JSONObject pDeviceInfo(){
-        String api =  android.os.Build.VERSION.SDK;      // API Level
+        String api =  String.valueOf(Build.VERSION.SDK_INT);      // API Level
         String device = android.os.Build.DEVICE;           // Device
         String model = android.os.Build.MODEL;            // Model
         String product = android.os.Build.PRODUCT;

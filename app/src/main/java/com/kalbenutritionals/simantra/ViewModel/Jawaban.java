@@ -5,14 +5,16 @@ public class Jawaban {
     public int idJawaban;
     public  int idPertanyaan;
     public boolean bitChoosen;
+    public String txtReason;
     public String getJawaban() {
         return jawaban;
     }
 
-    public void setJawaban(String jawaban, int idJawaban, int idPertanyaan, boolean bitChoosen) {
+    public void setJawaban(String jawaban, int idJawaban, int idPertanyaan, boolean bitChoosen, String txtReason) {
         this.jawaban = jawaban;
         this.idJawaban = idJawaban;
         this.idPertanyaan = idPertanyaan;
         this.bitChoosen = bitChoosen;
+        this.txtReason = txtReason;
     }
 }

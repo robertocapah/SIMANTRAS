@@ -85,7 +85,7 @@ public class ActivitySplash extends AppCompatActivity {
     private Gson gson;
     private String i_View = "Fragment";
     private final String TAG_DOWNlOAD_APK = "Download_apk";
-
+    int intCode=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,7 +204,7 @@ public class ActivitySplash extends AppCompatActivity {
         iv.clearAnimation();
         iv.startAnimation(anim);
 
-        anim = AnimationUtils.loadAnimation(this, R.anim.bounce);
+        anim = AnimationUtils.loadAnimation(this, R.anim.alpha);
         anim.reset();
         ImageView iv2 = (ImageView) findViewById(R.id.imageView2);
         iv2.setBackgroundResource(R.drawable.ic_simantra);
@@ -241,7 +241,7 @@ public class ActivitySplash extends AppCompatActivity {
                             tokenRepo = new RepoclsToken(getApplicationContext());
                             dataToken = (List<ClsToken>) tokenRepo.findAll();
                             if (dataToken.size() == 0) {
-                                requestToken(this);
+                                requestToken(this,0);
                             } else {
                                 checkVersion(this, mAccountManager);
                             }
@@ -275,7 +275,7 @@ public class ActivitySplash extends AppCompatActivity {
                     tokenRepo = new RepoclsToken(getApplicationContext());
                     dataToken = (List<ClsToken>) tokenRepo.findAll();
                     if (dataToken.size() == 0) {
-                        requestToken(this);
+                        requestToken(this,0);
                     } else {
                         checkVersion(this, mAccountManager);
                     }
@@ -290,8 +290,8 @@ public class ActivitySplash extends AppCompatActivity {
         }
     }
 
-    public void requestToken(final Context activity) {
-
+    public void requestToken(final Context activity,  int code) {
+        this.intCode = code;
         new FastNetworkingUtils().FNRequestToken(activity, "Request Token, Please Wait", new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
@@ -311,7 +311,9 @@ public class ActivitySplash extends AppCompatActivity {
                     new RepoclsToken(activity.getApplicationContext()).createOrUpdate(data);
                     checkVersion(activity, mAccountManager);
                     Log.d("Data info", "get access_token & refresh_token, Success");
-
+                    if (intCode == 1){
+                        finishAffinity();
+                    }
                 } catch (Exception ex) {
                     String a = "";
                 }
@@ -422,7 +424,7 @@ public class ActivitySplash extends AppCompatActivity {
             @Override
             public void onError(ANError error) {
                 int a = 1;
-
+//                finish();
             }
         });
     }
@@ -524,8 +526,6 @@ public class ActivitySplash extends AppCompatActivity {
             e.printStackTrace();
         }
         JSONObject dataJson = new JSONObject();
-
-
         try {
             dataJson.put("GuiId", dtLogin.getTxtGuID());
             tokenRepo = new RepoclsToken(activity.getApplicationContext());

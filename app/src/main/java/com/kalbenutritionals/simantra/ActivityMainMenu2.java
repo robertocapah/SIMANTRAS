@@ -23,7 +23,6 @@ import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Fragment.FragmentDetailInfoChecker;
 import com.kalbenutritionals.simantra.Fragment.FragmentHome;
 import com.kalbenutritionals.simantra.Fragment.FragmentNotification;
-import com.kalbenutritionals.simantra.Fragment.FragmentPushData;
 import com.kalbenutritionals.simantra.Fragment.FragmentSPMSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSearch;
 import com.kalbenutritionals.simantra.Fragment.FragmentSetting;
@@ -84,12 +83,6 @@ public class ActivityMainMenu2 extends AppCompatActivity {
                 String myMessage = "notMainMenu";
                 bundle.putString("message", myMessage);
 
-                FragmentPushData fragmentPushData = new FragmentPushData();
-                fragmentPushData.setArguments(bundle);
-                FragmentTransaction fragmentTransactionPushData = getSupportFragmentManager().beginTransaction();
-                fragmentTransactionPushData.replace(R.id.frame, fragmentPushData);
-                fragmentTransactionPushData.commit();
-                selectedId = 99;
             }
         } else {
             toolbar.setTitle("Home");
@@ -192,7 +185,7 @@ public class ActivityMainMenu2 extends AppCompatActivity {
                             fragmentTransactionSearch.commit();
                             selectedId = 99;
                             break;
-                        case R.id.transporter:
+                        case R.id.mnTransporter:
                             checkNavItem = null;
                             toolbar.setTitle("SIMANTRA");
 
@@ -214,43 +207,6 @@ public class ActivityMainMenu2 extends AppCompatActivity {
                             fragmentTransactionChecklist.replace(R.id.frame, checklistFragment);
                             fragmentTransactionChecklist.commit();*/
                             selectedId = 99;
-                            break;
-                        case R.id.mnpushData:
-                            checkNavItem = null;
-                            toolbar.setTitle("Push Data");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-                            FragmentPushData fragmentPushData = new FragmentPushData();
-                            FragmentTransaction fragmentTransactionPushData = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionPushData.replace(R.id.frame, fragmentPushData);
-                            fragmentTransactionPushData.commit();
-                            selectedId = 99;
-                            break;
-                        case R.id.mnDownloadData:
-                            checkNavItem = null;
-                            toolbar.setTitle("Download Data");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-
-                            selectedId = 99;
-                            break;
-                        case R.id.mnNotification:
-                            checkNavItem = null;
-                            toolbar.setTitle("Notification");
-                            toolbar.setSubtitle(null);
-
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-                            FragmentNotification fragmentNotification = new FragmentNotification();
-                            FragmentTransaction fragmentTransactionNotification = getSupportFragmentManager().beginTransaction();
-                            fragmentTransactionNotification.replace(R.id.frame, fragmentNotification);
-                            fragmentTransactionNotification.commit();
-                            selectedId = 99;
-
                             break;
                         case R.id.mnSetting:
                             checkNavItem = null;

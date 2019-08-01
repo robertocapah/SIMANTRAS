@@ -124,7 +124,7 @@ public class AdapterExpandableListDestination extends RecyclerView.Adapter<Recyc
         }
     }
 
-    private void selectImageProfile(final int id, int position, final int imgId) {
+    /*private void selectImageProfile(final int id, int position, final int imgId) {
         FragmentDetailInfoChecker.CAMERA_REQUEST_QUESTION = id;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_ID = imgId;
         FragmentDetailInfoChecker.GLOBAL_PICK_PICTURE_QUEST_ID = position;
@@ -151,7 +151,7 @@ public class AdapterExpandableListDestination extends RecyclerView.Adapter<Recyc
 //            }
 //        });
 //        builder.show();
-    }
+    }*/
     private void galleryIntentProfile() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -260,7 +260,7 @@ public class AdapterExpandableListDestination extends RecyclerView.Adapter<Recyc
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImageProfile(paId,position2, position);
+//                        selectImageProfile(paId,position2, position);
                     }
                 });
                 linearLayout.addView(rcImage);
@@ -333,7 +333,7 @@ public class AdapterExpandableListDestination extends RecyclerView.Adapter<Recyc
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImageProfile(paId,position2, position);
+//                        selectImageProfile(paId,position2, position);
                     }
                 });
                 linearLayout.addView(rcImage);
@@ -362,8 +362,9 @@ public class AdapterExpandableListDestination extends RecyclerView.Adapter<Recyc
             layoutParams2.setMargins(10,0,0,0);
             layoutParams2.gravity = Gravity.CENTER_HORIZONTAL;
             final TextView etTest = new TextView(ctx);
-
-            etTest.setText(pa.jawabans.get(0).jawaban);
+            if (pa.jawabans.size()>0){
+                etTest.setText(pa.jawabans.get(0).jawaban);
+            }
             etTest.setId(pa.id*13);
             etTest.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
             etTest.setSingleLine(false);
@@ -447,7 +448,7 @@ public class AdapterExpandableListDestination extends RecyclerView.Adapter<Recyc
                 adapter.setOnImageClickListener(new RecyclerGridImageAdapter.OnImageClickListener() {
                     @Override
                     public void onItemClick(View view, VmListImageAdapter obj, int position) {
-                        selectImageProfile(paId,position2, position);
+//                        selectImageProfile(paId,position2, position);
                     }
                 });
 //                ImageView image;

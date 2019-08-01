@@ -22,22 +22,22 @@
             android:title="Approver"
             app:actionLayout="@layout/menu_counter"/>
         <item
-            android:id="@+id/search"
-            android:checked="true"
-            android:icon="@drawable/places_ic_search"
-            android:orderInCategory="0"
-            android:iconTint="@color/black"
-            android:title="Serach"
-            android:visible="false"
-            app:actionLayout="@layout/menu_counter"/>
-        <item
-            android:id="@+id/transporter"
+            android:id="@+id/mnTransporter"
             android:checked="true"
             android:icon="@drawable/ic_directions_car_black_24dp"
             android:orderInCategory="0"
             android:iconTint="@color/black"
             android:title="Transporter"
             app:actionLayout="@layout/menu_counter"/>
+        <item
+            android:id="@+id/mnValidator"
+            android:checked="true"
+            android:icon="@drawable/ic_check_box_black_24dp"
+            android:orderInCategory="0"
+            android:iconTint="@color/black"
+            android:title="Verificator"
+            app:actionLayout="@layout/menu_counter"/>
+
         <item
             android:id="@+id/transaction"
             android:checked="true"
@@ -46,15 +46,6 @@
             android:iconTint="@color/black"
             android:title="Transaction"
             app:actionLayout="@layout/menu_counter"/>
-        <item
-            android:id="@+id/validator"
-            android:checked="true"
-            android:icon="@drawable/ic_import_export_black_24dp"
-            android:orderInCategory="0"
-            android:iconTint="@color/black"
-            android:title="Validator"
-            app:actionLayout="@layout/menu_counter"/>
-
     </group>
     <group
         android:checkableBehavior="single"
@@ -63,7 +54,7 @@
     <group
         android:checkableBehavior="single"
         android:id="@+id/groupListfooter">
-        <item
+        <!--<item
             android:id="@+id/mnDownloadData"
             android:icon="@mipmap/ic_download"
             android:orderInCategory="0"
@@ -75,7 +66,7 @@
             android:orderInCategory="0"
             android:visible="false"
             android:title="Push Data" />
-        <item
+            <item
             android:id="@+id/mnProfile"
             android:icon="@drawable/ic_person_pin_black_24dp"
             android:orderInCategory="0"
@@ -88,7 +79,7 @@
             android:orderInCategory="0"
             android:title="Notification"
             android:visible="false"
-            app:actionLayout="@layout/badge_navigation_plain"/>
+            app:actionLayout="@layout/badge_navigation_plain"/>-->
         <item
             android:id="@+id/mnSetting"
             android:icon="@mipmap/ic_setting"
@@ -102,7 +93,14 @@
             android:orderInCategory="0"
             android:title="Test Menu" />
         <item
+            android:id="@+id/mnAbout"
+            android:icon="@drawable/ic_local_cafe"
+            android:visible="true"
+            android:orderInCategory="0"
+            android:title="About" />
+        <item
             android:id="@+id/mnLogout"
+            android:icon="@drawable/ic_arrow_back"
             android:checked="false"
             android:orderInCategory="2"
             android:title="Logout" />

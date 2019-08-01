@@ -84,7 +84,7 @@ public class AdapterExpandableListNotif extends BaseExpandableListAdapter {
         holder.title_group.setTypeface(null, Typeface.BOLD);
         holder.subtitle_group.setText(group.getTxtSubTittle());
         holder.image_letter.setText(group.getTxtImgName());
-
+        holder.date_child.setText(group.getTxtStatus());
         if (isExpanded){
             holder.imgArrow.setImageResource(R.mipmap.ic_arrow_up);
         }else {

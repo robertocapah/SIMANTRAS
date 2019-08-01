@@ -14,6 +14,8 @@ public class ClsmPertanyaan {
     @DatabaseField
     private String txtPertanyaan;
     @DatabaseField
+    private String txtMetodePemeriksaan;
+    @DatabaseField
     private String txtMapCol;
     @DatabaseField
     private int intLocationDocsId;
@@ -29,12 +31,40 @@ public class ClsmPertanyaan {
     private int intPhotoNeeded;
     @DatabaseField
     private int intSeq;
+    @DatabaseField
+    private String txtReason;
+    @DatabaseField
+    private String txtLoadingMessage;
 
     public static String TXTINTLOCATIONID = "intLocationDocsId";
     public static String TXTJENISPERTANYAAN = "intJenisPertanyaanId";
     public static String INTVALIDATEID = "intValidateID";
     public static String TXTFILLDTLID = "intFillDetailId";
     public static String TXTMAPCOL = "txtMapCol";
+
+    public String getTxtReason() {
+        return txtReason;
+    }
+
+    public void setTxtReason(String txtReason) {
+        this.txtReason = txtReason;
+    }
+
+    public String getTxtLoadingMessage() {
+        return txtLoadingMessage;
+    }
+
+    public void setTxtLoadingMessage(String txtLoadingMessage) {
+        this.txtLoadingMessage = txtLoadingMessage;
+    }
+
+    public String getTxtMetodePemeriksaan() {
+        return txtMetodePemeriksaan;
+    }
+
+    public void setTxtMetodePemeriksaan(String txtMetodePemeriksaan) {
+        this.txtMetodePemeriksaan = txtMetodePemeriksaan;
+    }
 
     public int getIntFillDetailId() {
         return intFillDetailId;

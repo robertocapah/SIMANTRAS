@@ -76,7 +76,7 @@ public class RepomUserLogin implements CRUD {
     }
 
     @Override
-    public List<?> findAll() throws SQLException {
+    public List<ClsmUserLogin> findAll() throws SQLException {
         List<ClsmUserLogin> items = null;
         try{
             items = helper.getmUserLoginsDao().queryForAll();

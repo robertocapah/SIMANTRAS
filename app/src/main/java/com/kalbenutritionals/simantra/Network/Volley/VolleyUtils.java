@@ -123,7 +123,7 @@ public class VolleyUtils {
                 builder.setPositiveButton("REFRESH", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        new ActivitySplash().requestToken(activity);
+                        new ActivitySplash().requestToken(activity,0);
                         dialog.dismiss();
                     }
                 });

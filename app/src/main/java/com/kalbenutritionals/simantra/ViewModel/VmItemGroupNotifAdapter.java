@@ -13,8 +13,17 @@ public class VmItemGroupNotifAdapter {
     private int intTransaksiId;
     private String txtTitleTransaksi;
     private String txtDescTransaksi;
+    private String txtStatus;
     private List<String> txtLinkImage;
     private int intColor;
+
+    public String getTxtStatus() {
+        return txtStatus;
+    }
+
+    public void setTxtStatus(String txtStatus) {
+        this.txtStatus = txtStatus;
+    }
 
     public String getTxtTittle() {
         return txtTittle;
