@@ -400,7 +400,7 @@ public class ActivitySplash extends AppCompatActivity {
                                 resUpdate = true;
                                 txtLink = objData.getString("link_app");
                             }
-                            resUpdate = false; //testing
+//                            resUpdate = false; //testing
                             if (resUpdate) {
 
                                 DonutProgress donutProgress = new DonutProgress(context);

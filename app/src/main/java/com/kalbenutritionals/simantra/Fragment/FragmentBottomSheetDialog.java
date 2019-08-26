@@ -266,7 +266,7 @@ public class FragmentBottomSheetDialog extends BottomSheetDialogFragment impleme
         }
         final String mRequestBody = resJson.toString();
 
-        new FastNetworkingUtils().FNRequestPostDataSearch(getActivity(), strLinkAPI, resJson, linearLayout, cvNewDokter, new InterfaceFastNetworking() {
+        /*new FastNetworkingUtils().FNRequestPostDataSearch(getActivity(), strLinkAPI, resJson, linearLayout, cvNewDokter, new InterfaceFastNetworking() {
             @Override
             public void onResponse(JSONObject response) {
                 Intent res = null;
@@ -316,7 +316,7 @@ public class FragmentBottomSheetDialog extends BottomSheetDialogFragment impleme
             public void onError(ANError error) {
                 new ToastCustom().showToasty(getContext(),error.getErrorDetail(),4);
             }
-        });
+        });*/
 
         /*new VolleyUtils().volleyGetDataMaster(getActivity(), strLinkAPI, mRequestBody, linearLayout, cvNewDokter, new InterfaceVolleyResponseListener() {
             @Override

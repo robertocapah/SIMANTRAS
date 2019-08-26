@@ -22,6 +22,16 @@ public class ClsTDataRejection implements Serializable {
     private String txtJawaban;
     @DatabaseField
     private String txtReason;
+    @DatabaseField
+    private String txtIssueReason;
+
+    public String getTxtIssueReason() {
+        return txtIssueReason;
+    }
+
+    public void setTxtIssueReason(String txtIssueReason) {
+        this.txtIssueReason = txtIssueReason;
+    }
 
     public String getTxtReason() {
         return txtReason;

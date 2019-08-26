@@ -10,7 +10,16 @@ public class VmTJawabanUserHeader {
     private int intFillHeaderId;
     private int intStatusDisposisi;
     private String txtLoadingMessage;
+    private List<VmAdapterBasicNotQualified> ListRejection;
     private List<VmTJawabanUser> listJawabanUser;
+
+    public List<VmAdapterBasicNotQualified> getListRejection() {
+        return ListRejection;
+    }
+
+    public void setListRejection(List<VmAdapterBasicNotQualified> listRejection) {
+        ListRejection = listRejection;
+    }
 
     public String getTxtLoadingMessage() {
         return txtLoadingMessage;

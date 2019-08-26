@@ -100,6 +100,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:id="@+id/ln_mandatory">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8sp"
+            android:textSize="@dimen/text_size_medium"
+            android:text="*"
+            android:textColor="@color/blue_A700"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mandatory_text"
+            android:text="Mandatory (Image Required)"
+            android:textSize="10sp"
+            android:textColor="@color/blue_A700"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:id="@+id/ln_error_msg">
         <TextView
             android:layout_width="wrap_content"

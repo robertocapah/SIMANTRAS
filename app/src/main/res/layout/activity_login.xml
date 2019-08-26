@@ -230,12 +230,11 @@
                         android:layout_marginRight="-4dp"
                         android:inputType="text"
                         android:maxLength="50"
+                        android:textColor="@color/black"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:ems="10"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small.Inverse"
-                        android:textColor="@color/green_300"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                         android:id="@+id/editTextUsername"
                         android:theme="@style/EditText.Grey" />
 
@@ -252,10 +251,12 @@
 
                     <android.support.v7.widget.AppCompatSpinner
                         android:id="@+id/spnRoleLogin"
-                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                        style="@style/spinnerItemStyle"
                         android:layout_width="match_parent"
+                        android:textColor="#FF0000"
                         android:layout_height="?attr/actionBarSize"
-                        android:spinnerMode="dialog" />
+                        android:spinnerMode="dialog"
+                        />
 
                     <View
                         android:layout_width="0dp"
@@ -280,10 +281,9 @@
                         android:singleLine="true"
                         android:imeActionLabel="Sign In"
                         android:imeOptions="actionUnspecified"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small.Inverse"
-                        android:textColor="@color/green_300"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                        android:textColor="@color/black"
                         android:ems="10"
-                        android:textStyle="bold"
                         android:drawableRight="@drawable/ic_lock_close"
                         android:drawableTint="@color/green_300"
                         android:theme="@style/EditText.Grey" />

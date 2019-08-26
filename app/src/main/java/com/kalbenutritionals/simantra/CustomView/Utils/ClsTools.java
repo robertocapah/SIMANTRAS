@@ -359,6 +359,17 @@ public class ClsTools {
         }
     }
 
+    public static void displayImageOriginalUrlCustom(Context ctx, ImageView img, @DrawableRes int drawable,String url) {
+        try {
+            Glide.with(ctx).load(url)
+                    .transition(new DrawableTransitionOptions().crossFade()).fitCenter()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_cloud_download_black_24dp)
+                    .into(img);
+        } catch (Exception e) {
+        }
+    }
+
     public static void displayImageRound(final Context ctx, final ImageView img, @DrawableRes int drawable) {
         try {
             Glide.with(ctx).asBitmap().load(drawable).centerCrop().into(new BitmapImageViewTarget(img) {

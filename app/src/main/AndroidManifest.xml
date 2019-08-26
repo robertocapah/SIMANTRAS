@@ -154,7 +154,7 @@
                 android:value="com.kalbenutritionals.simantra.ActivityMainMenu" />
         </activity>
         <activity android:name="com.kalbenutritionals.simantra.ActivityPDFViewer"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.kalbenutritionals.simantra.ActivityMainMenu" />

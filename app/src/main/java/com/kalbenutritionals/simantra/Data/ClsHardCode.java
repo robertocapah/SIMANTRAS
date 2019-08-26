@@ -57,6 +57,7 @@ public class ClsHardCode {
     public String linkGetListFormByOrg = new RepomConfig(context).API +"getListFormByOrg";
     public String linkSetTransactionList = new RepomConfig(context).API +"setTransaksiMobile";
     public String linkDownloadFilePDF = new RepomConfig(context).API + "filePDF?txtSPMNo=";
+    public String linkDownloadLinkPDF = new RepomConfig(context).API + "filePDF";
     public String linkGetDataApproval = new RepomConfig(context).API + "GetDataApproval";
 
     public String linksetTimeStatusTransaksiMobile = new RepomConfig(context).API +"setTimeStatusTransaksiMobile";
@@ -87,6 +88,8 @@ public class ClsHardCode {
     public static String intDesc = "intDesc";
     public static String intIsValidator = "IsValidator";
     public static String intRejectPopUp = "RejectPopUp";
+
+    public static String TXT_NAME_APP = "SMT Apps";
 
     public static int JenisPertanyaanTextView = 7;
     public static int JenisPertanyaanTextBox = 1;
@@ -150,6 +153,13 @@ public class ClsHardCode {
     public static String TXT_SHIP_TO = "SHIP_TO";
 
     public static String TXT_SHARED_PREF_KEY = "SimantraPref";
+
+
+    public static String FT_CHECKER = "Checker";
+    public static String FT_LOADING = "Loading";
+    public static String FT_FINISH = "Finish";
+    public static String FT_UNLOADING = "Unloading";
+    public static String FT_FINISH_UNLOADING = "FinishUnloading";
 
 
     public String copydb(Context context) throws IOException {

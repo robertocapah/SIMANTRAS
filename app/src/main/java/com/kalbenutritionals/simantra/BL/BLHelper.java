@@ -502,6 +502,8 @@ public class BLHelper {
                 VmAdapterBasicIssue dt = new VmAdapterBasicIssue();
                 dt.setIssue(dtReject.getTxtPertanyaan());
                 dt.setJawaban(dtReject.getTxtJawaban());
+                dt.setIssueReason(dtReject.getTxtIssueReason());
+                dt.setFixReason(dtReject.getTxtReason());
                 List<ClsImages> ltImageIssue = new RepoClsImages(context).findLinkIssuesByDtlId(ClsHardCode.INT_IMAGE_ISSUE,dtReject.getIntFillDtlId());
                 dt.setTxtLinkImageIssue(ltImageIssue);
                 dt.setFixReason(dtReject.getTxtReason());
@@ -686,6 +688,7 @@ public class BLHelper {
                         ClsTDataRejection dataReject = new ClsTDataRejection();
                         dataReject.setTxtPertanyaan(item.getTXTFORMNAME());
                         dataReject.setIntValueId(item.getINTVALUEID());
+                        dataReject.setTxtIssueReason(item.getTxtReason());
                         dataReject.setIntFillDtlId(item.getINTFILLDTLID());
                         dataReject.setTxtReason(dataVehichleFix.getTXT_REASON());
                         List<ListDatIsianItem> datIsianItems = item.getListDatIsian();

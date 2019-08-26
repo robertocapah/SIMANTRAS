@@ -107,7 +107,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
 //        public TextView txtPertanyaan;
         public ImageButton bt_expand;
         public View lyt_expand;
-        public LinearLayout lyt_parent, ln_error_msg;
+        public LinearLayout lyt_parent, ln_error_msg, ln_mandatory;
         private LinearLayout lyt_pertayaan, ll_jawaban1;
 //        private LinearLayout ll_reason;
         public TextView tvErrorMesage;
@@ -124,6 +124,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             tvErrorMesage = (TextView) v.findViewById(R.id.warning_text);
             tvBtnInformation = (TextView) v.findViewById(R.id.tvBtnInformation);
             ln_error_msg = (LinearLayout) v.findViewById(R.id.ln_error_msg);
+            ln_mandatory = (LinearLayout) v.findViewById(R.id.ln_mandatory);
             if(lyt_pertayaan== null)lyt_pertayaan = (LinearLayout) v.findViewById(R.id.ll_pertanyaan1);
 //            ll_reason = (LinearLayout) v.findViewById(R.id.ll_reason);
 //            etReason = (EditText) v.findViewById(R.id.etReason);
@@ -212,7 +213,7 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
             int size = holder.ll_jawaban1.getChildCount();
             for (int x = 0; x < holder.ll_jawaban1.getChildCount(); x++) {
                 View nextChild = holder.ll_jawaban1.getChildAt(x);
-                if (nextChild instanceof LinearLayout) {
+                  if (nextChild instanceof LinearLayout) {
                     linearLayout = (LinearLayout) nextChild;
                     linearLayout = (LinearLayout) v.findViewById(pa.id*22);
                 }
@@ -300,6 +301,11 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
         }else{
             holder.ln_error_msg.setVisibility(View.VISIBLE);
             holder.tvErrorMesage.setText(pa.message);
+        }
+        if (pa.intValidateId == ClsHardCode.MANDATORY){
+            holder.ln_mandatory.setVisibility(View.VISIBLE);
+        }else{
+            holder.ln_mandatory.setVisibility(View.GONE);
         }
         if(pa!=null && pa.jenisPertanyaan==ClsHardCode.JenisPertanyaanCheckBox){
             TextView tvPertanyaan = new TextView(ctx);
@@ -419,6 +425,14 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     params.setMargins(10, 10, 100, 15);
                     rb.setLayoutParams(params);
                     rb.setChecked(j.bitChoosen);
+                    rb.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mOnItemClickListener != null) {
+                                mOnItemClickListener.onItemClick(v, items.get(position), position);
+                            }
+                        }
+                    });
                     if (j.bitChoosen){
                         if(rb.getText().equals("No")){
 //                            holder.ll_reason.setVisibility(View.VISIBLE);
@@ -511,8 +525,8 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                     }
 
                 }
-            });
-            if(rg.getCheckedRadioButtonId()==-1){
+            });*/
+            /*if(rg.getCheckedRadioButtonId()==-1){
                 int selectedId = rg.getCheckedRadioButtonId();
                 // find the radiobutton by returned id
                 RadioButton rd = (RadioButton)v.findViewById(selectedId);
@@ -716,14 +730,14 @@ public class AdapterExpandableList extends RecyclerView.Adapter<RecyclerView.Vie
                  receivedData.onDataTransportReceived(listAnswer, HMPertanyaan1, ListAnswerView, p.intPositionId);
                  ListAnswerView = new ArrayList<>();
              }
-            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+            /*view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mOnItemClickListener != null) {
                         mOnItemClickListener.onItemClick(view, items.get(position), position);
                     }
                 }
-            });
+            });*/
 
 
         }

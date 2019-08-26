@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentTab extends Fragment {
-    private ViewPager mPager;
-    private SectionsPagerAdapter viewPagerAdapter;
+    public ViewPager mPager;
+    public SectionsPagerAdapter viewPagerAdapter;
     private TabLayout tab_layout;
     View v;
     int statusLoading, intDesc;
@@ -60,7 +60,7 @@ public class FragmentTab extends Fragment {
         // set icon color pre-selected
         tab_layout.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.deep_orange_500), PorterDuff.Mode.SRC_IN);
         tab_layout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Questioner Checker");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("SIMANTRA");
         tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -120,7 +120,7 @@ public class FragmentTab extends Fragment {
 
         viewPager.setAdapter(viewPagerAdapter);
     }
-    private class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();

@@ -20,10 +20,12 @@ public class VmListItemAdapterPertanyaan {
     public List<VmImageContainer> listImage;
     public boolean bolHaveAnswer;
     public boolean bitValid;
+    public boolean bitChecked;
     public String message;
     public List<Jawaban> jawabans;
     public int intValidateId;
     public int intPositionId;
+    public int intFormDtlId;
     public int intFillDtlId;
     public int intFillHdrId;
     public String txtMetodePemeriksaan;
@@ -35,7 +37,7 @@ public class VmListItemAdapterPertanyaan {
     public VmListItemAdapterPertanyaan() {
     }
 
-    public VmListItemAdapterPertanyaan(int image, String txtPertanyaan, int id, int jenisPertanyaan, boolean bitImage, List<Jawaban> jawabans, boolean bitValid, String msg, Bitmap bitmap, Uri uri, boolean bolHaveAnswer, int intValidateId, int intPositionId, String txtMetodePemeriksaan, int intFillDtlId, int intFillHdrId, String txtReason, String txtLoadingMessage) {
+    public VmListItemAdapterPertanyaan(int image, String txtPertanyaan, int id, int jenisPertanyaan, boolean bitImage, List<Jawaban> jawabans, boolean bitValid, String msg, Bitmap bitmap, Uri uri, boolean bolHaveAnswer, int intValidateId, int intPositionId, String txtMetodePemeriksaan, int intFillDtlId, int intFillHdrId, String txtReason, String txtLoadingMessage, boolean bitChecked, int intFormDtlId) {
         this.id = id;
         this.image = image;
         this.txtPertanyaan = txtPertanyaan;
@@ -54,5 +56,7 @@ public class VmListItemAdapterPertanyaan {
         this.intFillHdrId = intFillHdrId;
         this.txtReason = txtReason;
         this.txtLoadingMessage = txtLoadingMessage;
+        this.bitChecked = bitChecked;
+        this.intFormDtlId = intFormDtlId;
     }
 }

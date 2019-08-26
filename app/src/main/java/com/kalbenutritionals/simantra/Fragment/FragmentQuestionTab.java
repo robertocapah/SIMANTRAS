@@ -12,9 +12,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +36,7 @@ import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 import com.kalbenutritionals.simantra.BL.BLHelper;
 import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasic;
+import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterListBasicNotQualified;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
 import com.kalbenutritionals.simantra.Data.ResponseDataJson.responsePushTransaksi.ResponsePushTransaksi;
@@ -45,6 +49,7 @@ import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.DeviceInfo;
 import com.kalbenutritionals.simantra.ViewModel.UserRequest;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
+import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasicNotQualified;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUser;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserDetail;
 import com.kalbenutritionals.simantra.ViewModel.VmTJawabanUserHeader;
@@ -84,8 +89,9 @@ public class FragmentQuestionTab extends Fragment {
     private View line_first, line_second;
     private ImageView image_left, image_midle, image_right;
     private TextView tvlineone, tvlinetwo, tvlinethree, tv_next, tvLabelTitle;
+    public TextView tvQuestionCount;
     private int idx_state = 0;
-    private MaterialRippleLayout btnNext;
+    public MaterialRippleLayout btnNext;
     Context context;
     Map<String, File> listMap = new HashMap<>();
     int intIsValidator;
@@ -150,7 +156,7 @@ public class FragmentQuestionTab extends Fragment {
         image_left = (ImageView) v.findViewById(R.id.image_left);
         image_midle = (ImageView) v.findViewById(R.id.image_midle);
         image_right = (ImageView) v.findViewById(R.id.image_right);
-
+        tvQuestionCount = (TextView) v.findViewById(R.id.tvQuestionCount);
         tvLabelTitle = (TextView) v.findViewById(R.id.tvLabelTitle);
         tv_next = (TextView) v.findViewById(R.id.tvNext);
         tvlineone = (TextView) v.findViewById(R.id.tvlineone);
@@ -181,6 +187,7 @@ public class FragmentQuestionTab extends Fragment {
                 tvlinetwo.setText("Unloading");
                 tv_next.setText("Finish");
                 (v.findViewById(R.id.lyt_save)).setVisibility(View.GONE);
+                tvQuestionCount.setVisibility(View.GONE);
                 /*switch (intDesc){
                     case 4:
                         idx_state = 4;
@@ -207,7 +214,7 @@ public class FragmentQuestionTab extends Fragment {
                     TransactionClosed();
                 } else {
                     if (array_state[idx_state].name().equalsIgnoreCase(State.CHECKING.name())) {
-                        FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+                        final FragmentDetailInfoChecker myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 //                        boolean validBody = myFragment.validateAnswHeader();
                         btnNext.setClickable(false);
                         VmTJawabanUserHeader validMandatoryList = myFragment.validateAll(ClsHardCode.PUSHDATA);
@@ -256,27 +263,55 @@ public class FragmentQuestionTab extends Fragment {
 
                                 NestedScrollView nested_scroll_view_alert = (NestedScrollView) dialog.findViewById(R.id.nested_scroll_view_alert);
                                 TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitleAlert);
-                                RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
+                                final RecyclerView rvView = (RecyclerView) dialog.findViewById(R.id.lvPoin);
                                 nested_scroll_view_alert.fullScroll(ScrollView.FOCUS_UP);
-                                List<VmAdapterBasic> basic = myFragment.ListRejection;
+                                final List<VmAdapterBasicNotQualified> basic = myFragment.ListRejection;
                                 if (basic.size() > 0) {
 //                                dialog.setTitle("Are yo");
                                     tvTitle.setText("Are you sure these item not qualified?");
 //                                basic.addAll(basic);
-                                    AdapterListBasic lv = new AdapterListBasic(getActivity(), basic);
+                                    final AdapterListBasicNotQualified lv = new AdapterListBasicNotQualified(getActivity(), basic);
+                                    lv.setOnItemClickListener(new AdapterListBasicNotQualified.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(View view, VmAdapterBasicNotQualified obj, int position, String txtReason) {
+                                            myFragment.ListRejection.get(position).setTxtReason(txtReason);
+                                            lv.notifyDataSetChanged();
+                                            rvView.setAdapter(lv);
+
+                                        }
+                                    });
                                     rvView.setAdapter(lv);
                                     rvView.setLayoutManager(new LinearLayoutManager(getActivity()));
                                     // if button is clicked, close the custom dialog
                                     btnProceed.setBackgroundColor(getResources().getColor(R.color.red_600));
+                                    etReason.addTextChangedListener(new TextWatcher() {
+                                        @Override
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                        }
+
+                                        @Override
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+
+                                        @Override
+                                        public void afterTextChanged(Editable s) {
+                                            if (!etReason.getText().toString().trim().equals("")){
+                                                etReason.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_rounded_normal_black));
+                                            }else{
+                                                etReason.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_rounded_normal_red));
+                                            }
+                                        }
+                                    });
                                     btnProceed.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             if(etReason.getText().toString().trim().equals("")){
                                                 Toast.makeText(context,"Fill The Reason",Toast.LENGTH_SHORT).show();
                                             }else{
-                                                pushTransaction(dialog, ClsHardCode.PUSHDATA, etReason.getText().toString());
+                                                pushTransaction(dialog, ClsHardCode.PUSHDATA, etReason.getText().toString(),myFragment.ListRejection);
                                             }
-
                                         }
                                     });
 
@@ -299,7 +334,7 @@ public class FragmentQuestionTab extends Fragment {
                                                     etReason.setBackground(getActivity().getDrawable(R.drawable.bg_rounded_normal_red));
                                                 }
                                             }else{
-                                                pushTransaction(dialog, ClsHardCode.PUSHDATA,etReason.getText().toString());
+                                                pushTransaction(dialog, ClsHardCode.PUSHDATA,etReason.getText().toString(), myFragment.ListRejection);
                                             }
                                         }
                                     });
@@ -397,7 +432,7 @@ public class FragmentQuestionTab extends Fragment {
                 btnProceed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pushTransaction(dialog, ClsHardCode.SAVE, "");
+                        pushTransaction(dialog, ClsHardCode.SAVE, "", myFragment.ListRejection);
                     }
                 });
 
@@ -411,11 +446,11 @@ public class FragmentQuestionTab extends Fragment {
         return v;
     }
 
-    private void pushTransaction(final Dialog dialog, final int FlagPush, String txtReason) {
+    private void pushTransaction(final Dialog dialog, final int FlagPush, String txtReason, List<VmAdapterBasicNotQualified> ListRejection) {
 
         String txtLink = new ClsHardCode().linkSetTransactionList;
         myFragment = (FragmentDetailInfoChecker) getActivity().getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        JSONObject data = myFragment.getDataTransaction(FlagPush, txtReason);
+        JSONObject data = myFragment.getDataTransaction(FlagPush, txtReason, ListRejection);
         JSONObject object = new JSONObject();
         DeviceInfo dataDevice = new BLHelper().getDeviceInfo();
         JSONObject deviceInfo = new BLHelper().getDataTransaksiJsonObjCommon(context, dataDevice);
@@ -438,6 +473,7 @@ public class FragmentQuestionTab extends Fragment {
                     if (model.getResult().isStatus()) {
                         if (FlagPush == ClsHardCode.SAVE) {
                             new ToastCustom().showToasty(context, "Data Saved", 1);
+                            refreshForm();
                             dialog.dismiss();
                         } else {
 
@@ -453,6 +489,7 @@ public class FragmentQuestionTab extends Fragment {
                                 fragmentTransactionSPMSearch.commit();
                             } else {
                                 (v.findViewById(R.id.lyt_save)).setVisibility(View.GONE);
+                                tvQuestionCount.setVisibility(View.GONE);
                                 idx_state++;
                                 displayFragment(array_state[idx_state]);
                                 dialog.dismiss();
@@ -475,7 +512,38 @@ public class FragmentQuestionTab extends Fragment {
 
         });
     }
+    private void refreshForm() {
+        String txtLink = new ClsHardCode().linkGetListFormByOrg;
+        final int intType = ClsHardCode.INT_QRCODE;
+        int intFillHdrId = 60;
+        String qr = BLHelper.getPreference(context,ClsHardCode.SP_QRCodeActive);
+        JSONObject obj = new BLHelper().getDataRequestDataSPM(context,intType, qr, 1, intFillHdrId);//validator = 2
+        new FastNetworkingUtils().FNRequestPostData(getActivity(), txtLink, obj, "Refreshing Form", new InterfaceFastNetworking() {
+            @Override
+            public void onResponse(JSONObject response) {
+                ResponseGetQuestion model = gson.fromJson(response.toString(), ResponseGetQuestion.class);
+                if (model.getResult() != null) {
+                    if (model.getResult().isStatus()) {
+                        Bundle bundle;
+                        new BLHelper().GenerateData(getActivity().getApplicationContext(), model);
+                        // Reload current fragment
+                        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.detach(myFragment);
+                        ft.attach(myFragment);
+                        ft.commit();
 
+                    } else {
+                        Toast.makeText(context, model.getResult().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(ANError error) {
+                int a = 1;
+            }
+        });
+    }
     public void updateDataTimeAfterCheckFisik() {
         final SimpleDateFormat format = new SimpleDateFormat(ClsHardCode.FormatTime);
         final Date dateFinish = new Date(System.currentTimeMillis());
@@ -548,15 +616,16 @@ public class FragmentQuestionTab extends Fragment {
 
         if (state.name().equalsIgnoreCase(State.CHECKING.name())) {
 //            fragment = new FragmentPertanyaan();
-            FRAGMENT_TAG = "Checker";
+            FRAGMENT_TAG = ClsHardCode.FT_CHECKER;
             fragment = new FragmentDetailInfoChecker();
             tvlineone.setTextColor(getResources().getColor(R.color.grey_90));
             image_left.clearColorFilter();
             intStatusMenu = ClsHardCode.INT_CHECKER;
             tv_next.setText("Start Loading");
         } else if (state.name().equalsIgnoreCase(State.LOADING.name())) {
-            FRAGMENT_TAG = "Loading";
+            FRAGMENT_TAG = ClsHardCode.FT_LOADING;
             (v.findViewById(R.id.lyt_save)).setVisibility(View.GONE);
+            tvQuestionCount.setVisibility(View.GONE);
             (v.findViewById(R.id.lyt_do_other_transaction)).setVisibility(View.GONE);
             fragment = new FragmentLoading();
             intStatusMenu = ClsHardCode.INT_CHECKER;
@@ -580,7 +649,7 @@ public class FragmentQuestionTab extends Fragment {
             tv_next.setText("Finish");
 
         } else if (state.name().equalsIgnoreCase(State.FINISH.name())) {
-            FRAGMENT_TAG = "Finish";
+            FRAGMENT_TAG = ClsHardCode.FT_FINISH;
             fragment = new FragmentLoadingFinish();
             Bundle bundle = new Bundle();
             bundle.putInt(ClsHardCode.intIsValidator, 88);
@@ -592,7 +661,8 @@ public class FragmentQuestionTab extends Fragment {
             tv_next.setText("Close");
             intStatusMenu = ClsHardCode.INT_CHECKER;
         } else if (state.name().equalsIgnoreCase(State.UNLOADING.name())) {
-            FRAGMENT_TAG = "Unloading";
+            FRAGMENT_TAG = ClsHardCode.FT_UNLOADING;
+            (v.findViewById(R.id.lyt_do_other_transaction)).setVisibility(View.GONE);
             fragment = new FragmentValidator();
             if (this.getArguments() != null) {
                 String myValue = this.getArguments().getString(ClsHardCode.txtMessage);
@@ -613,7 +683,7 @@ public class FragmentQuestionTab extends Fragment {
             tvlinetwo.setTextColor(getResources().getColor(R.color.grey_90));
             tv_next.setText("Finish");
         } else if (state.name().equalsIgnoreCase(State.FINISHUNLOADING.name())) {
-            FRAGMENT_TAG = "FinishUnloading";
+            FRAGMENT_TAG = ClsHardCode.FT_FINISH_UNLOADING;
             fragment = new FragmentLoadingFinish();
             Bundle bundle = new Bundle();
             bundle.putInt(ClsHardCode.intIsValidator, intIsValidator);

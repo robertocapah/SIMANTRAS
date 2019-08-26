@@ -44,6 +44,27 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.InputFilter.InputFilters;
 import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
+import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterSpinner;
+import com.kalbenutritionals.simantra.CustomView.Utils.AuthenticatorUtil;
+import com.kalbenutritionals.simantra.CustomView.Utils.DrawableClickListener;
+import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListExpeditionItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListORGItem;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
+import com.kalbenutritionals.simantra.Database.Common.ClsExpedition;
+import com.kalbenutritionals.simantra.Database.Common.ClsOrganisation;
+import com.kalbenutritionals.simantra.Database.Common.ClsToken;
+import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
+import com.kalbenutritionals.simantra.Database.Common.ClsmUserRole;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsExpedition;
+import com.kalbenutritionals.simantra.Database.Repo.RepoClsOrganisation;
+import com.kalbenutritionals.simantra.Database.Repo.RepoclsToken;
+import com.kalbenutritionals.simantra.Database.Repo.RepomMenu;
+import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
+import com.kalbenutritionals.simantra.Database.Repo.RepomUserRole;
+import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
+import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
+import com.kalbenutritionals.simantra.ViewModel.VmSpinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,27 +89,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.kalbenutritionals.simantra.CustomView.Adapter.AdapterSpinner;
-import com.kalbenutritionals.simantra.CustomView.Utils.AuthenticatorUtil;
-import com.kalbenutritionals.simantra.CustomView.Utils.DrawableClickListener;
-import com.kalbenutritionals.simantra.Data.ClsHardCode;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListExpeditionItem;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.ListORGItem;
-import com.kalbenutritionals.simantra.Data.ResponseDataJson.loginMobileApps.LoginMobileApps;
-import com.kalbenutritionals.simantra.Database.Common.ClsExpedition;
-import com.kalbenutritionals.simantra.Database.Common.ClsOrganisation;
-import com.kalbenutritionals.simantra.Database.Common.ClsToken;
-import com.kalbenutritionals.simantra.Database.Common.ClsmUserLogin;
-import com.kalbenutritionals.simantra.Database.Common.ClsmUserRole;
-import com.kalbenutritionals.simantra.Database.Repo.RepoClsExpedition;
-import com.kalbenutritionals.simantra.Database.Repo.RepoClsOrganisation;
-import com.kalbenutritionals.simantra.Database.Repo.RepoclsToken;
-import com.kalbenutritionals.simantra.Database.Repo.RepomMenu;
-import com.kalbenutritionals.simantra.Database.Repo.RepomUserLogin;
-import com.kalbenutritionals.simantra.Database.Repo.RepomUserRole;
-import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
-import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
-import com.kalbenutritionals.simantra.ViewModel.VmSpinner;
 
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.ARG_ACCOUNT_NAME;
 import static com.oktaviani.dewi.mylibrary.authenticator.AccountGeneral.ARG_AUTH_TYPE;
@@ -106,8 +106,6 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
     String name[];
     @BindView(R.id.editTextUsername)
     TextInputEditText editTextUsername;
-    @BindView(R.id.spnRoleLogin)
-    AppCompatSpinner spnRoleLogin;
     @BindView(R.id.editTextPass)
     TextInputEditText editTextPass;
     @BindView(R.id.buttonLogin)
@@ -120,6 +118,8 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
     LinearLayout lnFormLogin2;
     @BindView(R.id.cd_login)
     CardView cdLogin;
+    @BindView(R.id.spnRoleLogin)
+    AppCompatSpinner spnRoleLogin;
     private String mAuthTokenType;
     private AlertDialog mAlertDialog;
     private AccountManager mAccountManager;
@@ -262,30 +262,27 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         dataSpn.setTxtValue("Select One");
         listRole.add(dataSpn);
 
-        dataAdapter = new AdapterSpinner(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, listRole){
+        dataAdapter = new AdapterSpinner(ActivityLogin.this, android.R.layout.simple_spinner_dropdown_item, listRole) {
             @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
+            public boolean isEnabled(int position) {
+                if (position == 0) {
                     // Disable the first item from Spinner
                     // First item will be use for hint
                     return false;
-                }
-                else
-                {
+                } else {
                     return true;
                 }
             }
+
             @Override
             public View getDropDownView(int position, View convertView,
                                         ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
-                if(position == 0){
+                if (position == 0) {
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
-                }
-                else {
+                } else {
                     tv.setTextColor(getResources().getColor(R.color.green_300));
                 }
                 return view;
@@ -328,7 +325,6 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
 
         // attaching data adapter to spinner
         spnRoleLogin.setAdapter(dataAdapter);
-
         spnRoleLogin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -469,14 +465,15 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
         String strLinkAPI = new ClsHardCode().linkLogin;
         JSONObject resJson = new JSONObject();
         JSONObject jData = new JSONObject();
-        if(intRoleId == 0){
-            new ToastCustom().showToasty(getApplicationContext(),"You need to choose role",4);
-        }else{
+        if (intRoleId == 0) {
+            new ToastCustom().showToasty(getApplicationContext(), "You need to choose role", 4);
+        } else {
 
             try {
                 jData.put("username", txtUsername);
                 jData.put("intRoleId", intRoleId);
                 jData.put("password", txtPassword);
+                jData.put("txtNameApp", ClsHardCode.TXT_NAME_APP);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -537,7 +534,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                                     } else {
                                         data.setBlobImg(null);
                                     }
-                                    if(model.getData().getListExpedition()!=null){
+                                    if (model.getData().getListExpedition() != null) {
                                         List<ListExpeditionItem> items = model.getData().getListExpedition();
                                         for (ListExpeditionItem item :
                                                 items) {
@@ -551,7 +548,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                                             }
                                         }
                                     }
-                                    if (model.getData().getListORG()!=null){
+                                    if (model.getData().getListORG() != null) {
                                         List<ListORGItem> items = model.getData().getListORG();
                                         for (ListORGItem item :
                                                 items) {
@@ -749,7 +746,7 @@ public class ActivityLogin extends AccountAuthenticatorActivity {
                                     }
                                     dataAdapter.notifyDataSetChanged();
                                     spnRoleLogin.setEnabled(true);
-                                    if (arrayData.length()==1){
+                                    if (arrayData.length() == 1) {
                                         spnRoleLogin.setSelection(1);
                                     }
 

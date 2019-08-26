@@ -7,9 +7,18 @@ import java.util.List;
 public class VmAdapterBasicIssue {
     private String issue;
     private String jawaban;
+    private String issueReason;
     private String fixReason;
     private List<ClsImages> txtLinkImageIssue;
     private List<ClsImages> txtLinkImageFixed;
+
+    public String getIssueReason() {
+        return issueReason;
+    }
+
+    public void setIssueReason(String issueReason) {
+        this.issueReason = issueReason;
+    }
 
     public String getIssue() {
         return issue;

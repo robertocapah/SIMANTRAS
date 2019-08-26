@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/spacing_medium"
+    android:background="@drawable/bg_rounded_normal"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -56,14 +57,16 @@
                 android:id="@+id/etReason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_medium"
-                android:background="@drawable/bg_edtext"
-                android:hint="Fill Reason" />
+                android:layout_marginTop="@dimen/spacing_large"
+                android:background="@drawable/bg_rounded_normal_red"
+                android:drawableRight="@drawable/ic_mode_edit_black_24dp"
+                android:hint="Fill Summary Check" />
 
             <TextView
                 android:id="@+id/titleConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
                 android:layout_margin="@dimen/spacing_small"
                 android:text="Do you want to Continue?"
                 android:textAlignment="center"

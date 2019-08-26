@@ -208,6 +208,30 @@
                 android:layout_height="2dp">
 
             </View>
+            <!--<com.balysv.materialripple.MaterialRippleLayout
+                style="@style/RippleStyleWhite"
+                android:id="@+id/lyt_question_count"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/spacing_xxlarge"
+                android:layout_weight="0.5"
+                android:background="@color/colorDefault">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvQuestionCount"
+                        android:tint="@android:color/white"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+                        android:textColor="@android:color/white"
+                        android:text="Q 10/10"/>
+                </LinearLayout>
+
+
+            </com.balysv.materialripple.MaterialRippleLayout>-->
             <com.balysv.materialripple.MaterialRippleLayout
                 android:id="@+id/lyt_next"
                 style="@style/RippleStyleWhite"
@@ -222,7 +246,14 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="horizontal">
-
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvQuestionCount"
+                        android:tint="@android:color/white"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+                        android:textColor="@android:color/white"
+                        android:text="( Q 10/10 ) "/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

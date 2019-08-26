@@ -2,8 +2,6 @@ package com.kalbenutritionals.simantra.CustomView.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -21,22 +19,22 @@ import com.kalbenutritionals.simantra.ViewModel.Images;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterImageSlider extends PagerAdapter {
+public class AdapterImageSliderCustomPathUrl extends PagerAdapter {
     private Activity act;
     private List<Images> items = new ArrayList<>();
     Context context;
-    private AdapterImageSlider.OnItemClickListener onItemClickListener;
+    private AdapterImageSliderCustomPathUrl.OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(View view, Images obj);
     }
 
-    public void setOnItemClickListener(AdapterImageSlider.OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(AdapterImageSliderCustomPathUrl.OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
     // constructor
-    public AdapterImageSlider(Activity activity, List<Images> items) {
+    public AdapterImageSliderCustomPathUrl(Activity activity, List<Images> items) {
         this.act = activity;
         this.items = items;
         this.context = activity.getApplicationContext();
@@ -70,12 +68,13 @@ public class AdapterImageSlider extends PagerAdapter {
         final LinearLayout layout_dots = v.findViewById(R.id.layout_dots);
         ImageView image = (ImageView) v.findViewById(R.id.image);
         MaterialRippleLayout lyt_parent = (MaterialRippleLayout) v.findViewById(R.id.lyt_parent);
-        if(o.imgLink!=null){
-            ClsTools.displayImageOriginalUrl(act, image, o.image,o.imgLink);
-        }else{
-            ClsTools.displayImageOriginalUrl(act, image, o.image,o.imgPath);
+        if (o.imgLink != null && !o.imgLink.equals("")) {
+            o.brief = "url";
+        } else {
+            o.brief = "path";
+            o.imgLink = o.imgPath;
         }
-
+        ClsTools.displayImageOriginalUrlCustom(act, image, o.image, o.imgLink);
         lyt_parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {

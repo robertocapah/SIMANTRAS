@@ -48,11 +48,13 @@ public class VmTJawabanUserDetail {
         public int idImage;
         public String imgName;
         public String imgPath;
+        public String imgLink;
 
-        public imageModel(int idImage, String imgName, String imgPath) {
+        public imageModel(int idImage, String imgName, String imgPath, String imgLink) {
             this.imgName = imgName;
             this.imgPath = imgPath;
             this.idImage = idImage;
+            this.imgLink = imgLink;
         }
     }
 }

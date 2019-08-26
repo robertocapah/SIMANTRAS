@@ -73,7 +73,7 @@ public class RepomConfig {
         data = new ClsmConfigData();
         data.setIntId(4);
         data.setTxtName("Application Name");
-        data.setTxtValue("AEDP MOBILE");
+        data.setTxtValue("SMT Apps");
         data.setTxtDefaultValue("3VyizZ7haX2KCvR0wl64YwulEteHqsq5FLncJSL+pBM=");
         data.setIntEditAdmin("1");
         helper.getmConfigDao().createOrUpdate(data);
@@ -97,8 +97,8 @@ public class RepomConfig {
         data = new ClsmConfigData();
         data.setIntId(7);
         data.setTxtName("application_name");
-        data.setTxtValue("AEDP Mobile Apps");
-        data.setTxtDefaultValue("AEDP Mobile Apps");
+        data.setTxtValue("SMT Apps");
+        data.setTxtDefaultValue("SMT Apps");
         data.setIntEditAdmin("1");
         helper.getmConfigDao().createOrUpdate(data);
 

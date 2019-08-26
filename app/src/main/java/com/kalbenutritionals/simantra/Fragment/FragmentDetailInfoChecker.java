@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.androidnetworking.error.ANError;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kalbe.mobiledevknlibs.PickImageAndFile.PickImage;
 import com.kalbenutritionals.simantra.BL.BLActivity;
 import com.kalbenutritionals.simantra.BL.BLHelper;
@@ -37,6 +41,7 @@ import com.kalbenutritionals.simantra.CustomView.Utils.ClsTools;
 import com.kalbenutritionals.simantra.CustomView.Utils.ImageCompression;
 import com.kalbenutritionals.simantra.CustomView.Utils.OnReceivedData;
 import com.kalbenutritionals.simantra.Data.ClsHardCode;
+import com.kalbenutritionals.simantra.Data.ResponseDataJson.getQuestion.ResponseGetQuestion;
 import com.kalbenutritionals.simantra.Database.Common.ClsImages;
 import com.kalbenutritionals.simantra.Database.Common.ClsTDataRejection;
 import com.kalbenutritionals.simantra.Database.Common.ClsmJawaban;
@@ -46,9 +51,12 @@ import com.kalbenutritionals.simantra.Database.Repo.RepoClsImages;
 import com.kalbenutritionals.simantra.Database.Repo.RepoClsTDataRejection;
 import com.kalbenutritionals.simantra.Database.Repo.RepomJawaban;
 import com.kalbenutritionals.simantra.Database.Repo.RepomPertanyaan;
+import com.kalbenutritionals.simantra.Network.FastNetworking.FastNetworkingUtils;
+import com.kalbenutritionals.simantra.Network.FastNetworking.InterfaceFastNetworking;
 import com.kalbenutritionals.simantra.R;
 import com.kalbenutritionals.simantra.ViewModel.Jawaban;
 import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasic;
+import com.kalbenutritionals.simantra.ViewModel.VmAdapterBasicNotQualified;
 import com.kalbenutritionals.simantra.ViewModel.VmImageContainer;
 import com.kalbenutritionals.simantra.ViewModel.VmListAnswerView;
 import com.kalbenutritionals.simantra.ViewModel.VmListItemAdapterPertanyaan;
@@ -61,9 +69,15 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -102,6 +116,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     boolean statusValid = false;
     boolean statusRejected = false;
     String txtMsg = "";
+    public int intQuestion = 0;
     AdapterExpandableList mAdapterHeader;
     AdapterExpandableList mAdapterBody;
 //    AdapterExpandableList mAdapterFooter;
@@ -118,18 +133,21 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     public static int CAMERA_REQUEST_QUESTION = 1;
     List<VmListItemAdapterPertanyaan> ltDataPertanyaanHeader = new ArrayList<>();
     List<VmListItemAdapterPertanyaan> ltDataPertanyaanBody = new ArrayList<>();
+    List<VmListItemAdapterPertanyaan> ltDataPertanyaanAll = new ArrayList<>();
 //    List<VmListItemAdapterPertanyaan> ltDataPertanyaanFooter = new ArrayList<>();
     List<VmListAnswerView> ListAnswerViewHeader = new ArrayList<>();
     List<VmListAnswerView> ListAnswerViewBody = new ArrayList<>();
     List<VmListAnswerView> ListAnswerViewFooter = new ArrayList<>();
     //    List<VmBasicListView> ltDataPIC = new ArrayList<>();
-    public List<VmAdapterBasic> ListRejection = new ArrayList<>();
+    public List<VmAdapterBasicNotQualified> ListRejection = new ArrayList<>();
     @BindView(R.id.btnWarning)
     Button btnWarning;
     @BindView(R.id.lnWarning)
     LinearLayout lnWarning;
     private LinearLayout linearLayout;
     Context context;
+    private Gson gson;
+    FragmentQuestionTab myFragment;
     VmTJawabanUserHeader jawabanListFinal = new VmTJawabanUserHeader();
 
     public FragmentDetailInfoChecker() {
@@ -150,6 +168,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_transaksi_transpoter, container, false);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gson = gsonBuilder.create();
         unbinder = ButterKnife.bind(this, v);
         context = getActivity().getApplicationContext();
         rvHeader.setNestedScrollingEnabled(false);
@@ -276,6 +296,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
     }
 
+
     public void generateDat() {
         rvHeader.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvHeader.addItemDecoration(new LineItemDecoration(getActivity(), LinearLayout.VERTICAL));
@@ -292,6 +313,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         ltDataPertanyaanHeader = getData(getActivity(), ClsHardCode.HEADER);
         ltDataPertanyaanBody = getData(getActivity(), ClsHardCode.BODY);
 //        ltDataPertanyaanFooter = getData(getActivity(), ClsHardCode.FOOTER);
+        updateCountPertanyaan();
 
         toggleSectionOptional(btToggleOptional);
         toggleSectionMandatory(btToggleMandatory);
@@ -299,7 +321,21 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         //set data and list adapter
 //        CustomAdapter mAdapterHeader = new CustomAdapter(getActivity(), mItems);
         mAdapterHeader = new AdapterExpandableList(getActivity(), ltDataPertanyaanHeader);
+        mAdapterHeader.setOnItemClickListener(new AdapterExpandableList.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, VmListItemAdapterPertanyaan obj, int position) {
+                ltDataPertanyaanHeader.get(position).bitChecked = true;
+                updateCountPertanyaan();
+            }
+        });
         mAdapterBody = new AdapterExpandableList(getActivity(), ltDataPertanyaanBody);
+        mAdapterBody.setOnItemClickListener(new AdapterExpandableList.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, VmListItemAdapterPertanyaan obj, int position) {
+                ltDataPertanyaanBody.get(position).bitChecked = true;
+                updateCountPertanyaan();
+            }
+        });
 //        mAdapterFooter = new AdapterExpandableList(getActivity(), ltDataPertanyaanFooter);
 
         rvHeader.setAdapter(mAdapterHeader);
@@ -309,6 +345,45 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
         mAdapterHeader.sendData(FragmentDetailInfoChecker.this);
         mAdapterBody.sendData(FragmentDetailInfoChecker.this);
 //        mAdapterFooter.sendData(FragmentDetailInfoChecker.this);
+    }
+    public void updateCountPertanyaan(){
+        ltDataPertanyaanAll = new ArrayList<>();
+        ltDataPertanyaanAll.addAll(ltDataPertanyaanHeader);
+        ltDataPertanyaanAll.addAll(ltDataPertanyaanBody);
+        List<VmListItemAdapterPertanyaan> ltDataNew = new ArrayList<>();
+        for (VmListItemAdapterPertanyaan dt: ltDataPertanyaanAll) {
+            if (dt.bitChecked){
+                ltDataNew.add(dt);
+            }
+        }
+//        myFragment = (FragmentQuestionTab) this.getSupportFragmentManager().findFragmentByTag(ClsHardCode.FT_CHECKER);
+//        FragmentQuestionTab myFragment = (FragmentQuestionTab)getActivity().getFragmentManager().findFragmentById(R.id.frame_content);
+
+//        FragmentQuestionTab parentFrag = ((FragmentQuestionTab)FragmentDetailInfoChecker.this.getParentFragment());
+        FragmentTab fragmenTab = null;
+
+
+        for(Fragment fragment : getFragmentManager().getFragments()){
+            if(fragment instanceof FragmentTab){
+                fragmenTab = (FragmentTab) fragment;
+                if (fragmenTab.mPager.getCurrentItem()==0){
+                    FragmentQuestionTab frq =(FragmentQuestionTab) ((FragmentTab) fragment).viewPagerAdapter.getItem(0);
+                    frq.tvQuestionCount.setText("("+ltDataNew.size()+"/"+ltDataPertanyaanAll.size()+")");
+                    if (ltDataNew.size() == ltDataPertanyaanAll.size()){
+                        frq.btnNext.setBackground(getActivity().getResources().getDrawable(R.color.colorPrimary));
+                    }else{
+                        frq.btnNext.setBackground(getActivity().getResources().getDrawable(R.color.grey_40));
+                    }
+                }
+
+                break;
+            }
+        }
+
+
+
+//        ((FragmentQuestionTab) getParentFragment()).tvQuestionCount.setText("");
+//        myFragment.tvQuestionCount.setText("("+ltDataNew.size()+"/"+ltDataPertanyaanAll.size()+")");
     }
 
     public List<VmListItemAdapterPertanyaan> getData(Context ctx, int jenis) {
@@ -343,6 +418,8 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 obj.intValidateId = pertanyaan.getIntValidateID();
                 obj.intPositionId = pertanyaan.getIntLocationDocsId();
                 obj.intFillDtlId = pertanyaan.getIntFillDetailId();
+                obj.intFormDtlId = pertanyaan.getIntPertanyaanId();
+                obj.intFillHdrId = pertanyaan.getIntFillHeaderId();
                 obj.txtMetodePemeriksaan = pertanyaan.getTxtMetodePemeriksaan();
                 obj.txtReason = pertanyaan.getTxtReason();
                 List<ClsmJawaban> jawabans1 = new RepomJawaban(context).findByHeader(pertanyaan.getIntPertanyaanId());
@@ -355,6 +432,9 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     jwbn.idJawaban = jawaban.getIdJawaban();
                     jwbn.jawaban = jawaban.getTxtJawaban();
                     jwbn.bitChoosen = jawaban.isBitChoosen();
+                    if (jawaban.isBitChoosen()){
+                        obj.bitChecked = true;
+                    }
                     jawabans.add(jwbn);
                 }
                 obj.jawabans = jawabans;
@@ -830,7 +910,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
     String jawabanCheckbox = "";
 
-    public JSONObject getDataTransaction(int FlagPush, String txtReason) {
+    public JSONObject getDataTransaction(int FlagPush, String txtReason, List<VmAdapterBasicNotQualified> ListRejection) {
         //jika nambah jawaban dari basic
         /*List<VmTJawabanUser> jawabanUser= jawabanListFinal.getListJawabanUser();
         try {
@@ -864,6 +944,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
             jawabanListFinal.setIntStatusDisposisi(0);
         }else{
             jawabanListFinal.setTxtLoadingMessage(txtReason);
+            jawabanListFinal.setListRejection(ListRejection);
         }
 //        String HeaderID = BLHelper.getPreference(context,ClsHardCode.SP_INT_HEADER_ID);
 //        jawabanListFinal.setIntFillHeaderId(Integer.parseInt(HeaderID));
@@ -901,9 +982,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 String jawabanFinal = "";
                 Boolean boolJawabanFinal = true;
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
+                List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
+                List<VmTJawabanUserDetail.imageModel> listImageRejection = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
                     boolean isImage = true;
-                    List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     View nextChild = ln.getChildAt(x);
                     if (nextChild instanceof CheckBox) {
@@ -972,6 +1054,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                                     String dir = Environment.getExternalStorageDirectory() + "/Android/" + dirA;
                                     File file = new File(dir);
                                     String imageName = ltDataPertanyaanHeader.get(position).listImage.get(z).getImgName();
+                                    String imageLink = ltDataPertanyaanHeader.get(position).listImage.get(z).getTxtLink();
                                     List<ClsImages> images = new RepoClsImages(context).findByFillDtlId(pertanyaans.getIntFillDetailId());
                                     int imgId = 0;
                                     if (images.size() > 0) {
@@ -981,9 +1064,15 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                                         }
                                     }
-                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imgId, imageName, dir);
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imgId, imageName, dir, imageLink);
 
                                     listImage.add(dtImage);
+                                    listImageRejection.add(dtImage);
+                                }else if (ltDataPertanyaanHeader.get(position).listImage.get(z).getTxtLink() != null && !ltDataPertanyaanHeader.get(position).listImage.get(z).getTxtLink().equals("")){
+                                    String imageName = ltDataPertanyaanHeader.get(position).listImage.get(z).getImgName();
+                                    String imageLink = ltDataPertanyaanHeader.get(position).listImage.get(z).getTxtLink();
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(0, imageName, "", imageLink);
+                                    listImageRejection.add(dtImage);
                                 }
                             }
                         }
@@ -997,11 +1086,19 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 tJawaban.setJawabanUserDetailList(listJawaban);
                 tJawabanList.add(tJawaban);
 
-                if (!boolJawabanFinal && ltDataPertanyaanHeader.get(position).intValidateId == 3) {
+                if (!boolJawabanFinal && ltDataPertanyaanHeader.get(position).intValidateId == ClsHardCode.MANDATORY) {
                     VmAdapterBasic data = new VmAdapterBasic();
                     data.setTitle(ltDataPertanyaanHeader.get(position).txtPertanyaan);
                     data.setSubtitle(jawabanFinal);
-                    ListRejection.add(data);
+
+                    VmAdapterBasicNotQualified dataNotQualified = new VmAdapterBasicNotQualified();
+                    dataNotQualified.setTitle(ltDataPertanyaanHeader.get(position).txtPertanyaan);
+                    dataNotQualified.setSubtitle(jawabanFinal);
+                    dataNotQualified.setIntDtlId(ltDataPertanyaanHeader.get(position).intFillDtlId);
+                    dataNotQualified.setIntHdrId(ltDataPertanyaanHeader.get(position).intFillHdrId);
+                    dataNotQualified.setIntFormDtlId(ltDataPertanyaanHeader.get(position).intFormDtlId);
+                    dataNotQualified.setDtImages(listImageRejection);
+                    ListRejection.add(dataNotQualified);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -1045,8 +1142,9 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                 String jawabanFinal = "";
                 Boolean boolJawabanFinal = true;
                 List<VmTJawabanUserDetail> listJawaban = new ArrayList<>();
+                List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
+                List<VmTJawabanUserDetail.imageModel> listImageRejection = new ArrayList<>();
                 for (int x = 0; x < ln.getChildCount(); x++) {
-                    List<VmTJawabanUserDetail.imageModel> listImage = new ArrayList<>();
                     VmTJawabanUserDetail dtJawaban = new VmTJawabanUserDetail();
                     boolean isImage = true;
                     View nextChild = ln.getChildAt(x);
@@ -1117,6 +1215,7 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                                     String dir = Environment.getExternalStorageDirectory() + "/Android/" + dirA;
                                     File file = new File(dir);
                                     String imageName = ltDataPertanyaanBody.get(position).listImage.get(z).getImgName();
+                                    String imageLink = ltDataPertanyaanBody.get(position).listImage.get(z).getTxtLink();
                                     List<ClsImages> images = new RepoClsImages(context).findByFillDtlId(pertanyaans.getIntFillDetailId());
                                     int imgId = 0;
                                     if (images.size() > 0) {
@@ -1126,9 +1225,15 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
 
                                         }
                                     }
-                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imgId, imageName, dir);
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(imgId, imageName, dir,imageLink);
 
                                     listImage.add(dtImage);
+                                    listImageRejection.add(dtImage);
+                                }else if (ltDataPertanyaanBody.get(position).listImage.get(z).getTxtLink() != null && !ltDataPertanyaanBody.get(position).listImage.get(z).getTxtLink().equals("")){
+                                    String imageName = ltDataPertanyaanBody.get(position).listImage.get(z).getImgName();
+                                    String imageLink = ltDataPertanyaanBody.get(position).listImage.get(z).getTxtLink();
+                                    VmTJawabanUserDetail.imageModel dtImage = new VmTJawabanUserDetail().new imageModel(0, imageName, "", imageLink);
+                                    listImageRejection.add(dtImage);
                                 }
                             }
                         }
@@ -1151,7 +1256,16 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                     VmAdapterBasic data = new VmAdapterBasic();
                     data.setTitle(ltDataPertanyaanBody.get(position).txtPertanyaan);
                     data.setSubtitle(jawabanFinal);
-                    ListRejection.add(data);
+
+
+                    VmAdapterBasicNotQualified dataNotQualified = new VmAdapterBasicNotQualified();
+                    dataNotQualified.setTitle(ltDataPertanyaanBody.get(position).txtPertanyaan);
+                    dataNotQualified.setSubtitle(jawabanFinal);
+                    dataNotQualified.setIntDtlId(ltDataPertanyaanBody.get(position).intFillDtlId);
+                    dataNotQualified.setIntHdrId(ltDataPertanyaanBody.get(position).intFillHdrId);
+                    dataNotQualified.setIntFormDtlId(ltDataPertanyaanBody.get(position).intFormDtlId);
+                    dataNotQualified.setDtImages(listImageRejection);
+                    ListRejection.add(dataNotQualified);
                 }
 
             } catch (SQLException e) {
@@ -1360,9 +1474,10 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         View child = lnRc.getChildAt(0);
                         ImageView imageView = (ImageView) child;
                         try {
-                            Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
+
                             String dir = new ClsTools().getRealPath(uriImage);
                             new ImageCompression(context).compressImage(dir);
+                            Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
                             new PickImage().previewCapturedImage(imageView, thePic, 400, 500);
                             ltDataPertanyaanHeader.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setPath(uriImage);
                             ltDataPertanyaanHeader.get(GLOBAL_PICK_PICTURE_QUEST_ID).listImage.get(GLOBAL_PICK_PICTURE_ID).setImgName(imgName);
@@ -1400,11 +1515,11 @@ public class FragmentDetailInfoChecker extends Fragment implements OnReceivedDat
                         ImageView imageView = (ImageView) child;
                         try {
 
-                            Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
 
                             String dir = new ClsTools().getRealPath(uriImage);
                             new ImageCompression(context).compressImage(dir);
 
+                            Bitmap thePic = new PickImage().decodeStreamReturnBitmap(AdapterExpandableList.ctx, uriImage);
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             thePic.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 

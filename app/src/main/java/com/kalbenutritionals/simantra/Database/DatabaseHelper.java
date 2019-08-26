@@ -44,7 +44,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // txtPertanyaan of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = _path.dbName;
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 25;
+    private static final int DATABASE_VERSION = 26;
 
     // the DAO object we use to access the SimpleData table
     protected Dao<ClsmConfigData, Integer> mConfigDao;

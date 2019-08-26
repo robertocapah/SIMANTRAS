@@ -24,6 +24,7 @@ import com.kalbe.mobiledevknlibs.ToastAndSnackBar.ToastCustom;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -202,53 +203,6 @@ public class FastNetworkingUtils {
                 });
     }
 
-    public void FNRequestPostDataSearch(final Activity context, String txtLink, JSONObject JObject, final LinearLayout lnProgressBar, final CardView cvNewDokter, final InterfaceFastNetworking listener) {
-        String access_token = "";
-        List<ClsToken> dataToken = null;
-        lnProgressBar.setVisibility(View.VISIBLE);
-        lnProgressBar.setAlpha(1.0f);
-        cvNewDokter.setVisibility(View.GONE);
-        RepomConfig configRepo = new RepomConfig(context);
-        try {
-            ClsmConfigData configDataClient = (ClsmConfigData) configRepo.findById(4);
-            clientId = configDataClient.getTxtDefaultValue().toString();
-            dataToken = new RepoclsToken(context).getDataToken(context);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            dataToken = new RepoclsToken(context).findAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        access_token = dataToken.get(0).txtUserToken.toString();
-        AndroidNetworking.post(txtLink)
-                .addJSONObjectBody(JObject)
-                .addHeaders("Authorization", "Bearer " + access_token)
-                .setTag("test")
-                .setPriority(Priority.LOW)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        listener.onResponse(response);
-                        ViewAnimation.fadeOut(lnProgressBar);
-                        lnProgressBar.setVisibility(View.GONE);
-                        cvNewDokter.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onError(ANError error) {
-                        listener.onError(error);
-                        ViewAnimation.fadeOut(lnProgressBar);
-                        lnProgressBar.setVisibility(View.GONE);
-                        cvNewDokter.setVisibility(View.VISIBLE);
-                        ErrorHandlerFN(context, error, TAG);
-                    }
-                });
-    }
-
     public void FNRequestDownloadAPKFile(final Activity ctx, String strLinkAPI, final String txtPathUserData, final String apkName, final String tag, final Dialog dialog, final InterfaceFastNetworkingDownloadFile listener) {
         dialog.show();
         final DonutProgress progressD = (DonutProgress) dialog.findViewById(R.id.progressPercentage);
@@ -354,6 +308,9 @@ public class FastNetworkingUtils {
         dialog = new Dialog(ctx);
         dialog.setContentView(R.layout.layout_progress_download_apk);
         TextView tvProcessDesc = dialog.findViewById(R.id.tvProgressDesc);
+        final TextView tvProgressText = dialog.findViewById(R.id.tvLoadingProgressText);
+        final LinearLayout lyt_progress = dialog.findViewById(R.id.lyt_progress);
+        lyt_progress.setVisibility(View.GONE);
         tvProcessDesc.setText("Pushing Datas ...");
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -374,7 +331,13 @@ public class FastNetworkingUtils {
                             @Override
                             public void run() {
                                 double precentage = ((double) bytesUploaded / (double) totalBytes) * 100;
-                                progressD.setProgress((int) precentage);
+                                int pr = (int) precentage;
+                                progressD.setProgress(pr);
+                                if (pr==100){
+                                    tvProgressText.setText("Processing Data");
+                                    lyt_progress.setVisibility(View.VISIBLE);
+                                }
+
                             }
                         });
                     }

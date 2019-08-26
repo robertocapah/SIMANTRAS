@@ -9,6 +9,7 @@ public class Images {
     public String name;
     public String imgLink;
     public String brief;
+    public String imgPath;
     public Integer counter = null;
 
 }

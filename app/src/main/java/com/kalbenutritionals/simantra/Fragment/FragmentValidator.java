@@ -280,6 +280,7 @@ public class FragmentValidator extends Fragment implements ZXingScannerView.Resu
                         isFinished = true;
                     }else{
                         Toast.makeText(context,model.getResult().getMessage(),Toast.LENGTH_SHORT).show();
+                        timeContinue();
                     }
 
                 }
@@ -288,6 +289,7 @@ public class FragmentValidator extends Fragment implements ZXingScannerView.Resu
             @Override
             public void onError(ANError error) {
                 Toast.makeText(context, error.getErrorBody().toString(), Toast.LENGTH_SHORT).show();
+                timeContinue();
             }
         });
 

@@ -116,10 +116,6 @@ public class FragmentSPMSearch extends Fragment implements ZXingScannerView.Resu
     }
 
     private void goToInfoChecker() {
-       /* FragmentDetailInfoChecker infoCheckerFragment = new FragmentDetailInfoChecker();
-        FragmentTransactions fragmentTransactionInfoChecker = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransactionInfoChecker.replace(R.id.frame, infoCheckerFragment);
-        fragmentTransactionInfoChecker.commit();*/
         String txtLink = new ClsHardCode().linkGetListFormByOrg;
         final String noQr = etSpmNumber.getText().toString().trim();
         final int intType = ClsHardCode.INT_DOCNUMB;

@@ -316,7 +316,7 @@ public class FullScannerFragment extends Fragment implements
                                     break;
                             }
                         }
-
+                        getActivity().finish();
                     } else {
 
 //                        getActivity().finish();

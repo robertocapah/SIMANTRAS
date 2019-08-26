@@ -87,7 +87,7 @@ public class AdapterListBasicWarning extends RecyclerView.Adapter<RecyclerView.V
 
             final VmAdapterBasicIssue p = items.get(position);
             view.title.setText(p.getIssue());
-            view.desc.setText(p.getJawaban());
+            view.desc.setText(p.getIssueReason());
             view.reason.setText(p.getFixReason());
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

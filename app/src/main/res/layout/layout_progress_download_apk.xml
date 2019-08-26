@@ -24,9 +24,23 @@
                 custom:donut_background_color="@color/translucte"
                 custom:donut_progress="0"
                 />
+            <LinearLayout
+                android:id="@+id/lyt_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/spacing_small"
+                android:orientation="vertical">
+
+                <com.kalbenutritionals.simantra.CustomView.Widget.ViewLoadingDotsBounce
+                    android:layout_width="30dp"
+                    android:layout_height="20dp"
+                    android:background="@color/blue_800" />
+
+            </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/tvLoadingProgressText"
                 android:text="Please wait ...."
                 android:padding="10dp"/>
         </LinearLayout>

@@ -115,6 +115,22 @@ public class VmListItemAdapter implements Serializable {
         this.txtLinkPdf = txtLinkPdf;
     }
 
+    public int getIntOrderId() {
+        return intOrderId;
+    }
+
+    public void setIntOrderId(int intOrderId) {
+        this.intOrderId = intOrderId;
+    }
+
+    public String getNoSPM() {
+        return noSPM;
+    }
+
+    public void setNoSPM(String noSPM) {
+        this.noSPM = noSPM;
+    }
+
     public String txtId;
     public Integer intImgView;
     public Drawable drwImg;
@@ -123,6 +139,8 @@ public class VmListItemAdapter implements Serializable {
     public String txtDesc;
     public String txtDate;
     public int intColor;
+    public int intOrderId;
+    public String noSPM;
     public boolean boolSection;
     public String txtImgName;
     public String txtStatus;

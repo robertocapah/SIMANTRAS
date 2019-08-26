@@ -427,6 +427,7 @@ public class ActivityPickAccount extends Activity {
             jData.put("username",txtUsername );
             jData.put("intRoleId", intRoleId);
             jData.put("password", txtPassword);
+            jData.put("txtNameApp", ClsHardCode.TXT_NAME_APP);
         } catch (JSONException e) {
             e.printStackTrace();
         }
